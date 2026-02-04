@@ -22,6 +22,7 @@ Partial Class Form1
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+<<<<<<< HEAD
         TextBox1 = New TextBox()
         TextBox2 = New TextBox()
         Label1 = New Label()
@@ -95,10 +96,15 @@ Partial Class Form1
         LinkLabel1.TabStop = True
         LinkLabel1.Text = "Register an Account Here."
         ' 
+=======
+        SuspendLayout()
+        ' 
+>>>>>>> 1be264a6d1e4f9a42075fe4c47f064fd9766dae1
         ' Form1
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
+<<<<<<< HEAD
         ClientSize = New Size(880, 665)
         Controls.Add(LinkLabel1)
         Controls.Add(Button1)
@@ -121,4 +127,12 @@ Partial Class Form1
     Friend WithEvents Button1 As Button
     Friend WithEvents LinkLabel1 As LinkLabel
 
+=======
+        ClientSize = New Size(1032, 674)
+        Name = "Form1"
+        Text = "Form1"
+        ResumeLayout(False)
+    End Sub
+
+>>>>>>> 1be264a6d1e4f9a42075fe4c47f064fd9766dae1
 End Class
