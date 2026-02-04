@@ -33,7 +33,7 @@ Public Class Form1
             If connect.State = ConnectionState.Closed Then connect.Open()
 
             ' Correct table name here
-            sql = "SELECT COUNT(*) FROM [Users] WHERE username = ? AND password = ?"
+            sql = "SELECT COUNT(*) FROM [username] WHERE username = ? AND password = ?"
             command = New OleDbCommand(sql, connect)
             command.Parameters.AddWithValue("?", TextBox1.Text.Trim())
             command.Parameters.AddWithValue("?", TextBox2.Text.Trim())

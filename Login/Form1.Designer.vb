@@ -48,8 +48,8 @@ Partial Class Form1
         ' Label1
         ' 
         Label1.AutoSize = True
-        Label1.Font = New Font("Wide Latin", 48F, FontStyle.Bold, GraphicsUnit.Point, 0)
-        Label1.Location = New Point(211, 43)
+        Label1.Font = New Font("Wide Latin", 48F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label1.Location = New Point(214, 50)
         Label1.Name = "Label1"
         Label1.Size = New Size(450, 79)
         Label1.TabIndex = 2
@@ -58,7 +58,7 @@ Partial Class Form1
         ' Label2
         ' 
         Label2.AutoSize = True
-        Label2.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, 0)
+        Label2.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label2.Location = New Point(336, 273)
         Label2.Name = "Label2"
         Label2.Size = New Size(199, 19)
@@ -68,7 +68,7 @@ Partial Class Form1
         ' Label3
         ' 
         Label3.AutoSize = True
-        Label3.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, 0)
+        Label3.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label3.Location = New Point(338, 363)
         Label3.Name = "Label3"
         Label3.Size = New Size(197, 19)
@@ -77,7 +77,7 @@ Partial Class Form1
         ' 
         ' Button1
         ' 
-        Button1.Font = New Font("Showcard Gothic", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0)
+        Button1.Font = New Font("Showcard Gothic", 15.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Button1.Location = New Point(383, 454)
         Button1.Name = "Button1"
         Button1.Size = New Size(102, 38)
