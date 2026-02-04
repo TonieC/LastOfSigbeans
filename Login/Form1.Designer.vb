@@ -49,7 +49,7 @@ Partial Class Form1
         ' 
         Label1.AutoSize = True
         Label1.Font = New Font("Wide Latin", 48F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label1.Location = New Point(211, 43)
+        Label1.Location = New Point(211, 49)
         Label1.Name = "Label1"
         Label1.Size = New Size(450, 79)
         Label1.TabIndex = 2
