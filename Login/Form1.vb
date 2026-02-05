@@ -6,9 +6,6 @@ Public Class Form1
     Dim connect As New OleDbConnection
     Dim command As OleDbCommand
     Dim sql As String = Nothing
-    Public su_username As String
-    Public su_password As String
-
 
     ' Link to registration form
     Private Sub LinkLabel1_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LinkLabel1.LinkClicked
@@ -26,19 +23,19 @@ Public Class Form1
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         If String.IsNullOrWhiteSpace(TextBox1.Text) Or String.IsNullOrWhiteSpace(TextBox2.Text) Then
             MsgBox("Please enter your username and password", MsgBoxStyle.Exclamation, "Input Required")
-            Return
+            Exit Sub
         End If
 
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
 
-            ' Correct table name here
-            sql = "SELECT COUNT(*) FROM [username] WHERE username = ? AND password = ?"
+            sql = "SELECT COUNT(*) FROM [login] WHERE username = ? AND [password] = ?"
             command = New OleDbCommand(sql, connect)
             command.Parameters.AddWithValue("?", TextBox1.Text.Trim())
             command.Parameters.AddWithValue("?", TextBox2.Text.Trim())
 
-            Dim count As Integer = Convert.ToInt32(command.ExecuteScalar())
+            Dim count As Integer = CInt(command.ExecuteScalar())
+
             If count > 0 Then
                 MsgBox("Login Successful", MsgBoxStyle.Information, "Welcome")
             Else
@@ -46,9 +43,9 @@ Public Class Form1
             End If
 
         Catch ex As Exception
-            MsgBox("Database error: " & ex.Message, MsgBoxStyle.Critical, "Error")
+            MsgBox(ex.Message, MsgBoxStyle.Critical, "Database Error")
         Finally
-            If connect.State = ConnectionState.Open Then connect.Close()
+            connect.Close()
         End Try
     End Sub
 
