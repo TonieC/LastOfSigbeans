@@ -22,9 +22,12 @@ Public Class Form2
         connect.ConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Administrator\OneDrive\Documents\Login.accdb"
     End Sub
 
-    ' Sign Up button click
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-        ' Check empty fields first
+        ' Get values from textboxes
+        su_username = TextBox2.Text.Trim()
+        su_password = TextBox1.Text.Trim()
+
+        ' Check empty fields
         If String.IsNullOrWhiteSpace(su_username) Or String.IsNullOrWhiteSpace(su_password) Then
             MsgBox("Please enter your username and password", MsgBoxStyle.Exclamation, "Input Required")
             Return
@@ -35,7 +38,7 @@ Public Class Form2
             If connect.State = ConnectionState.Closed Then connect.Open()
 
             ' Check if username exists
-            Dim checkData As String = "SELECT COUNT(*) FROM [user] WHERE username = ?"
+            Dim checkData As String = "SELECT COUNT(*) FROM [login] WHERE username = ?"
             command = New OleDbCommand(checkData, connect)
             command.Parameters.AddWithValue("?", su_username)
             Dim check As Integer = Convert.ToInt32(command.ExecuteScalar())
@@ -43,8 +46,8 @@ Public Class Form2
             If check > 0 Then
                 MsgBox("Username already exists", MsgBoxStyle.Critical, "Error")
             Else
-                ' Insert new user
-                sql = "INSERT INTO [user] ([username], [password]) VALUES (?, ?)"
+                ' Insert new user into [login] table
+                sql = "INSERT INTO [login] ([username], [password]) VALUES (?, ?)"
                 command = New OleDbCommand(sql, connect)
                 command.Parameters.Clear()
                 command.Parameters.AddWithValue("?", su_username)
@@ -52,15 +55,16 @@ Public Class Form2
                 command.ExecuteNonQuery()
 
                 MsgBox("Sign Up Successful", MsgBoxStyle.Information, "Welcome")
-                su_username = ""
-                su_password = ""
+                TextBox2.Text = ""
+                TextBox1.Text = ""
             End If
 
         Catch ex As Exception
             MsgBox("Database error: " & ex.Message, MsgBoxStyle.Critical, "Error")
         Finally
-            ' Close connection
             If connect.State = ConnectionState.Open Then connect.Close()
         End Try
     End Sub
+
+
 End Class

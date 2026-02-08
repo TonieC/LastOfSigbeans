@@ -83,6 +83,7 @@ Partial Class Form2
         ' 
         ' TextBox2
         ' 
+        TextBox2.AccessibleRole = AccessibleRole.IpAddress
         TextBox2.Location = New Point(309, 315)
         TextBox2.Name = "TextBox2"
         TextBox2.Size = New Size(204, 23)
