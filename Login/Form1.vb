@@ -49,5 +49,12 @@ Public Class Form1
         End Try
     End Sub
 
+    Private Sub CheckBox1_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox1.CheckedChanged
+        If CheckBox1.Checked Then
+            TextBox1.UseSystemPasswordChar = False   ' Show password
+        Else
+            TextBox1.UseSystemPasswordChar = True    ' Hide password
+        End If
+    End Sub
 
 End Class

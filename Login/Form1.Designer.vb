@@ -29,14 +29,16 @@ Partial Class Form1
         Label3 = New Label()
         Button1 = New Button()
         LinkLabel1 = New LinkLabel()
+        CheckBox1 = New CheckBox()
         SuspendLayout()
         ' 
         ' TextBox1
         ' 
-        TextBox1.Location = New Point(331, 385)
+        TextBox1.Location = New Point(331, 360)
         TextBox1.Name = "TextBox1"
         TextBox1.Size = New Size(204, 23)
         TextBox1.TabIndex = 0
+        TextBox1.UseSystemPasswordChar = True
         ' 
         ' TextBox2
         ' 
@@ -49,7 +51,7 @@ Partial Class Form1
         ' 
         Label1.AutoSize = True
         Label1.Font = New Font("Wide Latin", 48F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label1.Location = New Point(214, 50)
+        Label1.Location = New Point(221, 86)
         Label1.Name = "Label1"
         Label1.Size = New Size(450, 79)
         Label1.TabIndex = 2
@@ -69,7 +71,7 @@ Partial Class Form1
         ' 
         Label3.AutoSize = True
         Label3.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label3.Location = New Point(338, 363)
+        Label3.Location = New Point(338, 338)
         Label3.Name = "Label3"
         Label3.Size = New Size(197, 19)
         Label3.TabIndex = 4
@@ -78,7 +80,7 @@ Partial Class Form1
         ' Button1
         ' 
         Button1.Font = New Font("Showcard Gothic", 15.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Button1.Location = New Point(383, 454)
+        Button1.Location = New Point(377, 403)
         Button1.Name = "Button1"
         Button1.Size = New Size(102, 38)
         Button1.TabIndex = 5
@@ -95,11 +97,22 @@ Partial Class Form1
         LinkLabel1.TabStop = True
         LinkLabel1.Text = "Register an Account Here."
         ' 
+        ' CheckBox1
+        ' 
+        CheckBox1.AutoSize = True
+        CheckBox1.Location = New Point(541, 364)
+        CheckBox1.Name = "CheckBox1"
+        CheckBox1.Size = New Size(138, 19)
+        CheckBox1.TabIndex = 7
+        CheckBox1.Text = "Show/Hide Password"
+        CheckBox1.UseVisualStyleBackColor = True
+        ' 
         ' Form1
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(880, 665)
+        Controls.Add(CheckBox1)
         Controls.Add(LinkLabel1)
         Controls.Add(Button1)
         Controls.Add(Label3)
@@ -120,5 +133,6 @@ Partial Class Form1
     Friend WithEvents Label3 As Label
     Friend WithEvents Button1 As Button
     Friend WithEvents LinkLabel1 As LinkLabel
+    Friend WithEvents CheckBox1 As CheckBox
 
 End Class
