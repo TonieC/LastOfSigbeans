@@ -1,54 +1,46 @@
 ﻿Imports System.Data.OleDb
 Imports System.Data
 
-Public Class Form2
+Public Class Form3
 
     Dim connect As New OleDbConnection
     Dim command As OleDbCommand
     Dim sql As String = Nothing
 
-    ' Back to LOGIN (Form3)
+    ' Go to SIGN UP (Form2)
     Private Sub LinkLabel1_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LinkLabel1.LinkClicked
-        Dim login As New Form3
-        login.Show()
+        Dim signup As New Form2
+        signup.Show()
         Me.Hide()
     End Sub
 
-    Private Sub Form2_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    Private Sub Form3_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         connect.ConnectionString =
             "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Administrator\OneDrive\Documents\Login.accdb"
 
-        TextBox1.UseSystemPasswordChar = True
+        TextBox2.UseSystemPasswordChar = True ' password textbox
     End Sub
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-        Dim su_username As String = TextBox2.Text.Trim()
-        Dim su_password As String = TextBox1.Text.Trim()
-
-        If su_username = "" Or su_password = "" Then
-            MsgBox("Please enter username and password")
+        If String.IsNullOrWhiteSpace(TextBox1.Text) OrElse
+           String.IsNullOrWhiteSpace(TextBox2.Text) Then
+            MsgBox("Please enter your username and password")
             Exit Sub
         End If
 
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
 
-            sql = "SELECT COUNT(*) FROM [login] WHERE username=?"
+            sql = "SELECT COUNT(*) FROM [login] WHERE username=? AND [password]=?"
             command = New OleDbCommand(sql, connect)
-            command.Parameters.AddWithValue("?", su_username)
+            command.Parameters.AddWithValue("?", TextBox1.Text.Trim())
+            command.Parameters.AddWithValue("?", TextBox2.Text.Trim())
 
             If CInt(command.ExecuteScalar()) > 0 Then
-                MsgBox("Username already exists")
-                Exit Sub
+                MsgBox("Login Successful")
+            Else
+                MsgBox("Invalid username or password")
             End If
-
-            sql = "INSERT INTO [login] (username,[password]) VALUES (?,?)"
-            command = New OleDbCommand(sql, connect)
-            command.Parameters.AddWithValue("?", su_username)
-            command.Parameters.AddWithValue("?", su_password)
-            command.ExecuteNonQuery()
-
-            MsgBox("Sign Up Successful")
 
         Catch ex As Exception
             MsgBox(ex.Message)
@@ -59,7 +51,7 @@ Public Class Form2
 
     ' SHOW / HIDE PASSWORD (FIXED)
     Private Sub CheckBox1_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox1.CheckedChanged
-        TextBox1.UseSystemPasswordChar = Not CheckBox1.Checked
+        TextBox2.UseSystemPasswordChar = Not CheckBox1.Checked
     End Sub
 
 End Class
