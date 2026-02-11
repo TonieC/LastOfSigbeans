@@ -25,6 +25,8 @@ Partial Class Form4
         DataGridView1 = New DataGridView()
         Button1 = New Button()
         Button2 = New Button()
+        Button3 = New Button()
+        Button4 = New Button()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
@@ -47,18 +49,38 @@ Partial Class Form4
         ' 
         ' Button2
         ' 
-        Button2.Location = New Point(485, 429)
+        Button2.Location = New Point(457, 429)
         Button2.Name = "Button2"
         Button2.Size = New Size(102, 27)
         Button2.TabIndex = 2
         Button2.Text = "Delete"
         Button2.UseVisualStyleBackColor = True
         ' 
+        ' Button3
+        ' 
+        Button3.Location = New Point(122, 429)
+        Button3.Name = "Button3"
+        Button3.Size = New Size(102, 27)
+        Button3.TabIndex = 3
+        Button3.Text = "Add"
+        Button3.UseVisualStyleBackColor = True
+        ' 
+        ' Button4
+        ' 
+        Button4.Location = New Point(601, 429)
+        Button4.Name = "Button4"
+        Button4.Size = New Size(102, 27)
+        Button4.TabIndex = 4
+        Button4.Text = "Refresh"
+        Button4.UseVisualStyleBackColor = True
+        ' 
         ' Form4
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(853, 475)
+        Controls.Add(Button4)
+        Controls.Add(Button3)
         Controls.Add(Button2)
         Controls.Add(Button1)
         Controls.Add(DataGridView1)
@@ -71,4 +93,6 @@ Partial Class Form4
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents Button1 As Button
     Friend WithEvents Button2 As Button
+    Friend WithEvents Button3 As Button
+    Friend WithEvents Button4 As Button
 End Class

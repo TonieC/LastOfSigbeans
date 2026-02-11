@@ -49,12 +49,12 @@ Public Class Form4
             Exit Sub
         End If
 
-        Dim eid As String = DataGridView1.SelectedRows(0).Cells("EID").Value.ToString()
+        Dim eid = DataGridView1.SelectedRows(0).Cells("EID").Value.ToString
 
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
 
-            Dim sql As String =
+            Dim sql =
                 "UPDATE [login] SET username=?, FullName=?, MobileN=?, Email=?, Address=? WHERE EID=?"
 
             Using cmd As New OleDbCommand(sql, connect)
@@ -87,7 +87,7 @@ Public Class Form4
             Exit Sub
         End If
 
-        Dim eid As String = DataGridView1.SelectedRows(0).Cells("EID").Value.ToString()
+        Dim eid = DataGridView1.SelectedRows(0).Cells("EID").Value.ToString
 
         If MsgBox("Delete employee EID " & eid & "?", MsgBoxStyle.YesNo Or MsgBoxStyle.Critical) = MsgBoxResult.No Then
             Exit Sub
@@ -96,7 +96,7 @@ Public Class Form4
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
 
-            Dim sql As String = "DELETE FROM [login] WHERE EID=?"
+            Dim sql = "DELETE FROM [login] WHERE EID=?"
 
             Using cmd As New OleDbCommand(sql, connect)
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = eid
@@ -112,6 +112,77 @@ Public Class Form4
             connect.Close()
         End Try
 
+    End Sub
+
+    ' ADD NEW EMPLOYEE (ADMIN CONTROLLED)
+    Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+        Try
+            If connect.State = ConnectionState.Closed Then connect.Open()
+
+            ' Prompt admin for employee info
+            Dim username As String = InputBox("Enter username:")
+            If username = "" Then Exit Sub
+
+            ' Check duplicate username
+            Dim cmdCheck As New OleDbCommand("SELECT COUNT(*) FROM [login] WHERE username=?", connect)
+            cmdCheck.Parameters.Add("?", OleDbType.VarChar).Value = username
+            If CInt(cmdCheck.ExecuteScalar()) > 0 Then
+                MsgBox("Username already exists.", MsgBoxStyle.Exclamation)
+                Exit Sub
+            End If
+
+            Dim password As String = InputBox("Enter password:")
+            If password = "" Then Exit Sub
+
+            Dim fullName As String = InputBox("Enter full name:")
+            If fullName = "" Then Exit Sub
+
+            Dim mobile As String = InputBox("Enter mobile number:")
+            If mobile = "" Then Exit Sub
+
+            Dim email As String = InputBox("Enter email:")
+            If email = "" Then Exit Sub
+
+            Dim address As String = InputBox("Enter address:")
+            If address = "" Then Exit Sub
+
+            ' Generate new EID
+            Dim cmdMax As New OleDbCommand("SELECT MAX(EID) FROM [login]", connect)
+            Dim maxEID As Object = cmdMax.ExecuteScalar()
+            Dim newEID As String = "001"
+            If maxEID IsNot DBNull.Value Then
+                newEID = (CInt(maxEID) + 1).ToString("D3")
+            End If
+
+            ' Insert employee into DB
+            Dim cmdInsert As New OleDbCommand(
+                "INSERT INTO [login] (EID, username, [password], FullName, MobileN, Email, Address) VALUES (?,?,?,?,?,?,?)",
+                connect)
+
+            cmdInsert.Parameters.Add("?", OleDbType.VarChar).Value = newEID
+            cmdInsert.Parameters.Add("?", OleDbType.VarChar).Value = username
+            cmdInsert.Parameters.Add("?", OleDbType.VarChar).Value = password
+            cmdInsert.Parameters.Add("?", OleDbType.VarChar).Value = fullName
+            cmdInsert.Parameters.Add("?", OleDbType.VarChar).Value = mobile
+            cmdInsert.Parameters.Add("?", OleDbType.VarChar).Value = email
+            cmdInsert.Parameters.Add("?", OleDbType.VarChar).Value = address
+
+            cmdInsert.ExecuteNonQuery()
+            MsgBox("Employee added successfully.", MsgBoxStyle.Information)
+
+            ' Refresh grid
+            LoadEmployees()
+
+        Catch ex As Exception
+            MsgBox("Error adding employee: " & ex.Message)
+        Finally
+            connect.Close()
+        End Try
+    End Sub
+
+    ' REFRESH EMPLOYEE GRID
+    Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+        LoadEmployees()
     End Sub
 
 End Class
