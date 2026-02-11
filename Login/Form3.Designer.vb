@@ -34,15 +34,14 @@ Partial Class Form3
         ' 
         ' TextBox1
         ' 
-        TextBox1.Location = New Point(331, 360)
+        TextBox1.Location = New Point(331, 295)
         TextBox1.Name = "TextBox1"
         TextBox1.Size = New Size(204, 23)
         TextBox1.TabIndex = 0
-        TextBox1.UseSystemPasswordChar = True
         ' 
         ' TextBox2
         ' 
-        TextBox2.Location = New Point(331, 295)
+        TextBox2.Location = New Point(331, 360)
         TextBox2.Name = "TextBox2"
         TextBox2.Size = New Size(204, 23)
         TextBox2.TabIndex = 1
@@ -107,7 +106,7 @@ Partial Class Form3
         CheckBox1.Text = "Show/Hide Password"
         CheckBox1.UseVisualStyleBackColor = True
         ' 
-        ' Form1
+        ' Form3
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
@@ -120,7 +119,7 @@ Partial Class Form3
         Controls.Add(Label1)
         Controls.Add(TextBox2)
         Controls.Add(TextBox1)
-        Name = "Form1"
+        Name = "Form3"
         Text = "Form1"
         ResumeLayout(False)
         PerformLayout()

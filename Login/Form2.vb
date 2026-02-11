@@ -21,45 +21,93 @@ Public Class Form2
         TextBox1.UseSystemPasswordChar = True
     End Sub
 
+    ' SIGN UP BUTTON
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+
         Dim su_username As String = TextBox2.Text.Trim()
         Dim su_password As String = TextBox1.Text.Trim()
+        Dim su_fullname As String = TextBox3.Text.Trim()
+        Dim su_mobile As String = TextBox4.Text.Trim()
+        Dim su_email As String = TextBox5.Text.Trim()
+        Dim su_address As String = TextBox6.Text.Trim()
+        Dim su_eid As String = ""
 
-        If su_username = "" Or su_password = "" Then
-            MsgBox("Please enter username and password")
+        If su_username = "" Or su_password = "" Or su_fullname = "" _
+        Or su_mobile = "" Or su_email = "" Or su_address = "" Then
+            MsgBox("All fields are required")
             Exit Sub
         End If
 
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
 
+            ' CHECK DUPLICATE USERNAME
             sql = "SELECT COUNT(*) FROM [login] WHERE username=?"
             command = New OleDbCommand(sql, connect)
-            command.Parameters.AddWithValue("?", su_username)
+            command.Parameters.Add("?", OleDbType.VarChar).Value = su_username
 
             If CInt(command.ExecuteScalar()) > 0 Then
                 MsgBox("Username already exists")
                 Exit Sub
             End If
 
-            sql = "INSERT INTO [login] (username,[password]) VALUES (?,?)"
+            ' GET NEXT EID
+            sql = "SELECT MAX(EID) FROM [login]"
             command = New OleDbCommand(sql, connect)
-            command.Parameters.AddWithValue("?", su_username)
-            command.Parameters.AddWithValue("?", su_password)
+
+            Dim result As Object = command.ExecuteScalar()
+
+            Dim nextId As Integer
+            If IsDBNull(result) Or result Is Nothing Then
+                nextId = 1
+            Else
+                nextId = CInt(result.ToString())
+                nextId += 1
+            End If
+
+            su_eid = nextId.ToString("000")   ' 001, 002, 003
+
+            ' INSERT USER DATA (INCLUDING EID)
+            sql = "INSERT INTO [login] (EID, username, [password], FullName, MobileN, Email, Address) " &
+              "VALUES (?,?,?,?,?,?,?)"
+
+            command = New OleDbCommand(sql, connect)
+
+            ' ORDER MATTERS
+            command.Parameters.Add("?", OleDbType.VarChar).Value = su_eid
+            command.Parameters.Add("?", OleDbType.VarChar).Value = su_username
+            command.Parameters.Add("?", OleDbType.VarChar).Value = su_password
+            command.Parameters.Add("?", OleDbType.VarChar).Value = su_fullname
+            command.Parameters.Add("?", OleDbType.VarChar).Value = su_mobile
+            command.Parameters.Add("?", OleDbType.VarChar).Value = su_email
+            command.Parameters.Add("?", OleDbType.VarChar).Value = su_address
+
             command.ExecuteNonQuery()
 
-            MsgBox("Sign Up Successful")
+            MsgBox("Sign Up Successful. Employee ID: " & su_eid)
+
+            TextBox1.Clear()
+            TextBox2.Clear()
+            TextBox3.Clear()
+            TextBox4.Clear()
+            TextBox5.Clear()
+            TextBox6.Clear()
 
         Catch ex As Exception
-            MsgBox(ex.Message)
+            MsgBox("Error: " & ex.Message)
         Finally
             connect.Close()
         End Try
+
     End Sub
 
-    ' SHOW / HIDE PASSWORD (FIXED)
+
+    ' SHOW / HIDE PASSWORD
     Private Sub CheckBox1_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox1.CheckedChanged
         TextBox1.UseSystemPasswordChar = Not CheckBox1.Checked
     End Sub
 
+    Private Sub Label1_Click(sender As Object, e As EventArgs) Handles Label1.Click
+
+    End Sub
 End Class
