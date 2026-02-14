@@ -1,19 +1,23 @@
 ﻿Imports System.Data
 Imports System.Data.OleDb
+Imports System.Reflection.Emit
+Imports iTextSharp.text
+Imports iTextSharp.text.pdf
+Imports System.IO
 
-Public Class Form4
+Public Class form6
 
     Private connect As New OleDbConnection(
         "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Administrator\OneDrive\Documents\Login.accdb")
 
     Private dt As DataTable
-    Private currentTable As String = "login"
+    Private currentTable As String = "request"
 
     ' =========================
     ' FORM LOAD
     ' =========================
-    Private Sub Form4_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        LoadTable("login")
+    Private Sub StaffDashboard_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        LoadTable("request") ' Default to requests
     End Sub
 
     ' =========================
@@ -28,7 +32,7 @@ Public Class Form4
 
             Select Case tableName
                 Case "login"
-                    sql = "SELECT EID, username, password, FullName, MobileN, Email, Address 
+                    sql = "SELECT EID, username, FullName, MobileN, Email, Address 
                            FROM [login] ORDER BY EID"
                     Label2.Text = "Viewing: Employees"
 
@@ -50,13 +54,13 @@ Public Class Form4
             DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
             DataGridView1.MultiSelect = False
             DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-            DataGridView1.ReadOnly = False
+            DataGridView1.ReadOnly = True  ' View-only by default
 
-            ' Lock primary keys
-            Select Case tableName
-                Case "login", "request"
-                    DataGridView1.Columns(0).ReadOnly = True
-            End Select
+            ' Only requests are editable via approve/reject buttons
+            If tableName = "request" Then
+                DataGridView1.ReadOnly = False
+                DataGridView1.Columns("EID").ReadOnly = True ' Lock primary key
+            End If
 
             currentTable = tableName
 
@@ -71,23 +75,31 @@ Public Class Form4
     ' TABLE SWITCHING
     ' =========================
     Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
-        LoadTable("login")
+        LoadTable("login") ' View-only
     End Sub
 
     Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
-        LoadTable("request")
+        LoadTable("request") ' Can approve/reject
     End Sub
 
     Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
-        LoadTable("attendance")
+        LoadTable("attendance") ' View-only
     End Sub
 
     ' =========================
-    ' UPDATE RECORD
+    ' APPROVE / REJECT
     ' =========================
+    Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+        UpdateRequestStatus("Approved")
+    End Sub
+
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        UpdateRequestStatus("Rejected")
+    End Sub
+
+    Private Sub UpdateRequestStatus(newStatus As String)
         If DataGridView1.SelectedRows.Count = 0 Then
-            MsgBox("Select a row to update")
+            MsgBox("Select a request to update")
             Exit Sub
         End If
 
@@ -95,94 +107,19 @@ Public Class Form4
 
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
-            Dim cmd As New OleDbCommand("", connect)
 
-            Select Case currentTable
+            Dim cmd As New OleDbCommand(
+            "UPDATE [request] SET Status=? WHERE EID=?", connect)
 
-                Case "login"
-                    cmd.CommandText =
-                        "UPDATE [login] 
-                         SET username=?, password=?, FullName=?, MobileN=?, Email=?, Address=?
-                         WHERE EID=?"
-
-                    cmd.Parameters.AddWithValue("?", row.Cells("username").Value)
-                    cmd.Parameters.AddWithValue("?", row.Cells("password").Value)
-                    cmd.Parameters.AddWithValue("?", row.Cells("FullName").Value)
-                    cmd.Parameters.AddWithValue("?", row.Cells("MobileN").Value)
-                    cmd.Parameters.AddWithValue("?", row.Cells("Email").Value)
-                    cmd.Parameters.AddWithValue("?", row.Cells("Address").Value)
-                    cmd.Parameters.AddWithValue("?", row.Cells("EID").Value)
-
-                Case "request"
-                    cmd.CommandText =
-                        "UPDATE [request] 
-                         SET FullName=?, Category=?, [Request]=?, Status=?, RequestDate=?
-                         WHERE EID=?"
-
-                    cmd.Parameters.AddWithValue("?", row.Cells("FullName").Value)
-                    cmd.Parameters.AddWithValue("?", row.Cells("Category").Value)
-                    cmd.Parameters.AddWithValue("?", row.Cells("Request").Value)
-                    cmd.Parameters.AddWithValue("?", row.Cells("Status").Value)
-                    cmd.Parameters.AddWithValue("?", row.Cells("RequestDate").Value)
-                    cmd.Parameters.AddWithValue("?", row.Cells("EID").Value)
-
-                Case "attendance"
-                    cmd.CommandText =
-                        "UPDATE [attendance] 
-                         SET FullName=?, LoginDate=?, LoginTime=?, Status=?
-                         WHERE Username=?"
-
-                    cmd.Parameters.AddWithValue("?", row.Cells("FullName").Value)
-                    cmd.Parameters.AddWithValue("?", row.Cells("LoginDate").Value)
-                    cmd.Parameters.AddWithValue("?", row.Cells("LoginTime").Value)
-                    cmd.Parameters.AddWithValue("?", row.Cells("Status").Value)
-                    cmd.Parameters.AddWithValue("?", row.Cells("Username").Value)
-            End Select
-
+            cmd.Parameters.AddWithValue("?", newStatus)
+            cmd.Parameters.AddWithValue("?", row.Cells("EID").Value)
             cmd.ExecuteNonQuery()
-            MsgBox("Record updated successfully")
+
+            MsgBox("Request " & newStatus.ToLower() & " successfully")
             LoadTable(currentTable)
 
         Catch ex As Exception
             MsgBox("Update error: " & ex.Message)
-        Finally
-            connect.Close()
-        End Try
-    End Sub
-
-    ' =========================
-    ' DELETE RECORD
-    ' =========================
-    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-        If DataGridView1.SelectedRows.Count = 0 Then
-            MsgBox("Select a row to delete")
-            Exit Sub
-        End If
-
-        Try
-            If connect.State = ConnectionState.Closed Then connect.Open()
-            Dim cmd As New OleDbCommand("", connect)
-
-            Select Case currentTable
-                Case "login"
-                    cmd.CommandText = "DELETE FROM [login] WHERE EID=?"
-                    cmd.Parameters.AddWithValue("?", DataGridView1.SelectedRows(0).Cells("EID").Value)
-
-                Case "request"
-                    cmd.CommandText = "DELETE FROM [request] WHERE EID=?"
-                    cmd.Parameters.AddWithValue("?", DataGridView1.SelectedRows(0).Cells("EID").Value)
-
-                Case "attendance"
-                    cmd.CommandText = "DELETE FROM [attendance] WHERE Username=?"
-                    cmd.Parameters.AddWithValue("?", DataGridView1.SelectedRows(0).Cells("Username").Value)
-            End Select
-
-            cmd.ExecuteNonQuery()
-            MsgBox("Record deleted")
-            LoadTable(currentTable)
-
-        Catch ex As Exception
-            MsgBox("Delete error: " & ex.Message)
         Finally
             connect.Close()
         End Try
@@ -204,6 +141,60 @@ Public Class Form4
             f.Show()
             Close()
         End If
+    End Sub
+
+    ' =========================
+    ' EXPORT CURRENT TABLE TO PDF
+    ' =========================
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        If DataGridView1.Rows.Count = 0 Then
+            MsgBox("No data to export")
+            Exit Sub
+        End If
+
+        Try
+            ' Choose file location
+            Dim saveDlg As New SaveFileDialog
+            saveDlg.Filter = "PDF files (*.pdf)|*.pdf"
+            saveDlg.FileName = currentTable & "_Export.pdf"
+            If saveDlg.ShowDialog() <> DialogResult.OK Then Exit Sub
+
+            ' Create PDF document
+            Dim doc As New Document(PageSize.A4, 20, 20, 20, 20)
+            PdfWriter.GetInstance(doc, New FileStream(saveDlg.FileName, FileMode.Create))
+            doc.Open()
+
+            ' Add title
+            doc.Add(New Paragraph("Export of " & currentTable & " table"))
+            doc.Add(New Paragraph("Generated on: " & DateTime.Now.ToString()))
+            doc.Add(New Paragraph(" "))
+
+            ' Create PDF table
+            Dim pdfTable As New PdfPTable(DataGridView1.Columns.Count)
+            pdfTable.WidthPercentage = 100
+
+            ' Add headers
+            For Each col As DataGridViewColumn In DataGridView1.Columns
+                pdfTable.AddCell(New Phrase(col.HeaderText))
+            Next
+
+            ' Add rows
+            For Each row As DataGridViewRow In DataGridView1.Rows
+                If Not row.IsNewRow Then
+                    For Each cell As DataGridViewCell In row.Cells
+                        pdfTable.AddCell(If(cell.Value IsNot Nothing, cell.Value.ToString(), ""))
+                    Next
+                End If
+            Next
+
+            doc.Add(pdfTable)
+            doc.Close()
+
+            MsgBox("PDF exported successfully to " & saveDlg.FileName)
+
+        Catch ex As Exception
+            MsgBox("Error exporting PDF: " & ex.Message)
+        End Try
     End Sub
 
     Private Sub TextBox1_TextChanged(sender As Object, e As EventArgs) Handles TextBox1.TextChanged

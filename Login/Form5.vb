@@ -10,25 +10,29 @@ Imports ZXing.Windows.Compatibility
 Public Class Form5
 
     Private loggedInUsername As String
-
     Private connect As New OleDbConnection(
         "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Administrator\OneDrive\Documents\Login.accdb")
 
+    ' Constructor for Form5
     Public Sub New(username As String)
         InitializeComponent()
         loggedInUsername = username
     End Sub
 
+    ' =========================
+    ' Form Load
+    ' =========================
     Private Sub Form5_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadEmployeeData()
-        LoadLeaveCategories()
 
         If Label4.Text <> "" Then
             GenerateQRCode(Label4.Text)
         End If
     End Sub
 
-
+    ' =========================
+    ' Load Employee Data
+    ' =========================
     Private Sub LoadEmployeeData()
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
@@ -61,6 +65,9 @@ Public Class Form5
         End Try
     End Sub
 
+    ' =========================
+    ' Logout
+    ' =========================
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         If MsgBox("Are you sure you want to logout?", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "Logout") = MsgBoxResult.Yes Then
             Dim loginForm As New Form3
@@ -69,6 +76,9 @@ Public Class Form5
         End If
     End Sub
 
+    ' =========================
+    ' Generate QR Code
+    ' =========================
     Private Sub GenerateQRCode(qrText As String)
         Try
             Dim renderer As IBarcodeRenderer(Of Bitmap) = New BitmapRenderer()
@@ -90,6 +100,9 @@ Public Class Form5
         End Try
     End Sub
 
+    ' =========================
+    ' Save QR Code
+    ' =========================
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
         If PictureBox1.Image IsNot Nothing Then
             Using sfd As New SaveFileDialog()
@@ -105,23 +118,26 @@ Public Class Form5
         End If
     End Sub
 
+    ' =========================
+    ' Refresh QR Code
+    ' =========================
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
-        Dim qrContent As String = Label4.Text
-        If qrContent <> "" Then
-            GenerateQRCode(qrContent)
+        If Label4.Text <> "" Then
+            GenerateQRCode(Label4.Text)
             MsgBox("QR code refreshed!")
         Else
             MsgBox("Cannot refresh QR code: missing username")
         End If
     End Sub
 
-    ' Logout / Time Out
+    ' =========================
+    ' Time Out / Logout
+    ' =========================
     Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
         If MsgBox("Are you sure you want to logout?", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "Logout") = MsgBoxResult.Yes Then
             Try
                 If connect.State = ConnectionState.Closed Then connect.Open()
 
-                ' Insert a Time Out record in attendance table
                 Using cmd As New OleDbCommand(
                     "INSERT INTO [attendance] (Username, FullName, LoginDate, LoginTime, Status) VALUES (?, ?, ?, ?, ?)", connect)
                     cmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
@@ -140,87 +156,27 @@ Public Class Form5
                 connect.Close()
             End Try
 
-            ' Go back to login
             Dim loginForm As New Form3
             loginForm.Show()
             Close()
         End If
     End Sub
 
-    Private Sub TextBox1_TextChanged(sender As Object, e As EventArgs) Handles TextBox1.TextChanged
-
-    End Sub
-
-    Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
-
-        ' Validate category FIRST
-        If ComboBox1.SelectedIndex = -1 Then
-            MsgBox("Please select a leave category.")
-            Exit Sub
-        End If
-
-        ' Validate request message
-        If String.IsNullOrWhiteSpace(TextBox1.Text) Then
-            MsgBox("Please enter your leave request.")
-            Exit Sub
-        End If
-
-        Try
-            If connect.State = ConnectionState.Closed Then connect.Open()
-
-            Using cmd As New OleDbCommand(
-            "INSERT INTO [request] (EID, FullName, Category, [Request], Status, RequestDate) 
-             VALUES (?, ?, ?, ?, ?, ?)", connect)
-
-                ' OLEDB PARAMETER ORDER MATTERS — DO NOT CHANGE
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = Label2.Text                 ' EID
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = Label6.Text                 ' FullName
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = ComboBox1.SelectedItem.ToString() ' Category
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = TextBox1.Text.Trim          ' Request
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = "Pending"                   ' Status
-                cmd.Parameters.Add("?", OleDbType.Date).Value = Date.Now                       ' RequestDate
-
-                cmd.ExecuteNonQuery()
-            End Using
-
-            MsgBox("Leave request submitted successfully.")
-
-            ' Clear inputs
-            ComboBox1.SelectedIndex = -1
-            TextBox1.Clear()
-
-        Catch ex As Exception
-            MsgBox("Leave request error: " & ex.Message)
-        Finally
-            connect.Close()
-        End Try
-
-    End Sub
-
-    Private Sub Label14_Click(sender As Object, e As EventArgs) Handles Label14.Click
-
-    End Sub
-
+    ' =========================
+    ' Last Leave Request Status
+    ' =========================
     Private Sub Label16_Click(sender As Object, e As EventArgs) Handles Label16.Click
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
 
             Dim sql As String =
-                "SELECT TOP 1 Status " &
-                "FROM [request] " &
-                "WHERE EID=? " &
-                "ORDER BY RequestDate DESC"
+                "SELECT TOP 1 Status FROM [request] WHERE EID=? ORDER BY RequestDate DESC"
 
             Using cmd As New OleDbCommand(sql, connect)
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = Label2.Text ' EID
+                cmd.Parameters.Add("?", OleDbType.VarChar).Value = Label2.Text
 
                 Dim result = cmd.ExecuteScalar()
-
-                If result IsNot Nothing Then
-                    Label16.Text = result.ToString()
-                Else
-                    Label16.Text = "No requests"
-                End If
+                Label16.Text = If(result IsNot Nothing, result.ToString(), "No requests")
             End Using
 
         Catch ex As Exception
@@ -230,12 +186,15 @@ Public Class Form5
         End Try
     End Sub
 
-    Private Sub LoadLeaveCategories()
-        ComboBox1.Items.Clear()
-        ComboBox1.Items.Add("Emergency Leave")
-        ComboBox1.Items.Add("Vacation Leave")
-        ComboBox1.Items.Add("Sick Leave")
-        ComboBox1.SelectedIndex = -1 ' nothing selected by default
+    ' =========================
+    ' Open Leave Request Form
+    ' =========================
+    Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+        Dim leaveForm As New Form7(loggedInUsername)
+        leaveForm.ShowDialog() ' blocks until leave form closed
+
+        ' Refresh last request status if user submitted a new request
+        Label16_Click(Label16, EventArgs.Empty)
     End Sub
 
 End Class

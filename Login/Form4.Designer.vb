@@ -33,6 +33,8 @@ Partial Class Form4
         Label1 = New Label()
         Label2 = New Label()
         Button8 = New Button()
+        Label3 = New Label()
+        TextBox1 = New TextBox()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
@@ -113,9 +115,9 @@ Partial Class Form4
         Label1.Font = New Font("Showcard Gothic", 20.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label1.Location = New Point(403, 34)
         Label1.Name = "Label1"
-        Label1.Size = New Size(276, 33)
+        Label1.Size = New Size(288, 33)
         Label1.TabIndex = 8
-        Label1.Text = "Staff Dashboard"
+        Label1.Text = "Admin Dashboard"
         ' 
         ' Label2
         ' 
@@ -137,11 +139,30 @@ Partial Class Form4
         Button8.Text = "Log Out"
         Button8.UseVisualStyleBackColor = True
         ' 
+        ' Label3
+        ' 
+        Label3.AutoSize = True
+        Label3.Font = New Font("Showcard Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label3.Location = New Point(680, 142)
+        Label3.Name = "Label3"
+        Label3.Size = New Size(63, 15)
+        Label3.TabIndex = 29
+        Label3.Text = "Search:"
+        ' 
+        ' TextBox1
+        ' 
+        TextBox1.Location = New Point(749, 140)
+        TextBox1.Name = "TextBox1"
+        TextBox1.Size = New Size(164, 23)
+        TextBox1.TabIndex = 28
+        ' 
         ' Form4
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1037, 664)
+        Controls.Add(Label3)
+        Controls.Add(TextBox1)
         Controls.Add(Button8)
         Controls.Add(Label2)
         Controls.Add(Label1)
@@ -175,4 +196,7 @@ Partial Class Form4
     Private Sub Label1_Click(sender As Object, e As EventArgs) Handles Label1.Click
 
     End Sub
+
+    Friend WithEvents Label3 As Label
+    Friend WithEvents TextBox1 As TextBox
 End Class

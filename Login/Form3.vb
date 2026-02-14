@@ -34,6 +34,16 @@ Public Class Form3
             Exit Sub
         End If
 
+        ' ===== ADMIN LOGIN =====
+        If username = "staff" And password = "restricted" Then
+            MsgBox("Staff login successful")
+
+            Dim staffPanel As New form6
+            staffPanel.Show()
+            Me.Hide()
+            Exit Sub
+        End If
+
         ' ===== NORMAL USER LOGIN =====
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
