@@ -21,10 +21,13 @@ Public Class Form5
 
     Private Sub Form5_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadEmployeeData()
+        LoadLeaveCategories()
+
         If Label4.Text <> "" Then
             GenerateQRCode(Label4.Text)
         End If
     End Sub
+
 
     Private Sub LoadEmployeeData()
         Try
@@ -150,6 +153,12 @@ Public Class Form5
 
     Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
 
+        ' Validate category FIRST
+        If ComboBox1.SelectedIndex = -1 Then
+            MsgBox("Please select a leave category.")
+            Exit Sub
+        End If
+
         ' Validate request message
         If String.IsNullOrWhiteSpace(TextBox1.Text) Then
             MsgBox("Please enter your leave request.")
@@ -160,20 +169,24 @@ Public Class Form5
             If connect.State = ConnectionState.Closed Then connect.Open()
 
             Using cmd As New OleDbCommand(
-                "INSERT INTO [request] (EID, FullName, [Request], Status, RequestDate) VALUES (?, ?, ?, ?, ?)",
-                connect)
+            "INSERT INTO [request] (EID, FullName, Category, [Request], Status, RequestDate) 
+             VALUES (?, ?, ?, ?, ?, ?)", connect)
 
-                ' IMPORTANT: Order matters in OLEDB
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = Label2.Text        ' EID
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = Label6.Text        ' FullName
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = TextBox1.Text.Trim ' Request
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = "Pending"          ' Status
-                cmd.Parameters.Add("?", OleDbType.Date).Value = Date.Now              ' RequestDate
+                ' OLEDB PARAMETER ORDER MATTERS — DO NOT CHANGE
+                cmd.Parameters.Add("?", OleDbType.VarChar).Value = Label2.Text                 ' EID
+                cmd.Parameters.Add("?", OleDbType.VarChar).Value = Label6.Text                 ' FullName
+                cmd.Parameters.Add("?", OleDbType.VarChar).Value = ComboBox1.SelectedItem.ToString() ' Category
+                cmd.Parameters.Add("?", OleDbType.VarChar).Value = TextBox1.Text.Trim          ' Request
+                cmd.Parameters.Add("?", OleDbType.VarChar).Value = "Pending"                   ' Status
+                cmd.Parameters.Add("?", OleDbType.Date).Value = Date.Now                       ' RequestDate
 
                 cmd.ExecuteNonQuery()
             End Using
 
             MsgBox("Leave request submitted successfully.")
+
+            ' Clear inputs
+            ComboBox1.SelectedIndex = -1
             TextBox1.Clear()
 
         Catch ex As Exception
@@ -215,6 +228,14 @@ Public Class Form5
         Finally
             connect.Close()
         End Try
+    End Sub
+
+    Private Sub LoadLeaveCategories()
+        ComboBox1.Items.Clear()
+        ComboBox1.Items.Add("Emergency Leave")
+        ComboBox1.Items.Add("Vacation Leave")
+        ComboBox1.Items.Add("Sick Leave")
+        ComboBox1.SelectedIndex = -1 ' nothing selected by default
     End Sub
 
 End Class

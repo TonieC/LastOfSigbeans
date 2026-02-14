@@ -45,6 +45,7 @@ Partial Class Form5
         Button5 = New Button()
         Label15 = New Label()
         Label16 = New Label()
+        ComboBox1 = New ComboBox()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
@@ -244,7 +245,7 @@ Partial Class Form5
         ' 
         ' Button5
         ' 
-        Button5.Location = New Point(553, 323)
+        Button5.Location = New Point(644, 323)
         Button5.Name = "Button5"
         Button5.Size = New Size(148, 49)
         Button5.TabIndex = 20
@@ -271,11 +272,20 @@ Partial Class Form5
         Label16.TabIndex = 22
         Label16.Text = "Click to refresh"
         ' 
+        ' ComboBox1
+        ' 
+        ComboBox1.FormattingEnabled = True
+        ComboBox1.Location = New Point(446, 332)
+        ComboBox1.Name = "ComboBox1"
+        ComboBox1.Size = New Size(148, 23)
+        ComboBox1.TabIndex = 23
+        ' 
         ' Form5
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1033, 661)
+        Controls.Add(ComboBox1)
         Controls.Add(Label16)
         Controls.Add(Label15)
         Controls.Add(Button5)
@@ -329,4 +339,5 @@ Partial Class Form5
     Friend WithEvents Button5 As Button
     Friend WithEvents Label15 As Label
     Friend WithEvents Label16 As Label
+    Friend WithEvents ComboBox1 As ComboBox
 End Class
