@@ -62,7 +62,7 @@ Public Class Form5
         If MsgBox("Are you sure you want to logout?", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "Logout") = MsgBoxResult.Yes Then
             Dim loginForm As New Form3
             loginForm.Show()
-            Me.Close()
+            Close()
         End If
     End Sub
 
@@ -110,6 +110,111 @@ Public Class Form5
         Else
             MsgBox("Cannot refresh QR code: missing username")
         End If
+    End Sub
+
+    ' Logout / Time Out
+    Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+        If MsgBox("Are you sure you want to logout?", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "Logout") = MsgBoxResult.Yes Then
+            Try
+                If connect.State = ConnectionState.Closed Then connect.Open()
+
+                ' Insert a Time Out record in attendance table
+                Using cmd As New OleDbCommand(
+                    "INSERT INTO [attendance] (Username, FullName, LoginDate, LoginTime, Status) VALUES (?, ?, ?, ?, ?)", connect)
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = Label6.Text
+                    cmd.Parameters.Add("?", OleDbType.Date).Value = DateTime.Now.Date
+                    cmd.Parameters.Add("?", OleDbType.Date).Value = DateTime.Now
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = "Time Out"
+                    cmd.ExecuteNonQuery()
+                End Using
+
+                MsgBox($"Time Out recorded for {Label6.Text} ({loggedInUsername})")
+
+            Catch ex As Exception
+                MsgBox("Error recording Time Out: " & ex.Message)
+            Finally
+                connect.Close()
+            End Try
+
+            ' Go back to login
+            Dim loginForm As New Form3
+            loginForm.Show()
+            Close()
+        End If
+    End Sub
+
+    Private Sub TextBox1_TextChanged(sender As Object, e As EventArgs) Handles TextBox1.TextChanged
+
+    End Sub
+
+    Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+
+        ' Validate request message
+        If String.IsNullOrWhiteSpace(TextBox1.Text) Then
+            MsgBox("Please enter your leave request.")
+            Exit Sub
+        End If
+
+        Try
+            If connect.State = ConnectionState.Closed Then connect.Open()
+
+            Using cmd As New OleDbCommand(
+                "INSERT INTO [request] (EID, FullName, [Request], Status, RequestDate) VALUES (?, ?, ?, ?, ?)",
+                connect)
+
+                ' IMPORTANT: Order matters in OLEDB
+                cmd.Parameters.Add("?", OleDbType.VarChar).Value = Label2.Text        ' EID
+                cmd.Parameters.Add("?", OleDbType.VarChar).Value = Label6.Text        ' FullName
+                cmd.Parameters.Add("?", OleDbType.VarChar).Value = TextBox1.Text.Trim ' Request
+                cmd.Parameters.Add("?", OleDbType.VarChar).Value = "Pending"          ' Status
+                cmd.Parameters.Add("?", OleDbType.Date).Value = Date.Now              ' RequestDate
+
+                cmd.ExecuteNonQuery()
+            End Using
+
+            MsgBox("Leave request submitted successfully.")
+            TextBox1.Clear()
+
+        Catch ex As Exception
+            MsgBox("Leave request error: " & ex.Message)
+        Finally
+            connect.Close()
+        End Try
+
+    End Sub
+
+    Private Sub Label14_Click(sender As Object, e As EventArgs) Handles Label14.Click
+
+    End Sub
+
+    Private Sub Label16_Click(sender As Object, e As EventArgs) Handles Label16.Click
+        Try
+            If connect.State = ConnectionState.Closed Then connect.Open()
+
+            Dim sql As String =
+                "SELECT TOP 1 Status " &
+                "FROM [request] " &
+                "WHERE EID=? " &
+                "ORDER BY RequestDate DESC"
+
+            Using cmd As New OleDbCommand(sql, connect)
+                cmd.Parameters.Add("?", OleDbType.VarChar).Value = Label2.Text ' EID
+
+                Dim result = cmd.ExecuteScalar()
+
+                If result IsNot Nothing Then
+                    Label16.Text = result.ToString()
+                Else
+                    Label16.Text = "No requests"
+                End If
+            End Using
+
+        Catch ex As Exception
+            MsgBox("Status load error: " & ex.Message)
+        Finally
+            connect.Close()
+        End Try
     End Sub
 
 End Class

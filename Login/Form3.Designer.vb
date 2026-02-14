@@ -34,14 +34,14 @@ Partial Class Form3
         ' 
         ' TextBox1
         ' 
-        TextBox1.Location = New Point(331, 295)
+        TextBox1.Location = New Point(433, 279)
         TextBox1.Name = "TextBox1"
         TextBox1.Size = New Size(204, 23)
         TextBox1.TabIndex = 0
         ' 
         ' TextBox2
         ' 
-        TextBox2.Location = New Point(331, 360)
+        TextBox2.Location = New Point(433, 344)
         TextBox2.Name = "TextBox2"
         TextBox2.Size = New Size(204, 23)
         TextBox2.TabIndex = 1
@@ -50,7 +50,7 @@ Partial Class Form3
         ' 
         Label1.AutoSize = True
         Label1.Font = New Font("Wide Latin", 48F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label1.Location = New Point(221, 86)
+        Label1.Location = New Point(303, 47)
         Label1.Name = "Label1"
         Label1.Size = New Size(450, 79)
         Label1.TabIndex = 2
@@ -60,7 +60,7 @@ Partial Class Form3
         ' 
         Label2.AutoSize = True
         Label2.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label2.Location = New Point(336, 273)
+        Label2.Location = New Point(438, 257)
         Label2.Name = "Label2"
         Label2.Size = New Size(199, 19)
         Label2.TabIndex = 3
@@ -70,7 +70,7 @@ Partial Class Form3
         ' 
         Label3.AutoSize = True
         Label3.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label3.Location = New Point(338, 338)
+        Label3.Location = New Point(440, 322)
         Label3.Name = "Label3"
         Label3.Size = New Size(197, 19)
         Label3.TabIndex = 4
@@ -79,7 +79,7 @@ Partial Class Form3
         ' Button1
         ' 
         Button1.Font = New Font("Showcard Gothic", 15.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Button1.Location = New Point(377, 403)
+        Button1.Location = New Point(479, 387)
         Button1.Name = "Button1"
         Button1.Size = New Size(102, 38)
         Button1.TabIndex = 5
@@ -89,7 +89,7 @@ Partial Class Form3
         ' LinkLabel1
         ' 
         LinkLabel1.AutoSize = True
-        LinkLabel1.Location = New Point(364, 566)
+        LinkLabel1.Location = New Point(466, 550)
         LinkLabel1.Name = "LinkLabel1"
         LinkLabel1.Size = New Size(144, 15)
         LinkLabel1.TabIndex = 6
@@ -99,7 +99,7 @@ Partial Class Form3
         ' CheckBox1
         ' 
         CheckBox1.AutoSize = True
-        CheckBox1.Location = New Point(541, 364)
+        CheckBox1.Location = New Point(643, 348)
         CheckBox1.Name = "CheckBox1"
         CheckBox1.Size = New Size(138, 19)
         CheckBox1.TabIndex = 7
@@ -110,7 +110,7 @@ Partial Class Form3
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(880, 665)
+        ClientSize = New Size(1039, 675)
         Controls.Add(CheckBox1)
         Controls.Add(LinkLabel1)
         Controls.Add(Button1)

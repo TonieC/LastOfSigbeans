@@ -5,24 +5,34 @@ Public Class Form4
 
     Dim connect As New OleDbConnection(
         "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Administrator\OneDrive\Documents\Login.accdb")
-
     Dim dt As New DataTable
+    Dim currentTable As String = "login" ' Default table
 
-    ' LOAD DATA ON FORM LOAD
+    ' --- FORM LOAD ---
     Private Sub Form4_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        LoadEmployees()
+        LoadTable("login")
     End Sub
 
-    ' LOAD EMPLOYEES INTO GRID
-    Private Sub LoadEmployees()
+    ' --- LOAD ANY TABLE ---
+    Private Sub LoadTable(tableName As String)
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
+            dt = New DataTable()
+            Dim sql As String = ""
 
-            Dim sql As String =
-                "SELECT EID, username, FullName, MobileN, Email, Address FROM [login] ORDER BY EID"
+            Select Case tableName
+                Case "login"
+                    sql = "SELECT EID, username, password, FullName, MobileN, Email, Address FROM [login] ORDER BY EID"
+                    Label2.Text = "Viewing: Employees Data"
+                Case "request"
+                    sql = "SELECT EID, FullName, [Request], Status, RequestDate FROM [request] ORDER BY RequestDate"
+                    Label2.Text = "Viewing: Leave Requests"
+                Case "attendance"
+                    sql = "SELECT Username, FullName, LoginDate, LoginTime, Status FROM [attendance] ORDER BY LoginDate"
+                    Label2.Text = "Viewing: Attendance"
+            End Select
 
             Dim da As New OleDbDataAdapter(sql, connect)
-            dt.Clear()
             da.Fill(dt)
             DataGridView1.DataSource = dt
 
@@ -31,8 +41,13 @@ Public Class Form4
             DataGridView1.MultiSelect = False
             DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
 
-            ' LOCK EID (DO NOT EDIT)
-            DataGridView1.Columns("EID").ReadOnly = True
+            ' LOCK KEY FIELDS
+            Select Case tableName
+                Case "login", "request"
+                    DataGridView1.Columns(0).ReadOnly = True ' EID
+            End Select
+
+            currentTable = tableName
 
         Catch ex As Exception
             MsgBox("Load error: " & ex.Message)
@@ -41,148 +56,158 @@ Public Class Form4
         End Try
     End Sub
 
-    ' EDIT / UPDATE EMPLOYEE
-    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+    ' --- SWITCH TABLE BUTTONS ---
+    Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+        LoadTable("login")
+    End Sub
 
+    Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
+        LoadTable("request")
+    End Sub
+
+    Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
+        LoadTable("attendance")
+    End Sub
+
+    ' --- UPDATE ROW ---
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         If DataGridView1.SelectedRows.Count = 0 Then
-            MsgBox("Select an employee to update")
+            MsgBox("Select a row to update")
             Exit Sub
         End If
 
-        Dim eid = DataGridView1.SelectedRows(0).Cells("EID").Value.ToString
+        Dim selectedRow = DataGridView1.SelectedRows(0)
 
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
+            Dim cmd As New OleDbCommand("", connect)
 
-            Dim sql =
-                "UPDATE [login] SET username=?, FullName=?, MobileN=?, Email=?, Address=? WHERE EID=?"
+            Select Case currentTable
+                Case "login"
+                    cmd.CommandText = "UPDATE [login] SET username=?, password=?, FullName=?, MobileN=?, Email=?, Address=? WHERE EID=?"
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = selectedRow.Cells("username").Value
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = selectedRow.Cells("password").Value
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = selectedRow.Cells("FullName").Value
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = selectedRow.Cells("MobileN").Value
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = selectedRow.Cells("Email").Value
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = selectedRow.Cells("Address").Value
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = selectedRow.Cells("EID").Value
 
-            Using cmd As New OleDbCommand(sql, connect)
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.SelectedRows(0).Cells("username").Value
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.SelectedRows(0).Cells("FullName").Value
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.SelectedRows(0).Cells("MobileN").Value
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.SelectedRows(0).Cells("Email").Value
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.SelectedRows(0).Cells("Address").Value
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = eid
+                Case "request"
+                    cmd.CommandText = "UPDATE [request] SET FullName=?, [Request]=?, Status=?, RequestDate=? WHERE EID=?"
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = selectedRow.Cells("FullName").Value
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = selectedRow.Cells("Request").Value
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = selectedRow.Cells("Status").Value
+                    cmd.Parameters.Add("?", OleDbType.Date).Value = If(selectedRow.Cells("RequestDate").Value IsNot Nothing, selectedRow.Cells("RequestDate").Value, DBNull.Value)
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = selectedRow.Cells("EID").Value
 
-                cmd.ExecuteNonQuery()
-            End Using
+                Case "attendance"
+                    cmd.CommandText = "UPDATE [attendance] SET FullName=?, LoginDate=?, LoginTime=?, Status=? WHERE Username=?"
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = selectedRow.Cells("FullName").Value
+                    cmd.Parameters.Add("?", OleDbType.Date).Value = If(selectedRow.Cells("LoginDate").Value IsNot Nothing, selectedRow.Cells("LoginDate").Value, DBNull.Value)
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = selectedRow.Cells("LoginTime").Value
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = selectedRow.Cells("Status").Value
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = selectedRow.Cells("Username").Value
+            End Select
 
-            MsgBox("Employee updated successfully")
-            LoadEmployees()
+            cmd.ExecuteNonQuery()
+            MsgBox("Record updated successfully")
+            LoadTable(currentTable)
 
         Catch ex As Exception
             MsgBox("Update error: " & ex.Message)
         Finally
             connect.Close()
         End Try
-
     End Sub
 
-    ' DELETE EMPLOYEE
+    ' --- DELETE ROW ---
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-
         If DataGridView1.SelectedRows.Count = 0 Then
-            MsgBox("Select an employee to delete")
-            Exit Sub
-        End If
-
-        Dim eid = DataGridView1.SelectedRows(0).Cells("EID").Value.ToString
-
-        If MsgBox("Delete employee EID " & eid & "?", MsgBoxStyle.YesNo Or MsgBoxStyle.Critical) = MsgBoxResult.No Then
+            MsgBox("Select a row to delete")
             Exit Sub
         End If
 
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
+            Dim cmd As New OleDbCommand("", connect)
 
-            Dim sql = "DELETE FROM [login] WHERE EID=?"
+            Select Case currentTable
+                Case "login"
+                    cmd.CommandText = "DELETE FROM [login] WHERE EID=?"
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.SelectedRows(0).Cells("EID").Value
+                Case "request"
+                    cmd.CommandText = "DELETE FROM [request] WHERE EID=?"
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.SelectedRows(0).Cells("EID").Value
+                Case "attendance"
+                    cmd.CommandText = "DELETE FROM [attendance] WHERE Username=?"
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.SelectedRows(0).Cells("Username").Value
+            End Select
 
-            Using cmd As New OleDbCommand(sql, connect)
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = eid
-                cmd.ExecuteNonQuery()
-            End Using
-
-            MsgBox("Employee deleted")
-            LoadEmployees()
+            cmd.ExecuteNonQuery()
+            MsgBox("Record deleted")
+            LoadTable(currentTable)
 
         Catch ex As Exception
             MsgBox("Delete error: " & ex.Message)
         Finally
             connect.Close()
         End Try
-
     End Sub
 
-    ' ADD NEW EMPLOYEE (ADMIN CONTROLLED)
+    ' --- ADD NEW ROW ---
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
+            Dim cmd As New OleDbCommand("", connect)
 
-            ' Prompt admin for employee info
-            Dim username As String = InputBox("Enter username:")
-            If username = "" Then Exit Sub
+            Select Case currentTable
+                Case "login"
+                    cmd.CommandText = "INSERT INTO [login] (username, password, FullName, MobileN, Email, Address) VALUES (?, ?, ?, ?, ?, ?)"
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.CurrentRow.Cells("username").Value
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.CurrentRow.Cells("password").Value
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.CurrentRow.Cells("FullName").Value
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.CurrentRow.Cells("MobileN").Value
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.CurrentRow.Cells("Email").Value
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.CurrentRow.Cells("Address").Value
 
-            ' Check duplicate username
-            Dim cmdCheck As New OleDbCommand("SELECT COUNT(*) FROM [login] WHERE username=?", connect)
-            cmdCheck.Parameters.Add("?", OleDbType.VarChar).Value = username
-            If CInt(cmdCheck.ExecuteScalar()) > 0 Then
-                MsgBox("Username already exists.", MsgBoxStyle.Exclamation)
-                Exit Sub
-            End If
+                Case "request"
+                    cmd.CommandText = "INSERT INTO [request] (FullName, [Request], Status, RequestDate) VALUES (?, ?, ?, ?)"
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.CurrentRow.Cells("FullName").Value
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.CurrentRow.Cells("Request").Value
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.CurrentRow.Cells("Status").Value
+                    cmd.Parameters.Add("?", OleDbType.Date).Value = If(DataGridView1.CurrentRow.Cells("RequestDate").Value IsNot Nothing, DataGridView1.CurrentRow.Cells("RequestDate").Value, DBNull.Value)
 
-            Dim password As String = InputBox("Enter password:")
-            If password = "" Then Exit Sub
+                Case "attendance"
+                    cmd.CommandText = "INSERT INTO [attendance] (Username, FullName, LoginDate, LoginTime, Status) VALUES (?, ?, ?, ?, ?)"
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.CurrentRow.Cells("Username").Value
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.CurrentRow.Cells("FullName").Value
+                    cmd.Parameters.Add("?", OleDbType.Date).Value = If(DataGridView1.CurrentRow.Cells("LoginDate").Value IsNot Nothing, DataGridView1.CurrentRow.Cells("LoginDate").Value, DBNull.Value)
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.CurrentRow.Cells("LoginTime").Value
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.CurrentRow.Cells("Status").Value
+            End Select
 
-            Dim fullName As String = InputBox("Enter full name:")
-            If fullName = "" Then Exit Sub
-
-            Dim mobile As String = InputBox("Enter mobile number:")
-            If mobile = "" Then Exit Sub
-
-            Dim email As String = InputBox("Enter email:")
-            If email = "" Then Exit Sub
-
-            Dim address As String = InputBox("Enter address:")
-            If address = "" Then Exit Sub
-
-            ' Generate new EID
-            Dim cmdMax As New OleDbCommand("SELECT MAX(EID) FROM [login]", connect)
-            Dim maxEID As Object = cmdMax.ExecuteScalar()
-            Dim newEID As String = "001"
-            If maxEID IsNot DBNull.Value Then
-                newEID = (CInt(maxEID) + 1).ToString("D3")
-            End If
-
-            ' Insert employee into DB
-            Dim cmdInsert As New OleDbCommand(
-                "INSERT INTO [login] (EID, username, [password], FullName, MobileN, Email, Address) VALUES (?,?,?,?,?,?,?)",
-                connect)
-
-            cmdInsert.Parameters.Add("?", OleDbType.VarChar).Value = newEID
-            cmdInsert.Parameters.Add("?", OleDbType.VarChar).Value = username
-            cmdInsert.Parameters.Add("?", OleDbType.VarChar).Value = password
-            cmdInsert.Parameters.Add("?", OleDbType.VarChar).Value = fullName
-            cmdInsert.Parameters.Add("?", OleDbType.VarChar).Value = mobile
-            cmdInsert.Parameters.Add("?", OleDbType.VarChar).Value = email
-            cmdInsert.Parameters.Add("?", OleDbType.VarChar).Value = address
-
-            cmdInsert.ExecuteNonQuery()
-            MsgBox("Employee added successfully.", MsgBoxStyle.Information)
-
-            ' Refresh grid
-            LoadEmployees()
+            cmd.ExecuteNonQuery()
+            MsgBox("New record added successfully")
+            LoadTable(currentTable)
 
         Catch ex As Exception
-            MsgBox("Error adding employee: " & ex.Message)
+            MsgBox("Add error: " & ex.Message)
         Finally
             connect.Close()
         End Try
     End Sub
 
-    ' REFRESH EMPLOYEE GRID
+    ' --- REFRESH ---
     Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
-        LoadEmployees()
+        LoadTable(currentTable)
     End Sub
 
+    Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
+        If MsgBox("Are you sure you want to logout?", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "Logout") = MsgBoxResult.Yes Then
+            Dim loginForm As New Form3
+            loginForm.Show()
+            Close()
+        End If
+    End Sub
 End Class
