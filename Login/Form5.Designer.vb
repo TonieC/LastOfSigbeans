@@ -35,6 +35,10 @@ Partial Class Form5
         Label11 = New Label()
         Label12 = New Label()
         Button1 = New Button()
+        PictureBox1 = New PictureBox()
+        Button2 = New Button()
+        Button3 = New Button()
+        CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
         ' Label1
@@ -160,18 +164,47 @@ Partial Class Form5
         ' Button1
         ' 
         Button1.Font = New Font("Showcard Gothic", 15.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Button1.Location = New Point(734, 455)
+        Button1.Location = New Point(24, 12)
         Button1.Name = "Button1"
         Button1.Size = New Size(139, 38)
         Button1.TabIndex = 12
         Button1.Text = "Log Out"
         Button1.UseVisualStyleBackColor = True
         ' 
+        ' PictureBox1
+        ' 
+        PictureBox1.Location = New Point(570, 24)
+        PictureBox1.Name = "PictureBox1"
+        PictureBox1.Size = New Size(249, 229)
+        PictureBox1.TabIndex = 13
+        PictureBox1.TabStop = False
+        ' 
+        ' Button2
+        ' 
+        Button2.Location = New Point(704, 282)
+        Button2.Name = "Button2"
+        Button2.Size = New Size(115, 44)
+        Button2.TabIndex = 14
+        Button2.Text = "Save QR"
+        Button2.UseVisualStyleBackColor = True
+        ' 
+        ' Button3
+        ' 
+        Button3.Location = New Point(561, 282)
+        Button3.Name = "Button3"
+        Button3.Size = New Size(115, 44)
+        Button3.TabIndex = 15
+        Button3.Text = "Generate"
+        Button3.UseVisualStyleBackColor = True
+        ' 
         ' Form5
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(904, 520)
+        Controls.Add(Button3)
+        Controls.Add(Button2)
+        Controls.Add(PictureBox1)
         Controls.Add(Button1)
         Controls.Add(Label12)
         Controls.Add(Label11)
@@ -187,6 +220,7 @@ Partial Class Form5
         Controls.Add(Label1)
         Name = "Form5"
         Text = "Form5"
+        CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
         PerformLayout()
     End Sub
@@ -204,4 +238,7 @@ Partial Class Form5
     Friend WithEvents Label11 As Label
     Friend WithEvents Label12 As Label
     Friend WithEvents Button1 As Button
+    Friend WithEvents PictureBox1 As PictureBox
+    Friend WithEvents Button2 As Button
+    Friend WithEvents Button3 As Button
 End Class
