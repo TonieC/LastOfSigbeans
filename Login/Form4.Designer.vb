@@ -41,14 +41,14 @@ Partial Class Form4
         ' DataGridView1
         ' 
         DataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DataGridView1.Location = New Point(81, 169)
+        DataGridView1.Location = New Point(81, 160)
         DataGridView1.Name = "DataGridView1"
-        DataGridView1.Size = New Size(832, 395)
+        DataGridView1.Size = New Size(901, 395)
         DataGridView1.TabIndex = 0
         ' 
         ' Button1
         ' 
-        Button1.Location = New Point(418, 591)
+        Button1.Location = New Point(450, 570)
         Button1.Name = "Button1"
         Button1.Size = New Size(102, 27)
         Button1.TabIndex = 1
@@ -57,7 +57,7 @@ Partial Class Form4
         ' 
         ' Button2
         ' 
-        Button2.Location = New Point(526, 591)
+        Button2.Location = New Point(558, 570)
         Button2.Name = "Button2"
         Button2.Size = New Size(102, 27)
         Button2.TabIndex = 2
@@ -66,7 +66,7 @@ Partial Class Form4
         ' 
         ' Button3
         ' 
-        Button3.Location = New Point(310, 591)
+        Button3.Location = New Point(342, 570)
         Button3.Name = "Button3"
         Button3.Size = New Size(102, 27)
         Button3.TabIndex = 3
@@ -75,7 +75,7 @@ Partial Class Form4
         ' 
         ' Button4
         ' 
-        Button4.Location = New Point(634, 591)
+        Button4.Location = New Point(666, 570)
         Button4.Name = "Button4"
         Button4.Size = New Size(102, 27)
         Button4.TabIndex = 4
@@ -143,7 +143,7 @@ Partial Class Form4
         ' 
         Label3.AutoSize = True
         Label3.Font = New Font("Showcard Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label3.Location = New Point(680, 142)
+        Label3.Location = New Point(699, 134)
         Label3.Name = "Label3"
         Label3.Size = New Size(63, 15)
         Label3.TabIndex = 29
@@ -151,7 +151,7 @@ Partial Class Form4
         ' 
         ' TextBox1
         ' 
-        TextBox1.Location = New Point(749, 140)
+        TextBox1.Location = New Point(768, 134)
         TextBox1.Name = "TextBox1"
         TextBox1.Size = New Size(164, 23)
         TextBox1.TabIndex = 28
@@ -160,7 +160,7 @@ Partial Class Form4
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(1037, 664)
+        ClientSize = New Size(1052, 672)
         Controls.Add(Label3)
         Controls.Add(TextBox1)
         Controls.Add(Button8)

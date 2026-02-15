@@ -35,6 +35,7 @@ Partial Class Form6
         Button2 = New Button()
         TextBox1 = New TextBox()
         Label3 = New Label()
+        Button9 = New Button()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
@@ -156,11 +157,22 @@ Partial Class Form6
         Label3.TabIndex = 27
         Label3.Text = "Search:"
         ' 
+        ' Button9
+        ' 
+        Button9.Font = New Font("Showcard Gothic", 15.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Button9.Location = New Point(838, 29)
+        Button9.Name = "Button9"
+        Button9.Size = New Size(139, 46)
+        Button9.TabIndex = 28
+        Button9.Text = "Logs"
+        Button9.UseVisualStyleBackColor = True
+        ' 
         ' Form6
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1043, 667)
+        Controls.Add(Button9)
         Controls.Add(Label3)
         Controls.Add(TextBox1)
         Controls.Add(Button2)
@@ -194,4 +206,5 @@ Partial Class Form6
     Friend WithEvents Button2 As Button
     Friend WithEvents TextBox1 As TextBox
     Friend WithEvents Label3 As Label
+    Friend WithEvents Button9 As Button
 End Class

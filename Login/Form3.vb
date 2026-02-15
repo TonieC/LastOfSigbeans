@@ -19,50 +19,55 @@ Public Class Form3
         Dim username As String = TextBox1.Text.Trim()
         Dim password As String = TextBox2.Text.Trim()
 
-        If username = "" Or password = "" Then
-            MsgBox("Please enter your username and password")
+        If username = "" OrElse password = "" Then
+            MsgBox("Please enter username and password")
             Exit Sub
         End If
 
-        ' ===== ADMIN LOGIN =====
-        If username = "admin" And password = "restricted" Then
-            MsgBox("Admin login successful")
-
-            Dim adminPanel As New Form4
-            adminPanel.Show()
-            Me.Hide()
-            Exit Sub
-        End If
-
-        ' ===== ADMIN LOGIN =====
-        If username = "staff" And password = "restricted" Then
-            MsgBox("Staff login successful")
-
-            Dim staffPanel As New form6
-            staffPanel.Show()
-            Me.Hide()
-            Exit Sub
-        End If
-
-        ' ===== NORMAL USER LOGIN =====
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
 
-            sql = "SELECT COUNT(*) FROM [login] WHERE username=? AND [password]=?"
-            command = New OleDbCommand(sql, connect)
-            command.Parameters.Add("?", OleDbType.VarChar).Value = username
-            command.Parameters.Add("?", OleDbType.VarChar).Value = password
+            Dim sql As String =
+                "SELECT Role FROM [login] WHERE username=? AND [password]=?"
 
-            If CInt(command.ExecuteScalar()) > 0 Then
-                MsgBox("Login Successful")
+            Using cmd As New OleDbCommand(sql, connect)
+                cmd.Parameters.Add("?", OleDbType.VarChar).Value = username
+                cmd.Parameters.Add("?", OleDbType.VarChar).Value = password
 
-                Dim userPanel As New Form5(username)
-                userPanel.Show()
+                Dim roleObj = cmd.ExecuteScalar()
+
+                If roleObj Is Nothing Then
+                    MsgBox("Invalid username or password")
+                    Exit Sub
+                End If
+
+                Dim role As String = roleObj.ToString()
+
+                Select Case role.ToLower()
+
+                    Case "admin"
+                        MsgBox("Admin login successful")
+                        Dim adminPanel As New Form4(username)
+                        adminPanel.Show()
+
+                    Case "staff"
+                        MsgBox("Staff login successful")
+                        Dim staffPanel As New Form6(username)
+                        staffPanel.Show()
+
+                    Case "employee"
+                        MsgBox("Login successful")
+                        Dim userPanel As New Form5(username)
+                        userPanel.Show()
+
+                    Case Else
+                        MsgBox("Unknown role: " & role)
+                        Exit Sub
+
+                End Select
+
                 Me.Hide()
-
-            Else
-                MsgBox("Invalid username or password")
-            End If
+            End Using
 
         Catch ex As Exception
             MsgBox("Login error: " & ex.Message)

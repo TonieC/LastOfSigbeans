@@ -7,7 +7,9 @@ Imports ZXing.Common
 Imports ZXing.Rendering
 Imports ZXing.Windows.Compatibility
 
+
 Public Class Form5
+
 
     Private loggedInUsername As String
     Private connect As New OleDbConnection(
