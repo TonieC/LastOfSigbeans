@@ -28,6 +28,7 @@ Partial Class Form7
         TextBox1 = New TextBox()
         Button1 = New Button()
         Label1 = New Label()
+        Button2 = New Button()
         SuspendLayout()
         ' 
         ' ComboBox1
@@ -84,11 +85,21 @@ Partial Class Form7
         Label1.TabIndex = 29
         Label1.Text = "Leave Request for:"
         ' 
+        ' Button2
+        ' 
+        Button2.Location = New Point(553, 500)
+        Button2.Name = "Button2"
+        Button2.Size = New Size(148, 49)
+        Button2.TabIndex = 30
+        Button2.Text = "Cancel last request"
+        Button2.UseVisualStyleBackColor = True
+        ' 
         ' Form7
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1046, 673)
+        Controls.Add(Button2)
         Controls.Add(Label1)
         Controls.Add(Button1)
         Controls.Add(ComboBox1)
@@ -107,4 +118,5 @@ Partial Class Form7
     Friend WithEvents TextBox1 As TextBox
     Friend WithEvents Button1 As Button
     Friend WithEvents Label1 As Label
+    Friend WithEvents Button2 As Button
 End Class

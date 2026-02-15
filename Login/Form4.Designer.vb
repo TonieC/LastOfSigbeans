@@ -35,6 +35,7 @@ Partial Class Form4
         Button8 = New Button()
         Label3 = New Label()
         TextBox1 = New TextBox()
+        DateTimePicker1 = New DateTimePicker()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
@@ -156,11 +157,20 @@ Partial Class Form4
         TextBox1.Size = New Size(164, 23)
         TextBox1.TabIndex = 28
         ' 
+        ' DateTimePicker1
+        ' 
+        DateTimePicker1.Format = DateTimePickerFormat.Short
+        DateTimePicker1.Location = New Point(938, 134)
+        DateTimePicker1.Name = "DateTimePicker1"
+        DateTimePicker1.Size = New Size(81, 23)
+        DateTimePicker1.TabIndex = 30
+        ' 
         ' Form4
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1052, 672)
+        Controls.Add(DateTimePicker1)
         Controls.Add(Label3)
         Controls.Add(TextBox1)
         Controls.Add(Button8)
@@ -199,4 +209,5 @@ Partial Class Form4
 
     Friend WithEvents Label3 As Label
     Friend WithEvents TextBox1 As TextBox
+    Friend WithEvents DateTimePicker1 As DateTimePicker
 End Class

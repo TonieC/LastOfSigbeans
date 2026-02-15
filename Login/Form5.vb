@@ -6,6 +6,9 @@ Imports ZXing
 Imports ZXing.Common
 Imports ZXing.Rendering
 Imports ZXing.Windows.Compatibility
+Imports iTextSharp.text
+Imports iTextSharp.text.pdf
+Imports System.IO
 
 
 Public Class Form5
@@ -27,6 +30,8 @@ Public Class Form5
     Private Sub Form5_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadEmployeeData()
         LoadAttendanceData()
+        Label14.Text = "Attendance Records" ' Default
+        Button7.Text = "Show Leave Requests"
 
         If Label4.Text <> "" Then
             GenerateQRCode(Label4.Text)
@@ -108,10 +113,10 @@ Public Class Form5
     ' =========================
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
         If PictureBox1.Image IsNot Nothing Then
-            Using sfd As New SaveFileDialog()
+            Using sfd As New SaveFileDialog
                 sfd.Filter = "PNG Image|*.png"
                 sfd.FileName = Label4.Text & "_QR.png"
-                If sfd.ShowDialog() = DialogResult.OK Then
+                If sfd.ShowDialog = DialogResult.OK Then
                     PictureBox1.Image.Save(sfd.FileName, ImageFormat.Png)
                     MsgBox("QR code saved successfully!")
                 End If
@@ -194,7 +199,7 @@ Public Class Form5
     ' =========================
     Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
         Dim leaveForm As New Form7(loggedInUsername)
-        leaveForm.ShowDialog ' blocks until leave form closed
+        leaveForm.ShowDialog() ' blocks until leave form closed
 
         ' Refresh last request status if user submitted a new request
         Label16_Click(Label16, EventArgs.Empty)
@@ -286,4 +291,214 @@ Public Class Form5
         End Try
     End Sub
 
+    ' =========================
+    ' Switch to showing Attendance
+    ' =========================
+    Private Sub Label14_Click(sender As Object, e As EventArgs) Handles Label14.Click
+        LoadAttendanceData()
+    End Sub
+
+    ' =========================
+    ' Switch to showing Leave Requests
+    ' =========================
+    ' Track current view
+    Private showingAttendance As Boolean = True
+
+    Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
+        If showingAttendance Then
+            ' Switch to Leave Requests
+            Try
+                If connect.State = ConnectionState.Closed Then connect.Open()
+
+                Dim sql = "SELECT Request, Status FROM [request] WHERE EID=? ORDER BY RequestDate DESC"
+                Using cmd As New OleDbCommand(sql, connect)
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = Label2.Text ' EID of logged-in user
+
+                    Dim adapter As New OleDbDataAdapter(cmd)
+                    Dim dt As New DataTable
+                    adapter.Fill(dt)
+
+                    DataGridView1.DataSource = dt
+                    DataGridView1.Columns("Request").HeaderText = "Leave Request"
+                    DataGridView1.Columns("Status").HeaderText = "Status"
+                    DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+                End Using
+
+                showingAttendance = False
+                Label14.Text = "Request Records"
+                Button7.Text = "Show Attendance"
+
+            Catch ex As Exception
+                MsgBox("Error loading leave requests: " & ex.Message)
+            Finally
+                connect.Close()
+            End Try
+        Else
+            ' Switch to Attendance
+            LoadAttendanceData()
+            showingAttendance = True
+            Label14.Text = "Attendance Records"
+            Button7.Text = "Show Leave Requests"
+        End If
+    End Sub
+
+    Private Sub DateTimePicker1_ValueChanged(sender As Object, e As EventArgs) Handles DateTimePicker1.ValueChanged
+        Try
+            If connect.State = ConnectionState.Closed Then connect.Open()
+
+            Dim sql As String
+            Dim cmd As New OleDbCommand()
+            cmd.Connection = connect
+
+            If showingAttendance Then
+                ' Filter attendance
+                sql = "SELECT LoginDate, LoginTime, Status FROM [attendance] WHERE Username=? AND LoginDate=? ORDER BY LoginDate DESC, LoginTime DESC"
+                cmd.CommandText = sql
+                cmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
+                cmd.Parameters.Add("?", OleDbType.Date).Value = DateTimePicker1.Value.Date
+            Else
+                ' Filter leave requests (assuming RequestDate exists)
+                sql = "SELECT Request, Status FROM [request] WHERE EID=? AND RequestDate=? ORDER BY RequestDate DESC"
+                cmd.CommandText = sql
+                cmd.Parameters.Add("?", OleDbType.VarChar).Value = Label2.Text
+                cmd.Parameters.Add("?", OleDbType.Date).Value = DateTimePicker1.Value.Date
+            End If
+
+            Dim adapter As New OleDbDataAdapter(cmd)
+            Dim dt As New DataTable()
+            adapter.Fill(dt)
+            DataGridView1.DataSource = dt
+
+        Catch ex As Exception
+            MsgBox("Error filtering by date: " & ex.Message)
+        Finally
+            connect.Close()
+        End Try
+    End Sub
+
+
+    Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
+        If DataGridView1.Rows.Count = 0 Then
+            MsgBox("No data to export.")
+            Exit Sub
+        End If
+
+        Using sfd As New SaveFileDialog
+            sfd.Filter = "PDF File|*.pdf"
+            sfd.FileName = If(showingAttendance, "AttendanceRecords.pdf", "RequestRecords.pdf")
+            If sfd.ShowDialog() = DialogResult.OK Then
+                Try
+                    Dim doc As New Document(PageSize.A4, 10, 10, 10, 10)
+                    PdfWriter.GetInstance(doc, New FileStream(sfd.FileName, FileMode.Create))
+                    doc.Open()
+
+                    ' Add title
+                    Dim title As String = If(showingAttendance, "Attendance Records", "Request Records")
+                    doc.Add(New Paragraph(title & " - " & DateTime.Now.ToString("g")))
+                    doc.Add(New Paragraph(" "))
+
+                    ' Add table
+                    Dim pdfTable As New PdfPTable(DataGridView1.Columns.Count)
+                    pdfTable.WidthPercentage = 100
+
+                    ' Add headers
+                    For Each col As DataGridViewColumn In DataGridView1.Columns
+                        pdfTable.AddCell(New Phrase(col.HeaderText))
+                    Next
+
+                    ' Add rows
+                    For Each row As DataGridViewRow In DataGridView1.Rows
+                        If Not row.IsNewRow Then
+                            For Each cell As DataGridViewCell In row.Cells
+                                pdfTable.AddCell(If(cell.Value?.ToString(), ""))
+                            Next
+                        End If
+                    Next
+
+                    doc.Add(pdfTable)
+                    doc.Close()
+
+                    MsgBox("PDF exported successfully!")
+
+                Catch ex As Exception
+                    MsgBox("Error exporting PDF: " & ex.Message)
+                End Try
+            End If
+        End Using
+    End Sub
+    Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
+        ' Step 1: Confirm user wants to edit
+        If MsgBox("Do you want to change any of your profile information?", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "Confirm Edit") = MsgBoxResult.No Then
+            Exit Sub
+        End If
+
+        ' Step 2: Ask which field to change
+        Dim fieldToChange As String = InputBox("Which field do you want to change? (username, FullName, MobileN, Email, Address)", "Select Field").Trim()
+        If String.IsNullOrEmpty(fieldToChange) Then Exit Sub
+
+        ' Validate field
+        Dim validFields As String() = {"username", "FullName", "MobileN", "Email", "Address"}
+        If Not validFields.Contains(fieldToChange) Then
+            MsgBox("Invalid field selected.")
+            Exit Sub
+        End If
+
+        ' Step 3: Ask for new value
+        Dim newValue As String = InputBox($"Enter new value for {fieldToChange}:", "New Value").Trim()
+        If String.IsNullOrEmpty(newValue) Then
+            MsgBox("New value cannot be empty.")
+            Exit Sub
+        End If
+
+        ' Step 4: Ask for password to verify
+        Dim password As String = InputBox("Enter your current password to confirm changes:", "Verify Password").Trim()
+        If String.IsNullOrEmpty(password) Then Exit Sub
+
+        ' Step 5: Verify password and update
+        Try
+            If connect.State = ConnectionState.Closed Then connect.Open()
+
+            ' Check password
+            Dim checkSql As String = "SELECT COUNT(*) FROM [login] WHERE username=? AND [password]=?"
+            Using checkCmd As New OleDbCommand(checkSql, connect)
+                checkCmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
+                checkCmd.Parameters.Add("?", OleDbType.VarChar).Value = password
+
+                Dim exists As Integer = Convert.ToInt32(checkCmd.ExecuteScalar())
+                If exists = 0 Then
+                    MsgBox("Incorrect password. Cannot update profile.", MsgBoxStyle.Critical)
+                    Exit Sub
+                End If
+            End Using
+
+            ' Update the selected field
+            Dim updateSql As String = $"UPDATE [login] SET [{fieldToChange}]=? WHERE username=?"
+            Using updateCmd As New OleDbCommand(updateSql, connect)
+                updateCmd.Parameters.Add("?", OleDbType.VarChar).Value = newValue
+                updateCmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
+                Dim rowsAffected As Integer = updateCmd.ExecuteNonQuery()
+                If rowsAffected > 0 Then
+                    MsgBox($"{fieldToChange} updated successfully!")
+
+                    ' Update local label if applicable
+                    Select Case fieldToChange
+                        Case "username" : Label4.Text = newValue
+                        Case "FullName" : Label6.Text = newValue
+                        Case "MobileN" : Label8.Text = newValue
+                        Case "Email" : Label10.Text = newValue
+                        Case "Address" : Label12.Text = newValue
+                    End Select
+                Else
+                    MsgBox("Update failed. No changes made.")
+                End If
+            End Using
+
+        Catch ex As Exception
+            MsgBox("Error updating profile: " & ex.Message)
+        Finally
+            connect.Close()
+        End Try
+    End Sub
+
 End Class
+

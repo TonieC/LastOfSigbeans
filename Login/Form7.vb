@@ -77,7 +77,7 @@ Public Class Form7
         End If
 
         Try
-            If connect.State = ConnectionState.Closed Then connect.Open()
+            If connect.State = ConnectionState.Closed Then connect.Open
 
             Using cmd As New OleDbCommand(
                 "INSERT INTO [request] (EID, FullName, Category, [Request], Status, RequestDate) " &
@@ -86,30 +86,72 @@ Public Class Form7
                 ' Use loaded employee info
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = employeeID
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = fullName
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = ComboBox1.SelectedItem.ToString()
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = TextBox1.Text.Trim()
+                cmd.Parameters.Add("?", OleDbType.VarChar).Value = ComboBox1.SelectedItem.ToString
+                cmd.Parameters.Add("?", OleDbType.VarChar).Value = TextBox1.Text.Trim
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = "Pending"
-                cmd.Parameters.Add("?", OleDbType.Date).Value = DateTime.Now
+                cmd.Parameters.Add("?", OleDbType.Date).Value = Date.Now
 
-                cmd.ExecuteNonQuery()
+                cmd.ExecuteNonQuery
             End Using
 
             MsgBox("Leave request submitted successfully.")
 
             ' Clear input
             ComboBox1.SelectedIndex = -1
-            TextBox1.Clear()
+            TextBox1.Clear
 
         Catch ex As Exception
             MsgBox("Error submitting leave request: " & ex.Message)
         Finally
-            connect.Close()
+            connect.Close
         End Try
     End Sub
 
     ' Back to profile
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         Me.Close()
+    End Sub
+
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        Try
+            If connect.State = ConnectionState.Closed Then connect.Open()
+
+            ' 1. Check the most recent request for this user
+            Dim checkSql As String = "SELECT TOP 1 [Request], Status FROM [request] WHERE EID=? ORDER BY RequestDate DESC"
+            Using checkCmd As New OleDbCommand(checkSql, connect)
+                checkCmd.Parameters.Add("?", OleDbType.VarChar).Value = employeeID
+
+                Using reader As OleDbDataReader = checkCmd.ExecuteReader()
+                    If reader.Read() Then
+                        Dim lastRequest As String = reader("Request").ToString()
+                        Dim status As String = reader("Status").ToString()
+
+                        If status = "Pending" Then
+                            ' 2. Delete the pending request
+                            Dim deleteSql As String = "DELETE FROM [request] WHERE EID=? AND [Request]=? AND Status='Pending'"
+                            Using deleteCmd As New OleDbCommand(deleteSql, connect)
+                                deleteCmd.Parameters.Add("?", OleDbType.VarChar).Value = employeeID
+                                deleteCmd.Parameters.Add("?", OleDbType.VarChar).Value = lastRequest
+                                deleteCmd.ExecuteNonQuery()
+                            End Using
+
+                            MsgBox("Pending leave request cancelled successfully.")
+                        Else
+                            ' 3. If approved/rejected
+                            MsgBox($"Last request was already {status}. Cannot cancel.")
+                        End If
+                    Else
+                        ' No requests found
+                        MsgBox("No leave requests found to cancel.")
+                    End If
+                End Using
+            End Using
+
+        Catch ex As Exception
+            MsgBox("Error cancelling leave request: " & ex.Message)
+        Finally
+            connect.Close()
+        End Try
     End Sub
 
 End Class
