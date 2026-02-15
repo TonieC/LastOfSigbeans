@@ -44,7 +44,10 @@ Partial Class Form5
         Label16 = New Label()
         Button5 = New Button()
         Button6 = New Button()
+        DataGridView1 = New DataGridView()
+        Label14 = New Label()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
+        CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
         ' Label1
@@ -227,7 +230,7 @@ Partial Class Form5
         ' 
         Label15.AutoSize = True
         Label15.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label15.Location = New Point(734, 128)
+        Label15.Location = New Point(548, 629)
         Label15.Name = "Label15"
         Label15.Size = New Size(245, 23)
         Label15.TabIndex = 21
@@ -237,7 +240,7 @@ Partial Class Form5
         ' 
         Label16.AutoSize = True
         Label16.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label16.Location = New Point(756, 163)
+        Label16.Location = New Point(799, 629)
         Label16.Name = "Label16"
         Label16.Size = New Size(197, 23)
         Label16.TabIndex = 22
@@ -245,27 +248,47 @@ Partial Class Form5
         ' 
         ' Button5
         ' 
-        Button5.Location = New Point(772, 70)
+        Button5.Location = New Point(606, 601)
         Button5.Name = "Button5"
-        Button5.Size = New Size(148, 49)
+        Button5.Size = New Size(120, 25)
         Button5.TabIndex = 27
         Button5.Text = "File Leave"
         Button5.UseVisualStyleBackColor = True
         ' 
         ' Button6
         ' 
-        Button6.Location = New Point(772, 255)
+        Button6.Location = New Point(488, 373)
         Button6.Name = "Button6"
-        Button6.Size = New Size(148, 49)
+        Button6.Size = New Size(120, 23)
         Button6.TabIndex = 28
         Button6.Text = "Change Password"
         Button6.UseVisualStyleBackColor = True
+        ' 
+        ' DataGridView1
+        ' 
+        DataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        DataGridView1.Location = New Point(666, 125)
+        DataGridView1.Name = "DataGridView1"
+        DataGridView1.Size = New Size(349, 270)
+        DataGridView1.TabIndex = 29
+        ' 
+        ' Label14
+        ' 
+        Label14.AutoSize = True
+        Label14.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label14.Location = New Point(730, 99)
+        Label14.Name = "Label14"
+        Label14.Size = New Size(228, 23)
+        Label14.TabIndex = 30
+        Label14.Text = "Attendance Record"
         ' 
         ' Form5
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1033, 661)
+        Controls.Add(Label14)
+        Controls.Add(DataGridView1)
         Controls.Add(Button6)
         Controls.Add(Button5)
         Controls.Add(Label16)
@@ -291,6 +314,7 @@ Partial Class Form5
         Name = "Form5"
         Text = "Form5"
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
+        CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
         PerformLayout()
     End Sub
@@ -317,4 +341,6 @@ Partial Class Form5
     Friend WithEvents Label16 As Label
     Friend WithEvents Button5 As Button
     Friend WithEvents Button6 As Button
+    Friend WithEvents DataGridView1 As DataGridView
+    Friend WithEvents Label14 As Label
 End Class

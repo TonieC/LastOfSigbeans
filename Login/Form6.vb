@@ -249,24 +249,55 @@ Public Class form6
         If dt Is Nothing Then Exit Sub
 
         Dim filter As String = TextBox1.Text.Trim().Replace("'", "''")
-        If filter = "" Then
-            DataGridView1.DataSource = dt
-            Exit Sub
+        Dim dv As New DataView(dt)
+        Dim rowFilter As String = ""
+
+        ' Text filter including all fields
+        If filter <> "" Then
+            Dim textFilter As String = ""
+            Select Case currentTable
+                Case "login"
+                    textFilter = $"(EID LIKE '%{filter}%' OR username LIKE '%{filter}%' OR FullName LIKE '%{filter}%' OR MobileN LIKE '%{filter}%' OR Email LIKE '%{filter}%' OR Address LIKE '%{filter}%')"
+                Case "request"
+                    textFilter = $"(EID LIKE '%{filter}%' OR FullName LIKE '%{filter}%' OR Category LIKE '%{filter}%' OR [Request] LIKE '%{filter}%' OR Status LIKE '%{filter}%')"
+                Case "attendance"
+                    textFilter = $"(Username LIKE '%{filter}%' OR FullName LIKE '%{filter}%' OR LoginTime LIKE '%{filter}%' OR Status LIKE '%{filter}%')"
+            End Select
+
+            rowFilter = textFilter
         End If
 
-        Dim dv As New DataView(dt)
-        Select Case currentTable
-            Case "login"
-                dv.RowFilter = $"username LIKE '%{filter}%' OR FullName LIKE '%{filter}%'"
-            Case "request"
-                dv.RowFilter = $"FullName LIKE '%{filter}%' OR Category LIKE '%{filter}%' OR Status LIKE '%{filter}%'"
-            Case "attendance"
-                dv.RowFilter = $"Username LIKE '%{filter}%' OR FullName LIKE '%{filter}%' OR Status LIKE '%{filter}%'"
-        End Select
+        ' Date filter using start/end of day
+        If DateTimePicker1.Checked Then
+            Dim startDate As Date = DateTimePicker1.Value.Date
+            Dim nextDate As Date = startDate.AddDays(1)
+            Dim dateFilter As String = ""
+
+            Select Case currentTable
+                Case "request"
+                    dateFilter = $"RequestDate IS NOT NULL AND RequestDate >= #{startDate:MM/dd/yyyy}# AND RequestDate < #{nextDate:MM/dd/yyyy}#"
+                Case "attendance"
+                    dateFilter = $"LoginDate IS NOT NULL AND LoginDate >= #{startDate:MM/dd/yyyy}# AND LoginDate < #{nextDate:MM/dd/yyyy}#"
+            End Select
+
+            If dateFilter <> "" Then
+                If rowFilter <> "" Then rowFilter &= " AND "
+                rowFilter &= dateFilter
+            End If
+        End If
+
+        dv.RowFilter = rowFilter
         DataGridView1.DataSource = dv
 
-        AddLog("Search", $"Searched '{filter}' in {currentTable}")
+        AddLog("Search", $"Searched '{filter}' with date '{If(DateTimePicker1.Checked, DateTimePicker1.Value.ToShortDateString(), "N/A")}' in {currentTable}")
     End Sub
+
+    Private Sub DateTimePicker1_ValueChanged(sender As Object, e As EventArgs) Handles DateTimePicker1.ValueChanged
+        ' Trigger search when date changes
+        TextBox1_TextChanged(Nothing, Nothing)
+    End Sub
+
+
 
     ' =========================
     ' OPEN LOGS (FORM8)

@@ -26,6 +26,7 @@ Public Class Form5
     ' =========================
     Private Sub Form5_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadEmployeeData()
+        LoadAttendanceData()
 
         If Label4.Text <> "" Then
             GenerateQRCode(Label4.Text)
@@ -252,4 +253,37 @@ Public Class Form5
         End Try
 
     End Sub
+
+    ' =========================
+    ' Load Attendance Data
+    ' =========================
+    Private Sub LoadAttendanceData()
+        Try
+            If connect.State = ConnectionState.Closed Then connect.Open()
+
+            Dim sql As String = "SELECT LoginDate, LoginTime, Status FROM [attendance] WHERE Username=? ORDER BY LoginDate DESC, LoginTime DESC"
+
+            Using cmd As New OleDbCommand(sql, connect)
+                cmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
+
+                Dim adapter As New OleDbDataAdapter(cmd)
+                Dim dt As New DataTable()
+                adapter.Fill(dt)
+
+                DataGridView1.DataSource = dt
+
+                ' Optional: make columns look nicer
+                DataGridView1.Columns("LoginDate").HeaderText = "Date"
+                DataGridView1.Columns("LoginTime").HeaderText = "Time"
+                DataGridView1.Columns("Status").HeaderText = "Status"
+                DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+            End Using
+
+        Catch ex As Exception
+            MsgBox("Error loading attendance: " & ex.Message)
+        Finally
+            connect.Close()
+        End Try
+    End Sub
+
 End Class
