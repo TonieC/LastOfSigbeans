@@ -43,6 +43,7 @@ Partial Class Form5
         Label15 = New Label()
         Label16 = New Label()
         Button5 = New Button()
+        Button6 = New Button()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
@@ -251,11 +252,21 @@ Partial Class Form5
         Button5.Text = "File Leave"
         Button5.UseVisualStyleBackColor = True
         ' 
+        ' Button6
+        ' 
+        Button6.Location = New Point(772, 255)
+        Button6.Name = "Button6"
+        Button6.Size = New Size(148, 49)
+        Button6.TabIndex = 28
+        Button6.Text = "Change Password"
+        Button6.UseVisualStyleBackColor = True
+        ' 
         ' Form5
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1033, 661)
+        Controls.Add(Button6)
         Controls.Add(Button5)
         Controls.Add(Label16)
         Controls.Add(Label15)
@@ -305,4 +316,5 @@ Partial Class Form5
     Friend WithEvents Label15 As Label
     Friend WithEvents Label16 As Label
     Friend WithEvents Button5 As Button
+    Friend WithEvents Button6 As Button
 End Class

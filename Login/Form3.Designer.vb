@@ -30,6 +30,7 @@ Partial Class Form3
         Button1 = New Button()
         LinkLabel1 = New LinkLabel()
         CheckBox1 = New CheckBox()
+        LinkLabel2 = New LinkLabel()
         SuspendLayout()
         ' 
         ' TextBox1
@@ -79,7 +80,7 @@ Partial Class Form3
         ' Button1
         ' 
         Button1.Font = New Font("Showcard Gothic", 15.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Button1.Location = New Point(479, 387)
+        Button1.Location = New Point(483, 385)
         Button1.Name = "Button1"
         Button1.Size = New Size(102, 38)
         Button1.TabIndex = 5
@@ -106,11 +107,22 @@ Partial Class Form3
         CheckBox1.Text = "Show/Hide Password"
         CheckBox1.UseVisualStyleBackColor = True
         ' 
+        ' LinkLabel2
+        ' 
+        LinkLabel2.AutoSize = True
+        LinkLabel2.Location = New Point(490, 426)
+        LinkLabel2.Name = "LinkLabel2"
+        LinkLabel2.Size = New Size(95, 15)
+        LinkLabel2.TabIndex = 9
+        LinkLabel2.TabStop = True
+        LinkLabel2.Text = "Forgot Password"
+        ' 
         ' Form3
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1039, 675)
+        Controls.Add(LinkLabel2)
         Controls.Add(CheckBox1)
         Controls.Add(LinkLabel1)
         Controls.Add(Button1)
@@ -133,5 +145,6 @@ Partial Class Form3
     Friend WithEvents Button1 As Button
     Friend WithEvents LinkLabel1 As LinkLabel
     Friend WithEvents CheckBox1 As CheckBox
+    Friend WithEvents LinkLabel2 As LinkLabel
 
 End Class

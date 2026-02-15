@@ -193,10 +193,63 @@ Public Class Form5
     ' =========================
     Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
         Dim leaveForm As New Form7(loggedInUsername)
-        leaveForm.ShowDialog() ' blocks until leave form closed
+        leaveForm.ShowDialog ' blocks until leave form closed
 
         ' Refresh last request status if user submitted a new request
         Label16_Click(Label16, EventArgs.Empty)
     End Sub
 
+    Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
+
+        ' 1. Ask for current password
+        Dim oldPassword As String = InputBox("Enter your current password:", "Change Password")
+        If oldPassword = "" Then Exit Sub
+
+        ' 2. Verify old password from database
+        Try
+            If connect.State = ConnectionState.Closed Then connect.Open()
+
+            Dim checkSql As String = "SELECT COUNT(*) FROM [login] WHERE username=? AND [password]=?"
+            Using checkCmd As New OleDbCommand(checkSql, connect)
+                checkCmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
+                checkCmd.Parameters.Add("?", OleDbType.VarChar).Value = oldPassword
+
+                Dim exists As Integer = Convert.ToInt32(checkCmd.ExecuteScalar())
+                If exists = 0 Then
+                    MsgBox("Incorrect current password.", MsgBoxStyle.Critical)
+                    Exit Sub
+                End If
+            End Using
+
+            ' 3. Ask for new password
+            Dim newPassword As String = InputBox("Enter your NEW password:", "Change Password")
+            If newPassword = "" Then
+                MsgBox("New password cannot be empty.")
+                Exit Sub
+            End If
+
+            ' 4. Confirm new password
+            Dim confirmPassword As String = InputBox("Confirm your NEW password:", "Change Password")
+            If newPassword <> confirmPassword Then
+                MsgBox("Passwords do not match.", MsgBoxStyle.Critical)
+                Exit Sub
+            End If
+
+            ' 5. Update password
+            Dim updateSql As String = "UPDATE [login] SET [password]=? WHERE username=?"
+            Using updateCmd As New OleDbCommand(updateSql, connect)
+                updateCmd.Parameters.Add("?", OleDbType.VarChar).Value = newPassword
+                updateCmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
+                updateCmd.ExecuteNonQuery()
+            End Using
+
+            MsgBox("Password changed successfully.", MsgBoxStyle.Information)
+
+        Catch ex As Exception
+            MsgBox("Password change error: " & ex.Message)
+        Finally
+            connect.Close()
+        End Try
+
+    End Sub
 End Class
