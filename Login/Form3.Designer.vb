@@ -31,6 +31,7 @@ Partial Class Form3
         LinkLabel1 = New LinkLabel()
         CheckBox1 = New CheckBox()
         LinkLabel2 = New LinkLabel()
+        Button2 = New Button()
         SuspendLayout()
         ' 
         ' TextBox1
@@ -50,7 +51,7 @@ Partial Class Form3
         ' Label1
         ' 
         Label1.AutoSize = True
-        Label1.Font = New Font("Wide Latin", 48F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label1.Font = New Font("Wide Latin", 48.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label1.Location = New Point(303, 47)
         Label1.Name = "Label1"
         Label1.Size = New Size(450, 79)
@@ -60,7 +61,7 @@ Partial Class Form3
         ' Label2
         ' 
         Label2.AutoSize = True
-        Label2.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label2.Font = New Font("Wide Latin", 12.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label2.Location = New Point(438, 257)
         Label2.Name = "Label2"
         Label2.Size = New Size(199, 19)
@@ -70,7 +71,7 @@ Partial Class Form3
         ' Label3
         ' 
         Label3.AutoSize = True
-        Label3.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label3.Font = New Font("Wide Latin", 12.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label3.Location = New Point(440, 322)
         Label3.Name = "Label3"
         Label3.Size = New Size(197, 19)
@@ -117,11 +118,21 @@ Partial Class Form3
         LinkLabel2.TabStop = True
         LinkLabel2.Text = "Forgot Password"
         ' 
+        ' Button2
+        ' 
+        Button2.Location = New Point(25, 25)
+        Button2.Name = "Button2"
+        Button2.Size = New Size(113, 34)
+        Button2.TabIndex = 10
+        Button2.Text = "Attendance"
+        Button2.UseVisualStyleBackColor = True
+        ' 
         ' Form3
         ' 
-        AutoScaleDimensions = New SizeF(7F, 15F)
+        AutoScaleDimensions = New SizeF(7.0F, 15.0F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1039, 675)
+        Controls.Add(Button2)
         Controls.Add(LinkLabel2)
         Controls.Add(CheckBox1)
         Controls.Add(LinkLabel1)
@@ -146,5 +157,6 @@ Partial Class Form3
     Friend WithEvents LinkLabel1 As LinkLabel
     Friend WithEvents CheckBox1 As CheckBox
     Friend WithEvents LinkLabel2 As LinkLabel
+    Friend WithEvents Button2 As Button
 
 End Class

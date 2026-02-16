@@ -38,7 +38,6 @@ Partial Class Form5
         PictureBox1 = New PictureBox()
         Button2 = New Button()
         Button3 = New Button()
-        Button4 = New Button()
         Label13 = New Label()
         Label15 = New Label()
         Label16 = New Label()
@@ -210,16 +209,6 @@ Partial Class Form5
         Button3.Text = "Generate"
         Button3.UseVisualStyleBackColor = True
         ' 
-        ' Button4
-        ' 
-        Button4.Font = New Font("Showcard Gothic", 8.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Button4.Location = New Point(157, 12)
-        Button4.Name = "Button4"
-        Button4.Size = New Size(143, 46)
-        Button4.TabIndex = 16
-        Button4.Text = "Log Out and Time Out"
-        Button4.UseVisualStyleBackColor = True
-        ' 
         ' Label13
         ' 
         Label13.AutoSize = True
@@ -252,7 +241,7 @@ Partial Class Form5
         ' 
         ' Button5
         ' 
-        Button5.Location = New Point(548, 601)
+        Button5.Location = New Point(422, 624)
         Button5.Name = "Button5"
         Button5.Size = New Size(120, 25)
         Button5.TabIndex = 27
@@ -261,7 +250,7 @@ Partial Class Form5
         ' 
         ' Button6
         ' 
-        Button6.Location = New Point(463, 315)
+        Button6.Location = New Point(459, 315)
         Button6.Name = "Button6"
         Button6.Size = New Size(120, 23)
         Button6.TabIndex = 28
@@ -337,7 +326,6 @@ Partial Class Form5
         Controls.Add(Label16)
         Controls.Add(Label15)
         Controls.Add(Label13)
-        Controls.Add(Button4)
         Controls.Add(Button3)
         Controls.Add(Button2)
         Controls.Add(PictureBox1)
@@ -378,7 +366,6 @@ Partial Class Form5
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents Button2 As Button
     Friend WithEvents Button3 As Button
-    Friend WithEvents Button4 As Button
     Friend WithEvents Label13 As Label
     Friend WithEvents Label15 As Label
     Friend WithEvents Label16 As Label

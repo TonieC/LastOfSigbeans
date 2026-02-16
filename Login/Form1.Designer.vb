@@ -25,7 +25,6 @@ Partial Class Form1
         Button1 = New Button()
         Label11 = New Label()
         PictureBox1 = New PictureBox()
-        Button2 = New Button()
         Button3 = New Button()
         Label1 = New Label()
         Button4 = New Button()
@@ -37,7 +36,7 @@ Partial Class Form1
         ' 
         ' Button1
         ' 
-        Button1.Location = New Point(896, 614)
+        Button1.Location = New Point(918, 74)
         Button1.Name = "Button1"
         Button1.Size = New Size(102, 45)
         Button1.TabIndex = 0
@@ -48,7 +47,7 @@ Partial Class Form1
         ' 
         Label11.AutoSize = True
         Label11.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label11.Location = New Point(458, 9)
+        Label11.Location = New Point(450, 20)
         Label11.Name = "Label11"
         Label11.Size = New Size(141, 23)
         Label11.TabIndex = 11
@@ -62,29 +61,20 @@ Partial Class Form1
         PictureBox1.TabIndex = 12
         PictureBox1.TabStop = False
         ' 
-        ' Button2
-        ' 
-        Button2.Location = New Point(330, 614)
-        Button2.Name = "Button2"
-        Button2.Size = New Size(102, 45)
-        Button2.TabIndex = 13
-        Button2.Text = "Scan"
-        Button2.UseVisualStyleBackColor = True
-        ' 
         ' Button3
         ' 
-        Button3.Location = New Point(587, 614)
+        Button3.Location = New Point(546, 522)
         Button3.Name = "Button3"
-        Button3.Size = New Size(102, 45)
+        Button3.Size = New Size(76, 28)
         Button3.TabIndex = 14
-        Button3.Text = "Stop"
+        Button3.Text = "Time Out"
         Button3.UseVisualStyleBackColor = True
         ' 
         ' Label1
         ' 
         Label1.AutoSize = True
         Label1.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label1.Location = New Point(458, 48)
+        Label1.Location = New Point(415, 48)
         Label1.Name = "Label1"
         Label1.Size = New Size(94, 23)
         Label1.TabIndex = 15
@@ -92,7 +82,7 @@ Partial Class Form1
         ' 
         ' Button4
         ' 
-        Button4.Location = New Point(896, 552)
+        Button4.Location = New Point(918, 12)
         Button4.Name = "Button4"
         Button4.Size = New Size(102, 45)
         Button4.TabIndex = 16
@@ -105,6 +95,7 @@ Partial Class Form1
         TextBox1.Name = "TextBox1"
         TextBox1.Size = New Size(188, 23)
         TextBox1.TabIndex = 17
+        TextBox1.Visible = False
         ' 
         ' Label2
         ' 
@@ -115,14 +106,15 @@ Partial Class Form1
         Label2.Size = New Size(194, 23)
         Label2.TabIndex = 18
         Label2.Text = "Enter Password"
+        Label2.Visible = False
         ' 
         ' Button5
         ' 
-        Button5.Location = New Point(468, 522)
+        Button5.Location = New Point(434, 522)
         Button5.Name = "Button5"
-        Button5.Size = New Size(102, 45)
+        Button5.Size = New Size(85, 28)
         Button5.TabIndex = 19
-        Button5.Text = "Enter"
+        Button5.Text = "Time In"
         Button5.UseVisualStyleBackColor = True
         ' 
         ' Form1
@@ -136,7 +128,6 @@ Partial Class Form1
         Controls.Add(Button4)
         Controls.Add(Label1)
         Controls.Add(Button3)
-        Controls.Add(Button2)
         Controls.Add(PictureBox1)
         Controls.Add(Label11)
         Controls.Add(Button1)
@@ -150,7 +141,6 @@ Partial Class Form1
     Friend WithEvents Button1 As Button
     Friend WithEvents Label11 As Label
     Friend WithEvents PictureBox1 As PictureBox
-    Friend WithEvents Button2 As Button
     Friend WithEvents Button3 As Button
     Friend WithEvents Label1 As Label
     Friend WithEvents Button4 As Button

@@ -138,37 +138,6 @@ Public Class Form5
         End If
     End Sub
 
-    ' =========================
-    ' Time Out / Logout
-    ' =========================
-    Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
-        If MsgBox("Are you sure you want to logout?", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "Logout") = MsgBoxResult.Yes Then
-            Try
-                If connect.State = ConnectionState.Closed Then connect.Open()
-
-                Using cmd As New OleDbCommand(
-                    "INSERT INTO [attendance] (Username, FullName, LoginDate, LoginTime, Status) VALUES (?, ?, ?, ?, ?)", connect)
-                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
-                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = Label6.Text
-                    cmd.Parameters.Add("?", OleDbType.Date).Value = DateTime.Now.Date
-                    cmd.Parameters.Add("?", OleDbType.Date).Value = DateTime.Now
-                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = "Time Out"
-                    cmd.ExecuteNonQuery()
-                End Using
-
-                MsgBox($"Time Out recorded for {Label6.Text} ({loggedInUsername})")
-
-            Catch ex As Exception
-                MsgBox("Error recording Time Out: " & ex.Message)
-            Finally
-                connect.Close()
-            End Try
-
-            Dim loginForm As New Form3
-            loginForm.Show()
-            Close()
-        End If
-    End Sub
 
     ' =========================
     ' Last Leave Request Status
