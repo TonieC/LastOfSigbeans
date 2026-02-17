@@ -3,7 +3,7 @@ Imports System.Data.OleDb
 
 Public Class Form4
 
-    Private connect As New OleDbConnection(
+    Private ReadOnly connect As New OleDbConnection(
         "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Administrator\OneDrive\Documents\Login.accdb")
 
     Private dt As DataTable
@@ -26,21 +26,20 @@ Public Class Form4
     End Sub
 
     ' =========================
-    ' LOGGING FUNCTION
+    ' LOGGING
     ' =========================
     Private Sub AddLog(action As String, details As String)
         Try
-            If connect.State = ConnectionState.Closed Then connect.Open()
+            If connect.State <> ConnectionState.Open Then connect.Open()
             Using cmd As New OleDbCommand(
-                "INSERT INTO [logs] (Username, ActionDate, [Action], Details) VALUES (?, ?, ?, ?)", connect)
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInAdmin
-                cmd.Parameters.Add("?", OleDbType.Date).Value = DateTime.Now
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = action
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = details
+                "INSERT INTO logs (Username, ActionDate, [Action], Details) VALUES (?,?,?,?)", connect)
+                cmd.Parameters.AddWithValue("?", loggedInAdmin)
+                cmd.Parameters.AddWithValue("?", DateTime.Now)
+                cmd.Parameters.AddWithValue("?", action)
+                cmd.Parameters.AddWithValue("?", details)
                 cmd.ExecuteNonQuery()
             End Using
-        Catch ex As Exception
-            MsgBox("Error logging action: " & ex.Message)
+        Catch
         Finally
             connect.Close()
         End Try
@@ -51,47 +50,42 @@ Public Class Form4
     ' =========================
     Private Sub LoadTable(tableName As String)
         Try
-            If connect.State = ConnectionState.Closed Then connect.Open()
+            If connect.State <> ConnectionState.Open Then connect.Open()
             dt = New DataTable()
+
             Dim sql As String = ""
 
             Select Case tableName
                 Case "login"
-                    sql = "SELECT EID, username, password, Role, FullName, MobileN, Email, Address FROM [login] ORDER BY EID"
-                    Label2.Text = "Viewing: Employees"
-
+                    sql = "SELECT EID, username, password, Role, FullName, MobileN, Email, Address FROM login"
                 Case "request"
-                    sql = "SELECT EID, FullName, Category, [Request], Status, RequestDate FROM [request] ORDER BY RequestDate DESC"
-                    Label2.Text = "Viewing: Leave Requests"
-
+                    sql = "SELECT UID, EID, FullName, Category, [Request], Status, RequestDate FROM request"
                 Case "attendance"
-                    sql = "SELECT Username, FullName, LoginDate, LoginTime, Status FROM [attendance] ORDER BY LoginDate DESC"
-                    Label2.Text = "Viewing: Attendance"
+                    sql = "SELECT Username, FullName, LoginDate, LoginTime, Status FROM attendance"
             End Select
 
-            Dim da As New OleDbDataAdapter(sql, connect)
-            da.Fill(dt)
+            Using da As New OleDbDataAdapter(sql, connect)
+                da.Fill(dt)
+            End Using
 
             DataGridView1.DataSource = dt
             DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
             DataGridView1.MultiSelect = False
             DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
             DataGridView1.ReadOnly = False
-
-            ' Always lock primary key
             DataGridView1.Columns(0).ReadOnly = True
 
             currentTable = tableName
-            AddLog("Table Switch", $"Switched to table: {tableName}")
+            AddLog("View", tableName)
         Catch ex As Exception
-            MsgBox("Load error: " & ex.Message)
+            MsgBox(ex.Message)
         Finally
             connect.Close()
         End Try
     End Sub
 
     ' =========================
-    ' TABLE SWITCHING BUTTONS
+    ' SWITCH TABLES
     ' =========================
     Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
         LoadTable("login")
@@ -106,167 +100,129 @@ Public Class Form4
     End Sub
 
     ' =========================
-    ' UPDATE RECORD (UNRESTRICTED)
+    ' ADD (LOGIN ONLY)
+    ' =========================
+    Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+        If currentTable <> "login" Then Exit Sub
+
+        ' Replace FormAddEmployee with a simple input dialog as placeholder
+        Dim username As String = InputBox("Enter username for new employee:", "Add Employee")
+        If String.IsNullOrEmpty(username) Then Exit Sub
+
+        Try
+            If connect.State <> ConnectionState.Open Then connect.Open()
+            Using cmd As New OleDbCommand("INSERT INTO login (username) VALUES (?)", connect)
+                cmd.Parameters.AddWithValue("?", username)
+                cmd.ExecuteNonQuery()
+            End Using
+            LoadTable("login")
+            AddLog("Add", $"Employee '{username}' added")
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        Finally
+            connect.Close()
+        End Try
+    End Sub
+
+    ' =========================
+    ' UPDATE
     ' =========================
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-        If DataGridView1.SelectedRows.Count = 0 Then
-            MsgBox("Select a row to update")
-            Exit Sub
-        End If
-
-        Dim row As DataGridViewRow = DataGridView1.SelectedRows(0)
+        If DataGridView1.SelectedRows.Count = 0 Then Exit Sub
+        Dim r = DataGridView1.SelectedRows(0)
 
         Try
-            If connect.State = ConnectionState.Closed Then connect.Open()
+            If connect.State <> ConnectionState.Open Then connect.Open()
             Using cmd As New OleDbCommand("", connect)
                 Select Case currentTable
                     Case "login"
-                        cmd.CommandText = "UPDATE [login] " &
-                      "SET [username]=?, [password]=?, [Role]=?, [FullName]=?, [MobileN]=?, [Email]=?, [Address]=? " &
-                      "WHERE [EID]=?"
-                        cmd.Parameters.Add("?", OleDbType.VarChar).Value = If(row.Cells("username").Value Is Nothing, "", row.Cells("username").Value)
-                        cmd.Parameters.Add("?", OleDbType.VarChar).Value = If(row.Cells("password").Value Is Nothing, "", row.Cells("password").Value)
-                        cmd.Parameters.Add("?", OleDbType.VarChar).Value = If(row.Cells("Role").Value Is Nothing, "", row.Cells("Role").Value)
-                        cmd.Parameters.Add("?", OleDbType.VarChar).Value = If(row.Cells("FullName").Value Is Nothing, "", row.Cells("FullName").Value)
-                        cmd.Parameters.Add("?", OleDbType.VarChar).Value = If(row.Cells("MobileN").Value Is Nothing, "", row.Cells("MobileN").Value)
-                        cmd.Parameters.Add("?", OleDbType.VarChar).Value = If(row.Cells("Email").Value Is Nothing, "", row.Cells("Email").Value)
-                        cmd.Parameters.Add("?", OleDbType.VarChar).Value = If(row.Cells("Address").Value Is Nothing, "", row.Cells("Address").Value)
-                        cmd.Parameters.Add("?", OleDbType.Integer).Value = CInt(row.Cells("EID").Value)
+                        cmd.CommandText =
+                            "UPDATE login SET username=?, [password]=?, [Role]=?, FullName=?, MobileN=?, Email=?, Address=? WHERE EID=?"
+                        cmd.Parameters.AddWithValue("?", r.Cells("username").Value)
+                        cmd.Parameters.AddWithValue("?", r.Cells("password").Value)
+                        cmd.Parameters.AddWithValue("?", r.Cells("Role").Value)
+                        cmd.Parameters.AddWithValue("?", r.Cells("FullName").Value)
+                        cmd.Parameters.AddWithValue("?", r.Cells("MobileN").Value)
+                        cmd.Parameters.AddWithValue("?", r.Cells("Email").Value)
+                        cmd.Parameters.AddWithValue("?", r.Cells("Address").Value)
+                        cmd.Parameters.AddWithValue("?", r.Cells("EID").Value)
 
                     Case "request"
-                        cmd.CommandText = "UPDATE [request] SET FullName=?, Category=?, [Request]=?, Status=?, RequestDate=? WHERE EID=?"
-                        cmd.Parameters.Add("?", OleDbType.VarChar).Value = If(row.Cells("FullName").Value Is Nothing, "", row.Cells("FullName").Value)
-                        cmd.Parameters.Add("?", OleDbType.VarChar).Value = If(row.Cells("Category").Value Is Nothing, "", row.Cells("Category").Value)
-                        cmd.Parameters.Add("?", OleDbType.VarChar).Value = If(row.Cells("Request").Value Is Nothing, "", row.Cells("Request").Value)
-                        cmd.Parameters.Add("?", OleDbType.VarChar).Value = If(row.Cells("Status").Value Is Nothing, "", row.Cells("Status").Value)
-                        cmd.Parameters.Add("?", OleDbType.Date).Value = If(row.Cells("RequestDate").Value Is Nothing, DateTime.Now, row.Cells("RequestDate").Value)
-                        cmd.Parameters.Add("?", OleDbType.Integer).Value = CInt(row.Cells("EID").Value)
-
+                        cmd.CommandText = "UPDATE request SET Status=? WHERE UID=?"
+                        cmd.Parameters.AddWithValue("?", r.Cells("Status").Value)
+                        cmd.Parameters.AddWithValue("?", r.Cells("UID").Value)
                     Case "attendance"
-                        cmd.CommandText = "UPDATE [attendance] SET FullName=?, LoginDate=?, LoginTime=?, Status=? WHERE Username=?"
-                        cmd.Parameters.Add("?", OleDbType.VarChar).Value = If(row.Cells("FullName").Value Is Nothing, "", row.Cells("FullName").Value)
-                        cmd.Parameters.Add("?", OleDbType.Date).Value = If(row.Cells("LoginDate").Value Is Nothing, DateTime.Now, row.Cells("LoginDate").Value)
-                        cmd.Parameters.Add("?", OleDbType.VarChar).Value = If(row.Cells("LoginTime").Value Is Nothing, "", row.Cells("LoginTime").Value)
-                        cmd.Parameters.Add("?", OleDbType.VarChar).Value = If(row.Cells("Status").Value Is Nothing, "", row.Cells("Status").Value)
-                        cmd.Parameters.Add("?", OleDbType.VarChar).Value = row.Cells("Username").Value
+                        cmd.CommandText = "UPDATE attendance SET Status=? WHERE Username=?"
+                        cmd.Parameters.AddWithValue("?", r.Cells("Status").Value)
+                        cmd.Parameters.AddWithValue("?", r.Cells("Username").Value)
                 End Select
-
-                Dim affected As Integer = cmd.ExecuteNonQuery()
-                MsgBox("Record updated successfully")
-                AddLog("Update", $"Updated row in {currentTable} (ID: {row.Cells(0).Value})")
-                LoadTable(currentTable)
+                cmd.ExecuteNonQuery()
             End Using
-
+            LoadTable(currentTable)
+            AddLog("Update", currentTable)
         Catch ex As Exception
-            MsgBox("Update error: " & ex.Message)
+            MsgBox(ex.Message)
         Finally
             connect.Close()
         End Try
     End Sub
 
     ' =========================
-    ' DELETE RECORD
+    ' DELETE
     ' =========================
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-        If DataGridView1.SelectedRows.Count = 0 Then
-            MsgBox("Select a row to delete")
-            Exit Sub
-        End If
+        If DataGridView1.SelectedRows.Count = 0 Then Exit Sub
+        If MsgBox("Delete selected record?", MsgBoxStyle.YesNo) <> MsgBoxResult.Yes Then Exit Sub
+        Dim r = DataGridView1.SelectedRows(0)
 
         Try
-            If connect.State = ConnectionState.Closed Then connect.Open()
+            If connect.State <> ConnectionState.Open Then connect.Open()
             Using cmd As New OleDbCommand("", connect)
                 Select Case currentTable
                     Case "login"
-                        cmd.CommandText = "DELETE FROM [login] WHERE EID=?"
-                        cmd.Parameters.Add("?", OleDbType.Integer).Value = DataGridView1.SelectedRows(0).Cells("EID").Value
-
+                        cmd.CommandText = "DELETE FROM login WHERE EID=?"
+                        cmd.Parameters.AddWithValue("?", r.Cells("EID").Value)
                     Case "request"
-                        cmd.CommandText = "DELETE FROM [request] WHERE EID=?"
-                        cmd.Parameters.Add("?", OleDbType.Integer).Value = DataGridView1.SelectedRows(0).Cells("EID").Value
-
+                        cmd.CommandText = "DELETE FROM request WHERE UID=?"
+                        cmd.Parameters.AddWithValue("?", r.Cells("UID").Value)
                     Case "attendance"
-                        cmd.CommandText = "DELETE FROM [attendance] WHERE Username=?"
-                        cmd.Parameters.Add("?", OleDbType.VarChar).Value = DataGridView1.SelectedRows(0).Cells("Username").Value
+                        cmd.CommandText = "DELETE FROM attendance WHERE Username=?"
+                        cmd.Parameters.AddWithValue("?", r.Cells("Username").Value)
                 End Select
-
                 cmd.ExecuteNonQuery()
-                MsgBox("Record deleted")
-                AddLog("Delete", $"Deleted row in {currentTable} (ID: {DataGridView1.SelectedRows(0).Cells(0).Value})")
-                LoadTable(currentTable)
             End Using
-
+            LoadTable(currentTable)
+            AddLog("Delete", currentTable)
         Catch ex As Exception
-            MsgBox("Delete error: " & ex.Message)
+            MsgBox(ex.Message)
         Finally
             connect.Close()
         End Try
     End Sub
 
     ' =========================
-    ' SEARCH
+    ' REFRESH
     ' =========================
-    Private Sub TextBox1_TextChanged(sender As Object, e As EventArgs) Handles TextBox1.TextChanged
-        If dt Is Nothing Then Exit Sub
-
-        Dim filter As String = TextBox1.Text.Trim().Replace("'", "''")
-        Dim dv As New DataView(dt)
-        Dim rowFilter As String = ""
-
-        ' Text filter including all fields
-        If filter <> "" Then
-            Dim textFilter As String = ""
-            Select Case currentTable
-                Case "login"
-                    textFilter = $"(EID LIKE '%{filter}%' OR username LIKE '%{filter}%' OR FullName LIKE '%{filter}%' OR MobileN LIKE '%{filter}%' OR Email LIKE '%{filter}%' OR Address LIKE '%{filter}%')"
-                Case "request"
-                    textFilter = $"(EID LIKE '%{filter}%' OR FullName LIKE '%{filter}%' OR Category LIKE '%{filter}%' OR [Request] LIKE '%{filter}%' OR Status LIKE '%{filter}%')"
-                Case "attendance"
-                    textFilter = $"(Username LIKE '%{filter}%' OR FullName LIKE '%{filter}%' OR LoginTime LIKE '%{filter}%' OR Status LIKE '%{filter}%')"
-            End Select
-
-            rowFilter = textFilter
-        End If
-
-        ' Date filter using start/end of day
-        If DateTimePicker1.Checked Then
-            Dim startDate As Date = DateTimePicker1.Value.Date
-            Dim nextDate As Date = startDate.AddDays(1)
-            Dim dateFilter As String = ""
-
-            Select Case currentTable
-                Case "request"
-                    dateFilter = $"RequestDate IS NOT NULL AND RequestDate >= #{startDate:MM/dd/yyyy}# AND RequestDate < #{nextDate:MM/dd/yyyy}#"
-                Case "attendance"
-                    dateFilter = $"LoginDate IS NOT NULL AND LoginDate >= #{startDate:MM/dd/yyyy}# AND LoginDate < #{nextDate:MM/dd/yyyy}#"
-            End Select
-
-            If dateFilter <> "" Then
-                If rowFilter <> "" Then rowFilter &= " AND "
-                rowFilter &= dateFilter
-            End If
-        End If
-
-        dv.RowFilter = rowFilter
-        DataGridView1.DataSource = dv
-
-        AddLog("Search", $"Searched '{filter}' with date '{If(DateTimePicker1.Checked, DateTimePicker1.Value.ToShortDateString(), "N/A")}' in {currentTable}")
+    Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+        LoadTable(currentTable)
+        AddLog("Refresh", currentTable)
     End Sub
 
-    Private Sub DateTimePicker1_ValueChanged(sender As Object, e As EventArgs) Handles DateTimePicker1.ValueChanged
-        ' Trigger search when date changes
-        TextBox1_TextChanged(Nothing, Nothing)
+    ' =========================
+    ' OPEN LOGS
+    ' =========================
+    Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
+        MsgBox("Open logs functionality placeholder (Form8 undefined).")
     End Sub
+
     ' =========================
     ' LOGOUT
     ' =========================
     Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
-        If MsgBox("Are you sure you want to logout?", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
-            AddLog("Logout", "Admin logged out")
-            Dim f As New Form3
-            f.Show()
-            Close()
-        End If
+        AddLog("Logout", "Admin logged out")
+        Dim f As New Form3
+        f.Show()
+        Close()
     End Sub
 
 End Class

@@ -49,6 +49,12 @@ Partial Class Form5
         DateTimePicker1 = New DateTimePicker()
         Button8 = New Button()
         Button9 = New Button()
+        Label17 = New Label()
+        Label18 = New Label()
+        Label19 = New Label()
+        Label20 = New Label()
+        Label21 = New Label()
+        Label22 = New Label()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
@@ -310,11 +316,77 @@ Partial Class Form5
         Button9.Text = "Edit Info"
         Button9.UseVisualStyleBackColor = True
         ' 
+        ' Label17
+        ' 
+        Label17.AutoSize = True
+        Label17.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label17.Location = New Point(232, 241)
+        Label17.Name = "Label17"
+        Label17.Size = New Size(49, 23)
+        Label17.TabIndex = 35
+        Label17.Text = "Age"
+        ' 
+        ' Label18
+        ' 
+        Label18.AutoSize = True
+        Label18.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label18.Location = New Point(232, 277)
+        Label18.Name = "Label18"
+        Label18.Size = New Size(49, 23)
+        Label18.TabIndex = 36
+        Label18.Text = "Age"
+        ' 
+        ' Label19
+        ' 
+        Label19.AutoSize = True
+        Label19.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label19.Location = New Point(232, 177)
+        Label19.Name = "Label19"
+        Label19.Size = New Size(90, 23)
+        Label19.TabIndex = 37
+        Label19.Text = "Gender"
+        ' 
+        ' Label20
+        ' 
+        Label20.AutoSize = True
+        Label20.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label20.Location = New Point(232, 200)
+        Label20.Name = "Label20"
+        Label20.Size = New Size(90, 23)
+        Label20.TabIndex = 38
+        Label20.Text = "Gender"
+        ' 
+        ' Label21
+        ' 
+        Label21.AutoSize = True
+        Label21.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label21.Location = New Point(232, 138)
+        Label21.Name = "Label21"
+        Label21.Size = New Size(147, 23)
+        Label21.TabIndex = 39
+        Label21.Text = "Department"
+        ' 
+        ' Label22
+        ' 
+        Label22.AutoSize = True
+        Label22.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label22.Location = New Point(232, 115)
+        Label22.Name = "Label22"
+        Label22.Size = New Size(147, 23)
+        Label22.TabIndex = 40
+        Label22.Text = "Department"
+        ' 
         ' Form5
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1033, 661)
+        Controls.Add(Label22)
+        Controls.Add(Label21)
+        Controls.Add(Label20)
+        Controls.Add(Label19)
+        Controls.Add(Label18)
+        Controls.Add(Label17)
         Controls.Add(Button9)
         Controls.Add(Button8)
         Controls.Add(DateTimePicker1)
@@ -377,4 +449,10 @@ Partial Class Form5
     Friend WithEvents DateTimePicker1 As DateTimePicker
     Friend WithEvents Button8 As Button
     Friend WithEvents Button9 As Button
+    Friend WithEvents Label17 As Label
+    Friend WithEvents Label18 As Label
+    Friend WithEvents Label19 As Label
+    Friend WithEvents Label20 As Label
+    Friend WithEvents Label21 As Label
+    Friend WithEvents Label22 As Label
 End Class

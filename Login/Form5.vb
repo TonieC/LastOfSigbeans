@@ -10,9 +10,7 @@ Imports iTextSharp.text
 Imports iTextSharp.text.pdf
 Imports System.IO
 
-
 Public Class Form5
-
 
     Private loggedInUsername As String
     Private connect As New OleDbConnection(
@@ -46,8 +44,8 @@ Public Class Form5
             If connect.State = ConnectionState.Closed Then connect.Open()
 
             Dim sql As String =
-                "SELECT EID, username, FullName, MobileN, Email, Address " &
-                "FROM [login] WHERE username=?"
+            "SELECT EID, username, FullName, MobileN, Email, Address, Gender, Age, Department " &
+            "FROM [login] WHERE username=?"
 
             Using cmd As New OleDbCommand(sql, connect)
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
@@ -60,6 +58,9 @@ Public Class Form5
                         Label8.Text = reader("MobileN").ToString()
                         Label10.Text = reader("Email").ToString()
                         Label12.Text = reader("Address").ToString()
+                        Label20.Text = reader("Gender").ToString()
+                        Label18.Text = reader("Age").ToString()
+                        Label21.Text = reader("Department").ToString()
                     Else
                         MsgBox("Employee record not found")
                     End If
@@ -138,7 +139,6 @@ Public Class Form5
         End If
     End Sub
 
-
     ' =========================
     ' Last Leave Request Status
     ' =========================
@@ -168,19 +168,17 @@ Public Class Form5
     ' =========================
     Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
         Dim leaveForm As New Form7(loggedInUsername)
-        leaveForm.ShowDialog() ' blocks until leave form closed
-
-        ' Refresh last request status if user submitted a new request
+        leaveForm.ShowDialog()
         Label16_Click(Label16, EventArgs.Empty)
     End Sub
 
+    ' =========================
+    ' Change Password
+    ' =========================
     Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
-
-        ' 1. Ask for current password
         Dim oldPassword As String = InputBox("Enter your current password:", "Change Password")
         If oldPassword = "" Then Exit Sub
 
-        ' 2. Verify old password from database
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
 
@@ -189,28 +187,20 @@ Public Class Form5
                 checkCmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
                 checkCmd.Parameters.Add("?", OleDbType.VarChar).Value = oldPassword
 
-                Dim exists As Integer = Convert.ToInt32(checkCmd.ExecuteScalar())
-                If exists = 0 Then
+                If Convert.ToInt32(checkCmd.ExecuteScalar()) = 0 Then
                     MsgBox("Incorrect current password.", MsgBoxStyle.Critical)
                     Exit Sub
                 End If
             End Using
 
-            ' 3. Ask for new password
             Dim newPassword As String = InputBox("Enter your NEW password:", "Change Password")
-            If newPassword = "" Then
-                MsgBox("New password cannot be empty.")
-                Exit Sub
-            End If
-
-            ' 4. Confirm new password
+            If newPassword = "" Then Exit Sub
             Dim confirmPassword As String = InputBox("Confirm your NEW password:", "Change Password")
             If newPassword <> confirmPassword Then
                 MsgBox("Passwords do not match.", MsgBoxStyle.Critical)
                 Exit Sub
             End If
 
-            ' 5. Update password
             Dim updateSql As String = "UPDATE [login] SET [password]=? WHERE username=?"
             Using updateCmd As New OleDbCommand(updateSql, connect)
                 updateCmd.Parameters.Add("?", OleDbType.VarChar).Value = newPassword
@@ -219,13 +209,11 @@ Public Class Form5
             End Using
 
             MsgBox("Password changed successfully.", MsgBoxStyle.Information)
-
         Catch ex As Exception
             MsgBox("Password change error: " & ex.Message)
         Finally
             connect.Close()
         End Try
-
     End Sub
 
     ' =========================
@@ -236,23 +224,17 @@ Public Class Form5
             If connect.State = ConnectionState.Closed Then connect.Open()
 
             Dim sql As String = "SELECT LoginDate, LoginTime, Status FROM [attendance] WHERE Username=? ORDER BY LoginDate DESC, LoginTime DESC"
-
             Using cmd As New OleDbCommand(sql, connect)
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
-
                 Dim adapter As New OleDbDataAdapter(cmd)
                 Dim dt As New DataTable()
                 adapter.Fill(dt)
-
                 DataGridView1.DataSource = dt
-
-                ' Optional: make columns look nicer
                 DataGridView1.Columns("LoginDate").HeaderText = "Date"
                 DataGridView1.Columns("LoginTime").HeaderText = "Time"
                 DataGridView1.Columns("Status").HeaderText = "Status"
                 DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
             End Using
-
         Catch ex As Exception
             MsgBox("Error loading attendance: " & ex.Message)
         Finally
@@ -261,49 +243,33 @@ Public Class Form5
     End Sub
 
     ' =========================
-    ' Switch to showing Attendance
+    ' Switch Attendance / Leave Requests
     ' =========================
-    Private Sub Label14_Click(sender As Object, e As EventArgs) Handles Label14.Click
-        LoadAttendanceData()
-    End Sub
-
-    ' =========================
-    ' Switch to showing Leave Requests
-    ' =========================
-    ' Track current view
     Private showingAttendance As Boolean = True
-
     Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
         If showingAttendance Then
-            ' Switch to Leave Requests
             Try
                 If connect.State = ConnectionState.Closed Then connect.Open()
-
                 Dim sql = "SELECT Request, Status FROM [request] WHERE EID=? ORDER BY RequestDate DESC"
                 Using cmd As New OleDbCommand(sql, connect)
-                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = Label2.Text ' EID of logged-in user
-
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = Label2.Text
                     Dim adapter As New OleDbDataAdapter(cmd)
                     Dim dt As New DataTable
                     adapter.Fill(dt)
-
                     DataGridView1.DataSource = dt
                     DataGridView1.Columns("Request").HeaderText = "Leave Request"
                     DataGridView1.Columns("Status").HeaderText = "Status"
                     DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
                 End Using
-
                 showingAttendance = False
                 Label14.Text = "Request Records"
                 Button7.Text = "Show Attendance"
-
             Catch ex As Exception
                 MsgBox("Error loading leave requests: " & ex.Message)
             Finally
                 connect.Close()
             End Try
         Else
-            ' Switch to Attendance
             LoadAttendanceData()
             showingAttendance = True
             Label14.Text = "Attendance Records"
@@ -314,30 +280,20 @@ Public Class Form5
     Private Sub DateTimePicker1_ValueChanged(sender As Object, e As EventArgs) Handles DateTimePicker1.ValueChanged
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
-
-            Dim sql As String
-            Dim cmd As New OleDbCommand()
-            cmd.Connection = connect
-
+            Dim cmd As New OleDbCommand() With {.Connection = connect}
             If showingAttendance Then
-                ' Filter attendance
-                sql = "SELECT LoginDate, LoginTime, Status FROM [attendance] WHERE Username=? AND LoginDate=? ORDER BY LoginDate DESC, LoginTime DESC"
-                cmd.CommandText = sql
+                cmd.CommandText = "SELECT LoginDate, LoginTime, Status FROM [attendance] WHERE Username=? AND LoginDate=? ORDER BY LoginDate DESC, LoginTime DESC"
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
                 cmd.Parameters.Add("?", OleDbType.Date).Value = DateTimePicker1.Value.Date
             Else
-                ' Filter leave requests (assuming RequestDate exists)
-                sql = "SELECT Request, Status FROM [request] WHERE EID=? AND RequestDate=? ORDER BY RequestDate DESC"
-                cmd.CommandText = sql
+                cmd.CommandText = "SELECT Request, Status FROM [request] WHERE EID=? AND RequestDate=? ORDER BY RequestDate DESC"
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = Label2.Text
                 cmd.Parameters.Add("?", OleDbType.Date).Value = DateTimePicker1.Value.Date
             End If
-
             Dim adapter As New OleDbDataAdapter(cmd)
             Dim dt As New DataTable()
             adapter.Fill(dt)
             DataGridView1.DataSource = dt
-
         Catch ex As Exception
             MsgBox("Error filtering by date: " & ex.Message)
         Finally
@@ -345,7 +301,9 @@ Public Class Form5
         End Try
     End Sub
 
-
+    ' =========================
+    ' Export to PDF
+    ' =========================
     Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
         If DataGridView1.Rows.Count = 0 Then
             MsgBox("No data to export.")
@@ -361,21 +319,15 @@ Public Class Form5
                     PdfWriter.GetInstance(doc, New FileStream(sfd.FileName, FileMode.Create))
                     doc.Open()
 
-                    ' Add title
-                    Dim title As String = If(showingAttendance, "Attendance Records", "Request Records")
-                    doc.Add(New Paragraph(title & " - " & DateTime.Now.ToString("g")))
+                    doc.Add(New Paragraph(If(showingAttendance, "Attendance Records", "Request Records") & " - " & DateTime.Now.ToString("g")))
                     doc.Add(New Paragraph(" "))
 
-                    ' Add table
                     Dim pdfTable As New PdfPTable(DataGridView1.Columns.Count)
                     pdfTable.WidthPercentage = 100
 
-                    ' Add headers
                     For Each col As DataGridViewColumn In DataGridView1.Columns
                         pdfTable.AddCell(New Phrase(col.HeaderText))
                     Next
-
-                    ' Add rows
                     For Each row As DataGridViewRow In DataGridView1.Rows
                         If Not row.IsNewRow Then
                             For Each cell As DataGridViewCell In row.Cells
@@ -383,85 +335,76 @@ Public Class Form5
                             Next
                         End If
                     Next
-
                     doc.Add(pdfTable)
                     doc.Close()
-
                     MsgBox("PDF exported successfully!")
-
                 Catch ex As Exception
                     MsgBox("Error exporting PDF: " & ex.Message)
                 End Try
             End If
         End Using
     End Sub
-    Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
-        ' Step 1: Confirm user wants to edit
-        If MsgBox("Do you want to change any of your profile information?", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "Confirm Edit") = MsgBoxResult.No Then
-            Exit Sub
-        End If
 
-        ' Step 2: Ask which field to change
-        Dim fieldToChange As String = InputBox("Which field do you want to change? (username, FullName, MobileN, Email, Address)", "Select Field").Trim()
+    ' =========================
+    ' Edit Profile (All editable fields except EID & Username)
+    ' =========================
+    Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
+        If MsgBox("Do you want to change any of your profile information?", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "Confirm Edit") = MsgBoxResult.No Then Exit Sub
+
+        Dim fieldToChange As String = InputBox("Which field do you want to change? (FullName, MobileN, Email, Address, Gender, Age, Department)", "Select Field").Trim()
         If String.IsNullOrEmpty(fieldToChange) Then Exit Sub
 
-        ' Validate field
-        Dim validFields As String() = {"username", "FullName", "MobileN", "Email", "Address"}
+        Dim validFields As String() = {"FullName", "MobileN", "Email", "Address", "Gender", "Age", "Department"}
         If Not validFields.Contains(fieldToChange) Then
             MsgBox("Invalid field selected.")
             Exit Sub
         End If
 
-        ' Step 3: Ask for new value
         Dim newValue As String = InputBox($"Enter new value for {fieldToChange}:", "New Value").Trim()
         If String.IsNullOrEmpty(newValue) Then
             MsgBox("New value cannot be empty.")
             Exit Sub
         End If
 
-        ' Step 4: Ask for password to verify
         Dim password As String = InputBox("Enter your current password to confirm changes:", "Verify Password").Trim()
         If String.IsNullOrEmpty(password) Then Exit Sub
 
-        ' Step 5: Verify password and update
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
 
-            ' Check password
             Dim checkSql As String = "SELECT COUNT(*) FROM [login] WHERE username=? AND [password]=?"
             Using checkCmd As New OleDbCommand(checkSql, connect)
                 checkCmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
                 checkCmd.Parameters.Add("?", OleDbType.VarChar).Value = password
-
-                Dim exists As Integer = Convert.ToInt32(checkCmd.ExecuteScalar())
-                If exists = 0 Then
+                If Convert.ToInt32(checkCmd.ExecuteScalar()) = 0 Then
                     MsgBox("Incorrect password. Cannot update profile.", MsgBoxStyle.Critical)
                     Exit Sub
                 End If
             End Using
 
-            ' Update the selected field
             Dim updateSql As String = $"UPDATE [login] SET [{fieldToChange}]=? WHERE username=?"
             Using updateCmd As New OleDbCommand(updateSql, connect)
-                updateCmd.Parameters.Add("?", OleDbType.VarChar).Value = newValue
+                If fieldToChange = "Age" Then
+                    updateCmd.Parameters.Add("?", OleDbType.Integer).Value = CInt(newValue)
+                Else
+                    updateCmd.Parameters.Add("?", OleDbType.VarChar).Value = newValue
+                End If
                 updateCmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
-                Dim rowsAffected As Integer = updateCmd.ExecuteNonQuery()
-                If rowsAffected > 0 Then
+                If updateCmd.ExecuteNonQuery() > 0 Then
                     MsgBox($"{fieldToChange} updated successfully!")
-
-                    ' Update local label if applicable
                     Select Case fieldToChange
-                        Case "username" : Label4.Text = newValue
                         Case "FullName" : Label6.Text = newValue
                         Case "MobileN" : Label8.Text = newValue
                         Case "Email" : Label10.Text = newValue
                         Case "Address" : Label12.Text = newValue
+                        Case "Gender" : Label20.Text = newValue
+                        Case "Age" : Label18.Text = newValue
+                        Case "Department" : Label21.Text = newValue
                     End Select
                 Else
                     MsgBox("Update failed. No changes made.")
                 End If
             End Using
-
         Catch ex As Exception
             MsgBox("Error updating profile: " & ex.Message)
         Finally
@@ -470,4 +413,3 @@ Public Class Form5
     End Sub
 
 End Class
-
