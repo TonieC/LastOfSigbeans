@@ -55,6 +55,7 @@ Partial Class Form5
         Label20 = New Label()
         Label21 = New Label()
         Label22 = New Label()
+        Button4 = New Button()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
@@ -63,7 +64,7 @@ Partial Class Form5
         ' 
         Label1.AutoSize = True
         Label1.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label1.Location = New Point(46, 115)
+        Label1.Location = New Point(44, 87)
         Label1.Name = "Label1"
         Label1.Size = New Size(114, 23)
         Label1.TabIndex = 0
@@ -73,17 +74,17 @@ Partial Class Form5
         ' 
         Label2.AutoSize = True
         Label2.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label2.Location = New Point(46, 151)
+        Label2.Location = New Point(43, 110)
         Label2.Name = "Label2"
-        Label2.Size = New Size(81, 23)
+        Label2.Size = New Size(33, 23)
         Label2.TabIndex = 1
-        Label2.Text = "Label2"
+        Label2.Text = "ID"
         ' 
         ' Label3
         ' 
         Label3.AutoSize = True
         Label3.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label3.Location = New Point(46, 204)
+        Label3.Location = New Point(43, 141)
         Label3.Name = "Label3"
         Label3.Size = New Size(115, 23)
         Label3.TabIndex = 2
@@ -93,17 +94,17 @@ Partial Class Form5
         ' 
         Label4.AutoSize = True
         Label4.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label4.Location = New Point(45, 227)
+        Label4.Location = New Point(42, 164)
         Label4.Name = "Label4"
-        Label4.Size = New Size(83, 23)
+        Label4.Size = New Size(115, 23)
         Label4.TabIndex = 3
-        Label4.Text = "Label4"
+        Label4.Text = "Username"
         ' 
         ' Label5
         ' 
         Label5.AutoSize = True
         Label5.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label5.Location = New Point(45, 281)
+        Label5.Location = New Point(42, 197)
         Label5.Name = "Label5"
         Label5.Size = New Size(116, 23)
         Label5.TabIndex = 4
@@ -113,17 +114,17 @@ Partial Class Form5
         ' 
         Label6.AutoSize = True
         Label6.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label6.Location = New Point(46, 304)
+        Label6.Location = New Point(43, 220)
         Label6.Name = "Label6"
-        Label6.Size = New Size(82, 23)
+        Label6.Size = New Size(111, 23)
         Label6.TabIndex = 5
-        Label6.Text = "Label6"
+        Label6.Text = "FullName"
         ' 
         ' Label7
         ' 
         Label7.AutoSize = True
         Label7.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label7.Location = New Point(46, 355)
+        Label7.Location = New Point(43, 254)
         Label7.Name = "Label7"
         Label7.Size = New Size(174, 23)
         Label7.TabIndex = 6
@@ -133,17 +134,17 @@ Partial Class Form5
         ' 
         Label8.AutoSize = True
         Label8.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label8.Location = New Point(46, 378)
+        Label8.Location = New Point(43, 277)
         Label8.Name = "Label8"
-        Label8.Size = New Size(83, 23)
+        Label8.Size = New Size(169, 23)
         Label8.TabIndex = 7
-        Label8.Text = "Label8"
+        Label8.Text = "MobileNumber"
         ' 
         ' Label9
         ' 
         Label9.AutoSize = True
         Label9.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label9.Location = New Point(44, 419)
+        Label9.Location = New Point(43, 310)
         Label9.Name = "Label9"
         Label9.Size = New Size(70, 23)
         Label9.TabIndex = 8
@@ -153,17 +154,17 @@ Partial Class Form5
         ' 
         Label10.AutoSize = True
         Label10.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label10.Location = New Point(46, 455)
+        Label10.Location = New Point(42, 333)
         Label10.Name = "Label10"
-        Label10.Size = New Size(92, 23)
+        Label10.Size = New Size(70, 23)
         Label10.TabIndex = 9
-        Label10.Text = "Label10"
+        Label10.Text = "Email"
         ' 
         ' Label11
         ' 
         Label11.AutoSize = True
         Label11.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label11.Location = New Point(50, 500)
+        Label11.Location = New Point(44, 368)
         Label11.Name = "Label11"
         Label11.Size = New Size(101, 23)
         Label11.TabIndex = 10
@@ -173,11 +174,11 @@ Partial Class Form5
         ' 
         Label12.AutoSize = True
         Label12.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label12.Location = New Point(50, 536)
+        Label12.Location = New Point(47, 391)
         Label12.Name = "Label12"
-        Label12.Size = New Size(90, 23)
+        Label12.Size = New Size(70, 23)
         Label12.TabIndex = 11
-        Label12.Text = "Label12"
+        Label12.Text = "Email"
         ' 
         ' Button1
         ' 
@@ -191,7 +192,7 @@ Partial Class Form5
         ' 
         ' PictureBox1
         ' 
-        PictureBox1.Location = New Point(422, 74)
+        PictureBox1.Location = New Point(422, 76)
         PictureBox1.Name = "PictureBox1"
         PictureBox1.Size = New Size(190, 195)
         PictureBox1.TabIndex = 13
@@ -199,7 +200,7 @@ Partial Class Form5
         ' 
         ' Button2
         ' 
-        Button2.Location = New Point(545, 275)
+        Button2.Location = New Point(545, 277)
         Button2.Name = "Button2"
         Button2.Size = New Size(67, 34)
         Button2.TabIndex = 14
@@ -208,7 +209,7 @@ Partial Class Form5
         ' 
         ' Button3
         ' 
-        Button3.Location = New Point(422, 275)
+        Button3.Location = New Point(422, 277)
         Button3.Name = "Button3"
         Button3.Size = New Size(67, 34)
         Button3.TabIndex = 15
@@ -219,11 +220,11 @@ Partial Class Form5
         ' 
         Label13.AutoSize = True
         Label13.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label13.Location = New Point(422, 38)
+        Label13.Location = New Point(422, 50)
         Label13.Name = "Label13"
-        Label13.Size = New Size(179, 23)
+        Label13.Size = New Size(98, 23)
         Label13.TabIndex = 18
-        Label13.Text = "Unique QR Code"
+        Label13.Text = "QR Code"
         ' 
         ' Label15
         ' 
@@ -256,7 +257,7 @@ Partial Class Form5
         ' 
         ' Button6
         ' 
-        Button6.Location = New Point(459, 315)
+        Button6.Location = New Point(460, 317)
         Button6.Name = "Button6"
         Button6.Size = New Size(120, 23)
         Button6.TabIndex = 28
@@ -309,7 +310,7 @@ Partial Class Form5
         ' 
         ' Button9
         ' 
-        Button9.Location = New Point(50, 596)
+        Button9.Location = New Point(157, 23)
         Button9.Name = "Button9"
         Button9.Size = New Size(67, 34)
         Button9.TabIndex = 34
@@ -320,7 +321,7 @@ Partial Class Form5
         ' 
         Label17.AutoSize = True
         Label17.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label17.Location = New Point(232, 241)
+        Label17.Location = New Point(43, 527)
         Label17.Name = "Label17"
         Label17.Size = New Size(49, 23)
         Label17.TabIndex = 35
@@ -330,7 +331,7 @@ Partial Class Form5
         ' 
         Label18.AutoSize = True
         Label18.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label18.Location = New Point(232, 277)
+        Label18.Location = New Point(43, 550)
         Label18.Name = "Label18"
         Label18.Size = New Size(49, 23)
         Label18.TabIndex = 36
@@ -340,7 +341,7 @@ Partial Class Form5
         ' 
         Label19.AutoSize = True
         Label19.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label19.Location = New Point(232, 177)
+        Label19.Location = New Point(43, 471)
         Label19.Name = "Label19"
         Label19.Size = New Size(90, 23)
         Label19.TabIndex = 37
@@ -350,7 +351,7 @@ Partial Class Form5
         ' 
         Label20.AutoSize = True
         Label20.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label20.Location = New Point(232, 200)
+        Label20.Location = New Point(43, 494)
         Label20.Name = "Label20"
         Label20.Size = New Size(90, 23)
         Label20.TabIndex = 38
@@ -360,7 +361,7 @@ Partial Class Form5
         ' 
         Label21.AutoSize = True
         Label21.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label21.Location = New Point(232, 138)
+        Label21.Location = New Point(43, 442)
         Label21.Name = "Label21"
         Label21.Size = New Size(147, 23)
         Label21.TabIndex = 39
@@ -370,17 +371,27 @@ Partial Class Form5
         ' 
         Label22.AutoSize = True
         Label22.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label22.Location = New Point(232, 115)
+        Label22.Location = New Point(43, 419)
         Label22.Name = "Label22"
         Label22.Size = New Size(147, 23)
         Label22.TabIndex = 40
         Label22.Text = "Department"
         ' 
+        ' Button4
+        ' 
+        Button4.Location = New Point(230, 32)
+        Button4.Name = "Button4"
+        Button4.Size = New Size(120, 25)
+        Button4.TabIndex = 41
+        Button4.Text = "View Dashboard"
+        Button4.UseVisualStyleBackColor = True
+        ' 
         ' Form5
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(1033, 661)
+        ClientSize = New Size(1038, 671)
+        Controls.Add(Button4)
         Controls.Add(Label22)
         Controls.Add(Label21)
         Controls.Add(Label20)
@@ -455,4 +466,5 @@ Partial Class Form5
     Friend WithEvents Label20 As Label
     Friend WithEvents Label21 As Label
     Friend WithEvents Label22 As Label
+    Friend WithEvents Button4 As Button
 End Class

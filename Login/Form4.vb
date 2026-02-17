@@ -1,5 +1,8 @@
 ﻿Imports System.Data
 Imports System.Data.OleDb
+Imports iTextSharp.text
+Imports iTextSharp.text.pdf
+Imports System.IO
 
 Public Class Form4
 
@@ -26,11 +29,11 @@ Public Class Form4
     End Sub
 
     ' =========================
-    ' LOGGING
+    ' ADD LOG FUNCTION
     ' =========================
     Private Sub AddLog(action As String, details As String)
         Try
-            If connect.State <> ConnectionState.Open Then connect.Open()
+            If connect.State = ConnectionState.Closed Then connect.Open()
             Using cmd As New OleDbCommand(
                 "INSERT INTO logs (Username, ActionDate, [Action], Details) VALUES (?,?,?,?)", connect)
                 cmd.Parameters.AddWithValue("?", loggedInAdmin)
@@ -40,6 +43,7 @@ Public Class Form4
                 cmd.ExecuteNonQuery()
             End Using
         Catch
+            ' Logging must NEVER interrupt workflow
         Finally
             connect.Close()
         End Try
@@ -50,18 +54,19 @@ Public Class Form4
     ' =========================
     Private Sub LoadTable(tableName As String)
         Try
-            If connect.State <> ConnectionState.Open Then connect.Open()
+            If connect.State = ConnectionState.Closed Then connect.Open()
             dt = New DataTable()
 
             Dim sql As String = ""
-
             Select Case tableName
                 Case "login"
-                    sql = "SELECT EID, username, password, Role, FullName, MobileN, Email, Address FROM login"
+                    sql = "SELECT EID, username, [password], Role, FullName, MobileN, Email, Address FROM login"
                 Case "request"
                     sql = "SELECT UID, EID, FullName, Category, [Request], Status, RequestDate FROM request"
                 Case "attendance"
                     sql = "SELECT Username, FullName, LoginDate, LoginTime, Status FROM attendance"
+                Case "logs"
+                    sql = "SELECT Username, [Action], ActionDate, Details FROM logs ORDER BY ActionDate DESC"
             End Select
 
             Using da As New OleDbDataAdapter(sql, connect)
@@ -73,12 +78,12 @@ Public Class Form4
             DataGridView1.MultiSelect = False
             DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
             DataGridView1.ReadOnly = False
-            DataGridView1.Columns(0).ReadOnly = True
+            If dt.Columns.Count > 0 Then DataGridView1.Columns(0).ReadOnly = True
 
             currentTable = tableName
-            AddLog("View", tableName)
+
         Catch ex As Exception
-            MsgBox(ex.Message)
+            MsgBox("Load error: " & ex.Message)
         Finally
             connect.Close()
         End Try
@@ -100,40 +105,42 @@ Public Class Form4
     End Sub
 
     ' =========================
-    ' ADD (LOGIN ONLY)
+    ' ADD EMPLOYEE
     ' =========================
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
         If currentTable <> "login" Then Exit Sub
 
-        ' Replace FormAddEmployee with a simple input dialog as placeholder
-        Dim username As String = InputBox("Enter username for new employee:", "Add Employee")
-        If String.IsNullOrEmpty(username) Then Exit Sub
+        Dim username As String = InputBox("Enter username for new employee:")
+        If String.IsNullOrWhiteSpace(username) Then Exit Sub
 
         Try
-            If connect.State <> ConnectionState.Open Then connect.Open()
-            Using cmd As New OleDbCommand("INSERT INTO login (username) VALUES (?)", connect)
+            If connect.State = ConnectionState.Closed Then connect.Open()
+            Using cmd As New OleDbCommand(
+                "INSERT INTO login (username) VALUES (?)", connect)
                 cmd.Parameters.AddWithValue("?", username)
                 cmd.ExecuteNonQuery()
             End Using
+
+            AddLog("ADD_EMPLOYEE", $"Username={username}")
             LoadTable("login")
-            AddLog("Add", $"Employee '{username}' added")
         Catch ex As Exception
-            MsgBox(ex.Message)
+            MsgBox("Add error: " & ex.Message)
         Finally
             connect.Close()
         End Try
     End Sub
 
     ' =========================
-    ' UPDATE
+    ' UPDATE RECORD
     ' =========================
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         If DataGridView1.SelectedRows.Count = 0 Then Exit Sub
         Dim r = DataGridView1.SelectedRows(0)
 
         Try
-            If connect.State <> ConnectionState.Open Then connect.Open()
+            If connect.State = ConnectionState.Closed Then connect.Open()
             Using cmd As New OleDbCommand("", connect)
+
                 Select Case currentTable
                     Case "login"
                         cmd.CommandText =
@@ -151,75 +158,129 @@ Public Class Form4
                         cmd.CommandText = "UPDATE request SET Status=? WHERE UID=?"
                         cmd.Parameters.AddWithValue("?", r.Cells("Status").Value)
                         cmd.Parameters.AddWithValue("?", r.Cells("UID").Value)
+
                     Case "attendance"
                         cmd.CommandText = "UPDATE attendance SET Status=? WHERE Username=?"
                         cmd.Parameters.AddWithValue("?", r.Cells("Status").Value)
                         cmd.Parameters.AddWithValue("?", r.Cells("Username").Value)
                 End Select
+
                 cmd.ExecuteNonQuery()
             End Using
+
+            AddLog("UPDATE_RECORD", currentTable)
             LoadTable(currentTable)
-            AddLog("Update", currentTable)
+
         Catch ex As Exception
-            MsgBox(ex.Message)
+            MsgBox("Update error: " & ex.Message)
         Finally
             connect.Close()
         End Try
     End Sub
 
     ' =========================
-    ' DELETE
+    ' DELETE RECORD
     ' =========================
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
         If DataGridView1.SelectedRows.Count = 0 Then Exit Sub
         If MsgBox("Delete selected record?", MsgBoxStyle.YesNo) <> MsgBoxResult.Yes Then Exit Sub
+
         Dim r = DataGridView1.SelectedRows(0)
 
         Try
-            If connect.State <> ConnectionState.Open Then connect.Open()
+            If connect.State = ConnectionState.Closed Then connect.Open()
             Using cmd As New OleDbCommand("", connect)
+
                 Select Case currentTable
                     Case "login"
                         cmd.CommandText = "DELETE FROM login WHERE EID=?"
                         cmd.Parameters.AddWithValue("?", r.Cells("EID").Value)
+
                     Case "request"
                         cmd.CommandText = "DELETE FROM request WHERE UID=?"
                         cmd.Parameters.AddWithValue("?", r.Cells("UID").Value)
+
                     Case "attendance"
                         cmd.CommandText = "DELETE FROM attendance WHERE Username=?"
                         cmd.Parameters.AddWithValue("?", r.Cells("Username").Value)
                 End Select
+
                 cmd.ExecuteNonQuery()
             End Using
+
+            AddLog("DELETE_RECORD", currentTable)
             LoadTable(currentTable)
-            AddLog("Delete", currentTable)
+
         Catch ex As Exception
-            MsgBox(ex.Message)
+            MsgBox("Delete error: " & ex.Message)
         Finally
             connect.Close()
         End Try
     End Sub
 
     ' =========================
-    ' REFRESH
+    ' REFRESH TABLE
     ' =========================
     Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
         LoadTable(currentTable)
-        AddLog("Refresh", currentTable)
     End Sub
 
     ' =========================
-    ' OPEN LOGS
+    ' EXPORT PDF
+    ' =========================
+    Private Sub Button10_Click(sender As Object, e As EventArgs) Handles Button10.Click
+        If DataGridView1.Rows.Count = 0 Then Exit Sub
+
+        Using sfd As New SaveFileDialog With {
+            .Filter = "PDF (*.pdf)|*.pdf",
+            .FileName = currentTable & "_" & DateTime.Now.ToString("yyyyMMdd_HHmmss") & ".pdf"
+        }
+            If sfd.ShowDialog() <> DialogResult.OK Then Exit Sub
+
+            Dim doc As New Document(PageSize.A4.Rotate())
+            PdfWriter.GetInstance(doc, New FileStream(sfd.FileName, FileMode.Create))
+            doc.Open()
+
+            Dim table As New PdfPTable(DataGridView1.Columns.Count)
+            table.WidthPercentage = 100
+
+            For Each col As DataGridViewColumn In DataGridView1.Columns
+                table.AddCell(col.HeaderText)
+            Next
+
+            For Each row As DataGridViewRow In DataGridView1.Rows
+                If row.IsNewRow Then Continue For
+                For Each cell As DataGridViewCell In row.Cells
+                    table.AddCell(If(cell.Value, "").ToString())
+                Next
+            Next
+
+            doc.Add(table)
+            doc.Close()
+
+            AddLog("EXPORT_PDF", currentTable)
+            MsgBox("PDF exported.")
+        End Using
+    End Sub
+
+    ' =========================
+    ' VIEW LOGS
     ' =========================
     Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
-        MsgBox("Open logs functionality placeholder (Form8 undefined).")
+        Try
+            Dim logsForm As New Form8(loggedInAdmin)
+            logsForm.ShowDialog()
+            AddLog("VIEW_LOGS", "Opened logs viewer")
+        Catch ex As Exception
+            MsgBox("Error opening logs viewer: " & ex.Message)
+        End Try
     End Sub
 
     ' =========================
     ' LOGOUT
     ' =========================
     Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
-        AddLog("Logout", "Admin logged out")
+        AddLog("LOGOUT", "Admin logged out")
         Dim f As New Form3
         f.Show()
         Close()

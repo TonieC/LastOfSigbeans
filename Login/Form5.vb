@@ -13,13 +13,17 @@ Imports System.IO
 Public Class Form5
 
     Private loggedInUsername As String
+    Private loggedInRole As String
     Private connect As New OleDbConnection(
         "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Administrator\OneDrive\Documents\Login.accdb")
 
-    ' Constructor for Form5
-    Public Sub New(username As String)
+    ' =========================
+    ' Constructor
+    ' =========================
+    Public Sub New(username As String, role As String)
         InitializeComponent()
         loggedInUsername = username
+        loggedInRole = role.ToLower()
     End Sub
 
     ' =========================
@@ -28,12 +32,24 @@ Public Class Form5
     Private Sub Form5_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadEmployeeData()
         LoadAttendanceData()
-        Label14.Text = "Attendance Records" ' Default
+        Label14.Text = "Attendance Records"
         Button7.Text = "Show Leave Requests"
 
         If Label4.Text <> "" Then
             GenerateQRCode(Label4.Text)
         End If
+
+        ' ===== Role-based Button4 logic =====
+        Select Case loggedInRole
+            Case "admin"
+                Button4.Visible = True
+                Button4.Text = "Open Admin Panel"
+            Case "staff"
+                Button4.Visible = True
+                Button4.Text = "Open Staff Panel"
+            Case Else
+                Button4.Visible = False
+        End Select
     End Sub
 
     ' =========================
@@ -94,16 +110,9 @@ Public Class Form5
             Dim writer As New BarcodeWriter(Of Bitmap)() With {
                 .Renderer = renderer,
                 .Format = BarcodeFormat.QR_CODE,
-                .Options = New EncodingOptions() With {
-                    .Width = 200,
-                    .Height = 200,
-                    .Margin = 1
-                }
+                .Options = New EncodingOptions() With {.Width = 200, .Height = 200, .Margin = 1}
             }
-
-            Dim qrBitmap As Bitmap = writer.Write(qrText)
-            PictureBox1.Image = qrBitmap
-
+            PictureBox1.Image = writer.Write(qrText)
         Catch ex As Exception
             MsgBox("QR code generation error: " & ex.Message)
         End Try
@@ -140,22 +149,33 @@ Public Class Form5
     End Sub
 
     ' =========================
+    ' Admin/Staff Button
+    ' =========================
+    Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+        Select Case loggedInRole
+            Case "admin"
+                Dim adminForm As New Form4(loggedInUsername)
+                adminForm.Show()
+            Case "staff"
+                Dim staffForm As New Form6(loggedInUsername)
+                staffForm.Show()
+            Case Else
+                Button4.Visible = False
+        End Select
+    End Sub
+
+    ' =========================
     ' Last Leave Request Status
     ' =========================
     Private Sub Label16_Click(sender As Object, e As EventArgs) Handles Label16.Click
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
-
-            Dim sql As String =
-                "SELECT TOP 1 Status FROM [request] WHERE EID=? ORDER BY RequestDate DESC"
-
+            Dim sql As String = "SELECT TOP 1 Status FROM [request] WHERE EID=? ORDER BY RequestDate DESC"
             Using cmd As New OleDbCommand(sql, connect)
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = Label2.Text
-
                 Dim result = cmd.ExecuteScalar()
                 Label16.Text = If(result IsNot Nothing, result.ToString(), "No requests")
             End Using
-
         Catch ex As Exception
             MsgBox("Status load error: " & ex.Message)
         Finally
@@ -181,12 +201,10 @@ Public Class Form5
 
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
-
             Dim checkSql As String = "SELECT COUNT(*) FROM [login] WHERE username=? AND [password]=?"
             Using checkCmd As New OleDbCommand(checkSql, connect)
                 checkCmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
                 checkCmd.Parameters.Add("?", OleDbType.VarChar).Value = oldPassword
-
                 If Convert.ToInt32(checkCmd.ExecuteScalar()) = 0 Then
                     MsgBox("Incorrect current password.", MsgBoxStyle.Critical)
                     Exit Sub
@@ -222,7 +240,6 @@ Public Class Form5
     Private Sub LoadAttendanceData()
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
-
             Dim sql As String = "SELECT LoginDate, LoginTime, Status FROM [attendance] WHERE Username=? ORDER BY LoginDate DESC, LoginTime DESC"
             Using cmd As New OleDbCommand(sql, connect)
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
@@ -277,6 +294,9 @@ Public Class Form5
         End If
     End Sub
 
+    ' =========================
+    ' Date Filter
+    ' =========================
     Private Sub DateTimePicker1_ValueChanged(sender As Object, e As EventArgs) Handles DateTimePicker1.ValueChanged
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
@@ -346,7 +366,7 @@ Public Class Form5
     End Sub
 
     ' =========================
-    ' Edit Profile (All editable fields except EID & Username)
+    ' Edit Profile
     ' =========================
     Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
         If MsgBox("Do you want to change any of your profile information?", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "Confirm Edit") = MsgBoxResult.No Then Exit Sub
@@ -371,7 +391,6 @@ Public Class Form5
 
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
-
             Dim checkSql As String = "SELECT COUNT(*) FROM [login] WHERE username=? AND [password]=?"
             Using checkCmd As New OleDbCommand(checkSql, connect)
                 checkCmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
@@ -411,5 +430,4 @@ Public Class Form5
             connect.Close()
         End Try
     End Sub
-
 End Class
