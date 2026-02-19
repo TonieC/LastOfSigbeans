@@ -6,170 +6,212 @@ Imports System.IO
 
 Public Class Form6
 
-    Private connect As New OleDbConnection(
-        "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Administrator\OneDrive\Documents\Login.accdb")
+    ' =========================
+    ' CONNECTION STRING
+    ' =========================
+    Private ReadOnly connString As String =
+        "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Administrator\OneDrive\Documents\Login.accdb"
 
     Private dt As DataTable
     Private currentTable As String = "request"
     Private loggedInStaffUsername As String
 
     ' =========================
-    ' CONSTRUCTOR
+    ' CONSTRUCTOR (USERNAME REQUIRED)
     ' =========================
-    Public Sub New(Optional username As String = "")
+    Public Sub New(username As String)
         InitializeComponent()
+
+        If String.IsNullOrWhiteSpace(username) Then
+            Throw New Exception("Staff username is REQUIRED.")
+        End If
+
         loggedInStaffUsername = username
     End Sub
 
     ' =========================
-    ' FORM LOAD (NO LOGGING)
+    ' FORM LOAD
     ' =========================
-    Private Sub StaffDashboard_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    Private Sub Form6_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadTable("request")
+        AddLog("FORM_LOAD", "Staff dashboard loaded")
     End Sub
 
     ' =========================
-    ' LOGGING (USED SPARINGLY)
+    ' LOGGING (SEPARATE CONNECTION)
     ' =========================
     Private Sub AddLog(action As String, details As String)
-        Try
-            If connect.State = ConnectionState.Closed Then connect.Open()
-            Using cmd As New OleDbCommand(
-                "INSERT INTO [logs] (Username, ActionDate, [Action], Details) VALUES (?, ?, ?, ?)", connect)
-                cmd.Parameters.AddWithValue("?", loggedInStaffUsername)
-                cmd.Parameters.AddWithValue("?", DateTime.Now)
-                cmd.Parameters.AddWithValue("?", action)
-                cmd.Parameters.AddWithValue("?", details)
-                cmd.ExecuteNonQuery()
-            End Using
-        Catch
-            ' Logging must NEVER break the app
-        Finally
-            connect.Close()
-        End Try
+
+        Using logConn As New OleDbConnection(connString)
+            Try
+                logConn.Open()
+
+                Using cmd As New OleDbCommand(
+                    "INSERT INTO logs ([Username], ActionDate, [Action], Details) VALUES (?,?,?,?)", logConn)
+
+                    cmd.Parameters.Add("?", OleDbType.VarWChar).Value = loggedInStaffUsername
+                    cmd.Parameters.Add("?", OleDbType.Date).Value = DateTime.Now
+                    cmd.Parameters.Add("?", OleDbType.VarWChar).Value = action
+                    cmd.Parameters.Add("?", OleDbType.VarWChar).Value = details
+
+                    cmd.ExecuteNonQuery()
+                End Using
+
+            Catch ex As Exception
+                MsgBox("LOGGING FAILED: " & ex.Message)
+            End Try
+        End Using
+
     End Sub
 
     ' =========================
-    ' LOAD TABLE (NO LOGGING)
+    ' LOAD TABLES
     ' =========================
     Private Sub LoadTable(tableName As String)
-        Try
-            If connect.State = ConnectionState.Closed Then connect.Open()
 
-            dt = New DataTable()
-            Dim sql As String = ""
+        Using conn As New OleDbConnection(connString)
+            Try
+                conn.Open()
 
-            Select Case tableName
-                Case "login"
-                    sql = "SELECT EID, username, FullName, MobileN, Email, Address, Gender, Age, Department FROM [login]"
-                    Label2.Text = "Viewing: Employees"
+                dt = New DataTable()
+                Dim sql As String = ""
 
-                Case "request"
-                    sql = "SELECT UID, EID, FullName, Category, [Request], Status, RequestDate FROM [request]"
-                    Label2.Text = "Viewing: Leave Requests"
+                Select Case tableName
+                    Case "login"
+                        sql = "SELECT EID, Username, FullName, MobileN, Email, Address, Gender, Age, Department, Status FROM login"
+                        Label2.Text = "Viewing: Employees"
 
-                Case "attendance"
-                    sql = "SELECT Username, FullName, LoginDate, LoginTime, Status FROM [attendance]"
-                    Label2.Text = "Viewing: Attendance"
-            End Select
+                    Case "request"
+                        sql = "SELECT UID, EID, FullName, Category, [Request], Status, RequestDate FROM request"
+                        Label2.Text = "Viewing: Leave Requests"
 
-            Using da As New OleDbDataAdapter(sql, connect)
-                da.Fill(dt)
-            End Using
+                    Case "attendance"
+                        sql = "SELECT Username, FullName, LoginDate, LoginTime, Status FROM attendance"
+                        Label2.Text = "Viewing: Attendance"
+                End Select
 
-            DataGridView1.DataSource = dt
-            DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
-            DataGridView1.MultiSelect = False
-            DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-            DataGridView1.ReadOnly = True
+                Using da As New OleDbDataAdapter(sql, conn)
+                    da.Fill(dt)
+                End Using
 
-            If tableName = "request" Then
-                DataGridView1.ReadOnly = False
-                For Each c In {"UID", "EID", "FullName", "Category", "Request", "RequestDate"}
-                    DataGridView1.Columns(c).ReadOnly = True
-                Next
-            End If
+                DataGridView1.DataSource = dt
+                DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
+                DataGridView1.MultiSelect = False
+                DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+                DataGridView1.ReadOnly = True
 
-            currentTable = tableName
+                If tableName = "request" Then
+                    DataGridView1.ReadOnly = False
+                    For Each c In {"UID", "EID", "FullName", "Category", "Request", "RequestDate"}
+                        DataGridView1.Columns(c).ReadOnly = True
+                    Next
+                End If
 
-        Catch ex As Exception
-            MsgBox("Load error: " & ex.Message)
-        Finally
-            connect.Close()
-        End Try
+                currentTable = tableName
+
+            Catch ex As Exception
+                MsgBox("Load error: " & ex.Message)
+            End Try
+        End Using
+
     End Sub
 
     ' =========================
-    ' TABLE SWITCH (NO LOGGING)
+    ' TABLE SWITCH
     ' =========================
     Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
         LoadTable("login")
+        AddLog("VIEW", "Viewed employees")
     End Sub
 
     Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
         LoadTable("request")
+        AddLog("VIEW", "Viewed requests")
     End Sub
 
     Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
         LoadTable("attendance")
+        AddLog("VIEW", "Viewed attendance")
     End Sub
 
     ' =========================
-    ' APPROVE / REJECT (LOGGED)
+    ' APPROVE / REJECT REQUEST
     ' =========================
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
-        UpdateRequestStatus("Approved")
+        UpdateRequest("Approved")
     End Sub
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-        UpdateRequestStatus("Rejected")
+        UpdateRequest("Rejected")
     End Sub
 
-    Private Sub UpdateRequestStatus(newStatus As String)
+    Private Sub UpdateRequest(newStatus As String)
+
         If currentTable <> "request" OrElse DataGridView1.SelectedRows.Count = 0 Then
             MsgBox("Select a request first.")
             Exit Sub
         End If
 
-        Dim uid As Integer = CInt(DataGridView1.SelectedRows(0).Cells("UID").Value)
+        Dim row = DataGridView1.SelectedRows(0)
+        Dim uid As Integer = CInt(row.Cells("UID").Value)
+        Dim eid As Integer = CInt(row.Cells("EID").Value)
 
-        Try
-            If connect.State = ConnectionState.Closed Then connect.Open()
-            Using cmd As New OleDbCommand(
-                "UPDATE [request] SET Status=? WHERE UID=?", connect)
-                cmd.Parameters.AddWithValue("?", newStatus)
-                cmd.Parameters.AddWithValue("?", uid)
-                cmd.ExecuteNonQuery()
-            End Using
+        Using conn As New OleDbConnection(connString)
+            Try
+                conn.Open()
 
-            AddLog("REQUEST_STATUS_CHANGE", $"UID={uid}, Status={newStatus}")
-            LoadTable("request")
-            MsgBox("Request updated.")
+                Using cmd As New OleDbCommand(
+                    "UPDATE request SET Status=? WHERE UID=?", conn)
+                    cmd.Parameters.Add("?", OleDbType.VarWChar).Value = newStatus
+                    cmd.Parameters.Add("?", OleDbType.Integer).Value = uid
+                    cmd.ExecuteNonQuery()
+                End Using
 
-        Catch ex As Exception
-            MsgBox("Update error: " & ex.Message)
-        Finally
-            connect.Close()
-        End Try
+                If newStatus = "Approved" Then
+                    Using cmd As New OleDbCommand(
+                        "UPDATE login SET Status='On Leave' WHERE EID=?", conn)
+                        cmd.Parameters.Add("?", OleDbType.Integer).Value = eid
+                        cmd.ExecuteNonQuery()
+                    End Using
+                Else
+                    Using cmd As New OleDbCommand(
+                        "UPDATE login SET Status='Active' WHERE EID=?", conn)
+                        cmd.Parameters.Add("?", OleDbType.Integer).Value = eid
+                        cmd.ExecuteNonQuery()
+                    End Using
+                End If
+
+                AddLog("REQUEST_UPDATE", $"UID={uid}, Status={newStatus}")
+                LoadTable("request")
+                MsgBox("Request updated.")
+
+            Catch ex As Exception
+                MsgBox("Update error: " & ex.Message)
+            End Try
+        End Using
+
     End Sub
 
     ' =========================
-    ' REFRESH (NO LOGGING)
+    ' REFRESH
     ' =========================
     Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
         LoadTable(currentTable)
+        AddLog("REFRESH", currentTable)
     End Sub
 
     ' =========================
-    ' EXPORT PDF (LOGGED)
+    ' EXPORT PDF
     ' =========================
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+
         If DataGridView1.Rows.Count = 0 Then Exit Sub
 
         Using dlg As New SaveFileDialog With {
             .Filter = "PDF (*.pdf)|*.pdf",
             .FileName = currentTable & "_Export.pdf"
         }
+
             If dlg.ShowDialog() <> DialogResult.OK Then Exit Sub
 
             Dim doc As New Document(PageSize.A4.Rotate())
@@ -195,11 +237,12 @@ Public Class Form6
 
             AddLog("EXPORT_PDF", currentTable)
             MsgBox("PDF exported.")
+
         End Using
     End Sub
 
     ' =========================
-    ' SEARCH (NO LOGGING)
+    ' SEARCH
     ' =========================
     Private Sub TextBox1_TextChanged(sender As Object, e As EventArgs) Handles TextBox1.TextChanged
         If dt Is Nothing Then Exit Sub
@@ -209,16 +252,16 @@ Public Class Form6
     End Sub
 
     ' =========================
-    ' VIEW LOGS (LOGGED)
+    ' VIEW LOGS
     ' =========================
     Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
-        AddLog("VIEW_LOGS", "Staff opened logs")
+        AddLog("VIEW_LOGS", "Opened logs")
         Dim f As New Form8(loggedInStaffUsername)
         f.ShowDialog()
     End Sub
 
     ' =========================
-    ' LOGOUT (LOGGED)
+    ' LOGOUT
     ' =========================
     Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
         If MsgBox("Logout?", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then

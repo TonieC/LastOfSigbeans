@@ -29,7 +29,7 @@ Public Class Form4
     End Sub
 
     ' =========================
-    ' ADD LOG FUNCTION
+    ' LOGGING
     ' =========================
     Private Sub AddLog(action As String, details As String)
         Try
@@ -43,14 +43,13 @@ Public Class Form4
                 cmd.ExecuteNonQuery()
             End Using
         Catch
-            ' Logging must NEVER interrupt workflow
         Finally
             connect.Close()
         End Try
     End Sub
 
     ' =========================
-    ' LOAD TABLE
+    ' LOAD TABLES
     ' =========================
     Private Sub LoadTable(tableName As String)
         Try
@@ -58,13 +57,17 @@ Public Class Form4
             dt = New DataTable()
 
             Dim sql As String = ""
+
             Select Case tableName
                 Case "login"
-                    sql = "SELECT EID, username, [password], Role, FullName, MobileN, Email, Address FROM login"
+                    sql = "SELECT EID, Username, [Password], Role, FullName, MobileN, Email, Address, Status FROM login"
+
                 Case "request"
                     sql = "SELECT UID, EID, FullName, Category, [Request], Status, RequestDate FROM request"
+
                 Case "attendance"
                     sql = "SELECT Username, FullName, LoginDate, LoginTime, Status FROM attendance"
+
                 Case "logs"
                     sql = "SELECT Username, [Action], ActionDate, Details FROM logs ORDER BY ActionDate DESC"
             End Select
@@ -78,7 +81,10 @@ Public Class Form4
             DataGridView1.MultiSelect = False
             DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
             DataGridView1.ReadOnly = False
-            If dt.Columns.Count > 0 Then DataGridView1.Columns(0).ReadOnly = True
+
+            If dt.Columns.Count > 0 Then
+                DataGridView1.Columns(0).ReadOnly = True
+            End If
 
             currentTable = tableName
 
@@ -110,19 +116,22 @@ Public Class Form4
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
         If currentTable <> "login" Then Exit Sub
 
-        Dim username As String = InputBox("Enter username for new employee:")
+        Dim username As String = InputBox("Enter username:")
         If String.IsNullOrWhiteSpace(username) Then Exit Sub
 
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
+
             Using cmd As New OleDbCommand(
-                "INSERT INTO login (username) VALUES (?)", connect)
+                "INSERT INTO login (Username, Status) VALUES (?,?)", connect)
                 cmd.Parameters.AddWithValue("?", username)
+                cmd.Parameters.AddWithValue("?", "Active")
                 cmd.ExecuteNonQuery()
             End Using
 
-            AddLog("ADD_EMPLOYEE", $"Username={username}")
+            AddLog("ADD_EMPLOYEE", username)
             LoadTable("login")
+
         Catch ex As Exception
             MsgBox("Add error: " & ex.Message)
         Finally
@@ -142,16 +151,19 @@ Public Class Form4
             Using cmd As New OleDbCommand("", connect)
 
                 Select Case currentTable
+
                     Case "login"
                         cmd.CommandText =
-                            "UPDATE login SET username=?, [password]=?, [Role]=?, FullName=?, MobileN=?, Email=?, Address=? WHERE EID=?"
-                        cmd.Parameters.AddWithValue("?", r.Cells("username").Value)
-                        cmd.Parameters.AddWithValue("?", r.Cells("password").Value)
+                            "UPDATE login SET Username=?, [Password]=?, Role=?, FullName=?, MobileN=?, Email=?, Address=?, Status=? WHERE EID=?"
+
+                        cmd.Parameters.AddWithValue("?", r.Cells("Username").Value)
+                        cmd.Parameters.AddWithValue("?", r.Cells("Password").Value)
                         cmd.Parameters.AddWithValue("?", r.Cells("Role").Value)
                         cmd.Parameters.AddWithValue("?", r.Cells("FullName").Value)
                         cmd.Parameters.AddWithValue("?", r.Cells("MobileN").Value)
                         cmd.Parameters.AddWithValue("?", r.Cells("Email").Value)
                         cmd.Parameters.AddWithValue("?", r.Cells("Address").Value)
+                        cmd.Parameters.AddWithValue("?", r.Cells("Status").Value)
                         cmd.Parameters.AddWithValue("?", r.Cells("EID").Value)
 
                     Case "request"
@@ -160,15 +172,16 @@ Public Class Form4
                         cmd.Parameters.AddWithValue("?", r.Cells("UID").Value)
 
                     Case "attendance"
-                        cmd.CommandText = "UPDATE attendance SET Status=? WHERE Username=?"
+                        cmd.CommandText = "UPDATE attendance SET Status=? WHERE Username=? AND LoginDate=?"
                         cmd.Parameters.AddWithValue("?", r.Cells("Status").Value)
                         cmd.Parameters.AddWithValue("?", r.Cells("Username").Value)
+                        cmd.Parameters.AddWithValue("?", r.Cells("LoginDate").Value)
                 End Select
 
                 cmd.ExecuteNonQuery()
             End Using
 
-            AddLog("UPDATE_RECORD", currentTable)
+            AddLog("UPDATE", currentTable)
             LoadTable(currentTable)
 
         Catch ex As Exception
@@ -201,14 +214,15 @@ Public Class Form4
                         cmd.Parameters.AddWithValue("?", r.Cells("UID").Value)
 
                     Case "attendance"
-                        cmd.CommandText = "DELETE FROM attendance WHERE Username=?"
+                        cmd.CommandText = "DELETE FROM attendance WHERE Username=? AND LoginDate=?"
                         cmd.Parameters.AddWithValue("?", r.Cells("Username").Value)
+                        cmd.Parameters.AddWithValue("?", r.Cells("LoginDate").Value)
                 End Select
 
                 cmd.ExecuteNonQuery()
             End Using
 
-            AddLog("DELETE_RECORD", currentTable)
+            AddLog("DELETE", currentTable)
             LoadTable(currentTable)
 
         Catch ex As Exception
@@ -219,7 +233,7 @@ Public Class Form4
     End Sub
 
     ' =========================
-    ' REFRESH TABLE
+    ' REFRESH
     ' =========================
     Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
         LoadTable(currentTable)
@@ -233,8 +247,9 @@ Public Class Form4
 
         Using sfd As New SaveFileDialog With {
             .Filter = "PDF (*.pdf)|*.pdf",
-            .FileName = currentTable & "_" & DateTime.Now.ToString("yyyyMMdd_HHmmss") & ".pdf"
+            .FileName = currentTable & "_" & Now.ToString("yyyyMMdd_HHmmss") & ".pdf"
         }
+
             If sfd.ShowDialog() <> DialogResult.OK Then Exit Sub
 
             Dim doc As New Document(PageSize.A4.Rotate())
@@ -264,26 +279,18 @@ Public Class Form4
     End Sub
 
     ' =========================
-    ' VIEW LOGS
-    ' =========================
-    Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
-        Try
-            Dim logsForm As New Form8(loggedInAdmin)
-            logsForm.ShowDialog()
-            AddLog("VIEW_LOGS", "Opened logs viewer")
-        Catch ex As Exception
-            MsgBox("Error opening logs viewer: " & ex.Message)
-        End Try
-    End Sub
-
-    ' =========================
     ' LOGOUT
     ' =========================
     Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
-        AddLog("LOGOUT", "Admin logged out")
+        AddLog("LOGOUT", loggedInAdmin)
         Dim f As New Form3
         f.Show()
         Close()
     End Sub
 
+    Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
+        Dim f As New Form8(loggedInAdmin)
+        f.Show()
+        Me.Hide()
+    End Sub
 End Class

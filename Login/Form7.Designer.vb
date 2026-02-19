@@ -29,21 +29,23 @@ Partial Class Form7
         Button1 = New Button()
         Label1 = New Label()
         Button2 = New Button()
+        Label2 = New Label()
+        Label3 = New Label()
         SuspendLayout()
         ' 
         ' ComboBox1
         ' 
         ComboBox1.FormattingEnabled = True
-        ComboBox1.Location = New Point(355, 445)
+        ComboBox1.Location = New Point(680, 341)
         ComboBox1.Name = "ComboBox1"
         ComboBox1.Size = New Size(148, 23)
         ComboBox1.TabIndex = 27
         ' 
         ' Button5
         ' 
-        Button5.Location = New Point(553, 436)
+        Button5.Location = New Point(408, 385)
         Button5.Name = "Button5"
-        Button5.Size = New Size(148, 49)
+        Button5.Size = New Size(118, 33)
         Button5.TabIndex = 26
         Button5.Text = "File Leave"
         Button5.UseVisualStyleBackColor = True
@@ -52,7 +54,7 @@ Partial Class Form7
         ' 
         Label14.AutoSize = True
         Label14.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label14.Location = New Point(462, 188)
+        Label14.Location = New Point(478, 48)
         Label14.Name = "Label14"
         Label14.Size = New Size(136, 23)
         Label14.TabIndex = 25
@@ -60,10 +62,10 @@ Partial Class Form7
         ' 
         ' TextBox1
         ' 
-        TextBox1.Location = New Point(346, 227)
+        TextBox1.Location = New Point(408, 234)
         TextBox1.Multiline = True
         TextBox1.Name = "TextBox1"
-        TextBox1.Size = New Size(355, 203)
+        TextBox1.Size = New Size(266, 130)
         TextBox1.TabIndex = 24
         ' 
         ' Button1
@@ -79,7 +81,7 @@ Partial Class Form7
         ' 
         Label1.AutoSize = True
         Label1.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label1.Location = New Point(420, 165)
+        Label1.Location = New Point(436, 22)
         Label1.Name = "Label1"
         Label1.Size = New Size(220, 23)
         Label1.TabIndex = 29
@@ -87,18 +89,40 @@ Partial Class Form7
         ' 
         ' Button2
         ' 
-        Button2.Location = New Point(553, 500)
+        Button2.Location = New Point(555, 385)
         Button2.Name = "Button2"
-        Button2.Size = New Size(148, 49)
+        Button2.Size = New Size(119, 33)
         Button2.TabIndex = 30
         Button2.Text = "Cancel last request"
         Button2.UseVisualStyleBackColor = True
+        ' 
+        ' Label2
+        ' 
+        Label2.AutoSize = True
+        Label2.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label2.Location = New Point(408, 208)
+        Label2.Name = "Label2"
+        Label2.Size = New Size(88, 23)
+        Label2.TabIndex = 31
+        Label2.Text = "Reason"
+        ' 
+        ' Label3
+        ' 
+        Label3.AutoSize = True
+        Label3.Font = New Font("Showcard Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label3.Location = New Point(680, 315)
+        Label3.Name = "Label3"
+        Label3.Size = New Size(138, 20)
+        Label3.TabIndex = 32
+        Label3.Text = "Type of Leave"
         ' 
         ' Form7
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1046, 673)
+        Controls.Add(Label3)
+        Controls.Add(Label2)
         Controls.Add(Button2)
         Controls.Add(Label1)
         Controls.Add(Button1)
@@ -119,4 +143,6 @@ Partial Class Form7
     Friend WithEvents Button1 As Button
     Friend WithEvents Label1 As Label
     Friend WithEvents Button2 As Button
+    Friend WithEvents Label2 As Label
+    Friend WithEvents Label3 As Label
 End Class
