@@ -15,21 +15,41 @@ Public Class Form2
     End Sub
 
     Private Sub Form2_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
         connect.ConnectionString =
             "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Administrator\OneDrive\Documents\Login.accdb"
 
         TextBox1.UseSystemPasswordChar = True
 
-        ' Populate ComboBoxes
+        ' Gender
         ComboBox1.Items.Clear()
         ComboBox1.Items.AddRange({"Male", "Female", "Prefer not to say"})
         ComboBox1.SelectedIndex = 0
 
+        ' Age
         ComboBox2.Items.Clear()
         For i As Integer = 16 To 65
             ComboBox2.Items.Add(i.ToString())
         Next
         ComboBox2.SelectedIndex = 0
+
+        ' Department
+        ComboBox3.Items.Clear()
+        ComboBox3.Items.AddRange({
+            "ICT",
+            "HUMMS",
+            "ABM",
+            "STEM",
+            "HE",
+            "GAS",
+            "EDUC",
+            "PSYCHOLOGY",
+            "CRIMINOLOGY",
+            "CABAM",
+            "Junior High School"
+        })
+        ComboBox3.SelectedIndex = 0
+
     End Sub
 
     ' SIGN UP BUTTON
@@ -42,11 +62,15 @@ Public Class Form2
         Dim su_email As String = TextBox5.Text.Trim()
         Dim su_address As String = TextBox6.Text.Trim()
         Dim su_gender As String = ComboBox1.SelectedItem.ToString()
-        Dim su_age As String = ComboBox2.SelectedItem.ToString()
+        Dim su_age As Integer = CInt(ComboBox2.SelectedItem.ToString())
+        Dim su_department As String = ComboBox3.SelectedItem.ToString()
         Dim su_eid As String = ""
 
+        ' Validation
         If su_username = "" Or su_password = "" Or su_fullname = "" _
-        Or su_mobile = "" Or su_email = "" Or su_address = "" Then
+            Or su_mobile = "" Or su_email = "" Or su_address = "" _
+            Or su_department = "" Then
+
             MsgBox("All fields are required")
             Exit Sub
         End If
@@ -70,18 +94,19 @@ Public Class Form2
 
             Dim result As Object = command.ExecuteScalar()
             Dim nextId As Integer
+
             If IsDBNull(result) Or result Is Nothing Then
                 nextId = 1
             Else
-                nextId = CInt(result.ToString())
-                nextId += 1
+                nextId = CInt(result) + 1
             End If
 
-            su_eid = nextId.ToString("000")   ' 001, 002, 003
+            su_eid = nextId.ToString("000")
 
-            ' INSERT USER DATA (INCLUDING EID, Gender, Age)
-            sql = "INSERT INTO [login] (EID, username, [password], FullName, MobileN, Email, Address, Gender, Age) " &
-                  "VALUES (?,?,?,?,?,?,?,?,?)"
+            ' INSERT USER DATA
+            sql = "INSERT INTO [login] " &
+                  "(EID, username, [password], FullName, MobileN, Email, Address, Gender, Age, Department) " &
+                  "VALUES (?,?,?,?,?,?,?,?,?,?)"
 
             command = New OleDbCommand(sql, connect)
 
@@ -94,13 +119,14 @@ Public Class Form2
             command.Parameters.Add("?", OleDbType.VarChar).Value = su_email
             command.Parameters.Add("?", OleDbType.VarChar).Value = su_address
             command.Parameters.Add("?", OleDbType.VarChar).Value = su_gender
-            command.Parameters.Add("?", OleDbType.Integer).Value = CInt(su_age)
+            command.Parameters.Add("?", OleDbType.Integer).Value = su_age
+            command.Parameters.Add("?", OleDbType.VarChar).Value = su_department
 
             command.ExecuteNonQuery()
 
             MsgBox("Sign Up Successful. Employee ID: " & su_eid)
 
-            ' Clear all inputs
+            ' Clear inputs
             TextBox1.Clear()
             TextBox2.Clear()
             TextBox3.Clear()
@@ -109,9 +135,11 @@ Public Class Form2
             TextBox6.Clear()
             ComboBox1.SelectedIndex = 0
             ComboBox2.SelectedIndex = 0
+            ComboBox3.SelectedIndex = 0
 
         Catch ex As Exception
             MsgBox("Error: " & ex.Message)
+
         Finally
             connect.Close()
         End Try
