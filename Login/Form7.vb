@@ -95,12 +95,33 @@ Public Class Form7
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
 
+            ' =========================
+            ' CHECK IF ALREADY SENT TODAY
+            ' =========================
+            Using checkCmd As New OleDbCommand(
+            "SELECT COUNT(*) FROM [request] WHERE EID=? AND RequestDate>=? AND RequestDate<?", connect)
+
+                checkCmd.Parameters.Add("?", OleDbType.VarChar).Value = employeeID
+                checkCmd.Parameters.Add("?", OleDbType.Date).Value = Date.Today
+                checkCmd.Parameters.Add("?", OleDbType.Date).Value = Date.Today.AddDays(1)
+
+                Dim count As Integer = CInt(checkCmd.ExecuteScalar())
+
+                If count > 0 Then
+                    MsgBox("You have already sent a leave request today. Please wait until tomorrow to submit another request.")
+                    Exit Sub
+                End If
+            End Using
+
+            ' =========================
+            ' INSERT NEW REQUEST
+            ' =========================
             Dim uid As Integer = GetNextUID()
 
             Using cmd As New OleDbCommand(
-                "INSERT INTO [request] " &
-                "(UID, EID, FullName, Category, [Request], Status, RequestDate) " &
-                "VALUES (?, ?, ?, ?, ?, ?, ?)", connect)
+            "INSERT INTO [request] " &
+            "(UID, EID, FullName, Category, [Request], Status, RequestDate) " &
+            "VALUES (?, ?, ?, ?, ?, ?, ?)", connect)
 
                 cmd.Parameters.Add("?", OleDbType.Integer).Value = uid
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = employeeID
