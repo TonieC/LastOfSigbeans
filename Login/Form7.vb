@@ -96,19 +96,20 @@ Public Class Form7
             If connect.State = ConnectionState.Closed Then connect.Open()
 
             ' =========================
-            ' CHECK IF ALREADY SENT TODAY
+            ' CHECK IF ALREADY SENT TODAY FOR THIS CATEGORY
             ' =========================
             Using checkCmd As New OleDbCommand(
-            "SELECT COUNT(*) FROM [request] WHERE EID=? AND RequestDate>=? AND RequestDate<?", connect)
+            "SELECT COUNT(*) FROM [request] WHERE EID=? AND Category=? AND RequestDate>=? AND RequestDate<?", connect)
 
                 checkCmd.Parameters.Add("?", OleDbType.VarChar).Value = employeeID
+                checkCmd.Parameters.Add("?", OleDbType.VarChar).Value = ComboBox1.SelectedItem.ToString()
                 checkCmd.Parameters.Add("?", OleDbType.Date).Value = Date.Today
                 checkCmd.Parameters.Add("?", OleDbType.Date).Value = Date.Today.AddDays(1)
 
                 Dim count As Integer = CInt(checkCmd.ExecuteScalar())
 
                 If count > 0 Then
-                    MsgBox("You have already sent a leave request today. Please wait until tomorrow to submit another request.")
+                    MsgBox($"You have already sent a {ComboBox1.SelectedItem} request today. Please wait until tomorrow to submit another {ComboBox1.SelectedItem} request.")
                     Exit Sub
                 End If
             End Using
