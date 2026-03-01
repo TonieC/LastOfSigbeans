@@ -35,7 +35,7 @@ Public Class Form7
             If connect.State = ConnectionState.Closed Then connect.Open()
 
             Using cmd As New OleDbCommand(
-                "SELECT EID, FullName FROM [login] WHERE username=?", connect)
+                "SELECT EID, FullName FROM [user] WHERE username=?", connect)
 
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
 

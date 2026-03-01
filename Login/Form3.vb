@@ -28,7 +28,7 @@ Public Class Form3
             If connect.State <> ConnectionState.Open Then connect.Open()
 
             Dim query As String =
-                "SELECT Role FROM [login] WHERE username=? AND [password]=?"
+                "SELECT Role FROM [user] WHERE username=? AND [password]=?"
 
             Using cmd As New OleDbCommand(query, connect)
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = username

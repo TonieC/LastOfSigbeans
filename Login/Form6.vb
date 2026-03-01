@@ -77,7 +77,7 @@ Public Class Form6
                 Dim sql As String = ""
 
                 Select Case tableName
-                    Case "login"
+                    Case "user"
                         sql = "SELECT EID, Username, FullName, MobileN, Email, Address, Gender, Age, Department, Status FROM login"
                         Label2.Text = "Viewing: Employees"
 
@@ -120,7 +120,7 @@ Public Class Form6
     ' TABLE SWITCH
     ' =========================
     Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
-        LoadTable("login")
+        LoadTable("user")
         AddLog("VIEW", "Viewed employees")
     End Sub
 
@@ -169,13 +169,13 @@ Public Class Form6
 
                 If newStatus = "Approved" Then
                     Using cmd As New OleDbCommand(
-                        "UPDATE login SET Status='On Leave' WHERE EID=?", conn)
+                        "UPDATE user SET Status='On Leave' WHERE EID=?", conn)
                         cmd.Parameters.Add("?", OleDbType.Integer).Value = eid
                         cmd.ExecuteNonQuery()
                     End Using
                 Else
                     Using cmd As New OleDbCommand(
-                        "UPDATE login SET Status='Active' WHERE EID=?", conn)
+                        "UPDATE user SET Status='Active' WHERE EID=?", conn)
                         cmd.Parameters.Add("?", OleDbType.Integer).Value = eid
                         cmd.ExecuteNonQuery()
                     End Using

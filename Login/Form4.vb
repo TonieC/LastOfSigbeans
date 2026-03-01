@@ -10,7 +10,7 @@ Public Class Form4
         "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Administrator\OneDrive\Documents\Login.accdb")
 
     Private dt As DataTable
-    Private currentTable As String = "login"
+    Private currentTable As String = "user"
     Private loggedInAdmin As String
 
     ' =========================
@@ -25,7 +25,7 @@ Public Class Form4
     ' FORM LOAD
     ' =========================
     Private Sub Form4_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        LoadTable("login")
+        LoadTable("user")
     End Sub
 
     ' =========================
@@ -59,8 +59,8 @@ Public Class Form4
             Dim sql As String = ""
 
             Select Case tableName
-                Case "login"
-                    sql = "SELECT EID, Username, [Password], Role, FullName, MobileN, Email, Address, Status FROM login"
+                Case "user"
+                    sql = "SELECT EID, Username, [Password], Role, FullName, MobileN, Email, Address, Status FROM user"
 
                 Case "request"
                     sql = "SELECT UID, EID, FullName, Category, [Request], Status, RequestDate FROM request"
@@ -99,7 +99,7 @@ Public Class Form4
     ' SWITCH TABLES
     ' =========================
     Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
-        LoadTable("login")
+        LoadTable("user")
     End Sub
 
     Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
@@ -114,7 +114,7 @@ Public Class Form4
     ' ADD EMPLOYEE
     ' =========================
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
-        If currentTable <> "login" Then Exit Sub
+        If currentTable <> "user" Then Exit Sub
 
         Dim username As String = InputBox("Enter username:")
         If String.IsNullOrWhiteSpace(username) Then Exit Sub
@@ -123,14 +123,14 @@ Public Class Form4
             If connect.State = ConnectionState.Closed Then connect.Open()
 
             Using cmd As New OleDbCommand(
-                "INSERT INTO login (Username, Status) VALUES (?,?)", connect)
+                "INSERT INTO user (Username, Status) VALUES (?,?)", connect)
                 cmd.Parameters.AddWithValue("?", username)
                 cmd.Parameters.AddWithValue("?", "Active")
                 cmd.ExecuteNonQuery()
             End Using
 
             AddLog("ADD_EMPLOYEE", username)
-            LoadTable("login")
+            LoadTable("user")
 
         Catch ex As Exception
             MsgBox("Add error: " & ex.Message)
@@ -152,9 +152,9 @@ Public Class Form4
 
                 Select Case currentTable
 
-                    Case "login"
+                    Case "user"
                         cmd.CommandText =
-                            "UPDATE login SET Username=?, [Password]=?, Role=?, FullName=?, MobileN=?, Email=?, Address=?, Status=? WHERE EID=?"
+                            "UPDATE user SET Username=?, [Password]=?, Role=?, FullName=?, MobileN=?, Email=?, Address=?, Status=? WHERE EID=?"
 
                         cmd.Parameters.AddWithValue("?", r.Cells("Username").Value)
                         cmd.Parameters.AddWithValue("?", r.Cells("Password").Value)
@@ -205,8 +205,8 @@ Public Class Form4
             Using cmd As New OleDbCommand("", connect)
 
                 Select Case currentTable
-                    Case "login"
-                        cmd.CommandText = "DELETE FROM login WHERE EID=?"
+                    Case "user"
+                        cmd.CommandText = "DELETE FROM user WHERE EID=?"
                         cmd.Parameters.AddWithValue("?", r.Cells("EID").Value)
 
                     Case "request"

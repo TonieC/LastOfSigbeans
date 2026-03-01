@@ -61,7 +61,7 @@ Public Class Form5
 
             Dim sql As String =
             "SELECT EID, username, FullName, MobileN, Email, Address, Gender, Age, Department " &
-            "FROM [login] WHERE username=?"
+            "FROM [user] WHERE username=?"
 
             Using cmd As New OleDbCommand(sql, connect)
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
@@ -201,7 +201,7 @@ Public Class Form5
 
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
-            Dim checkSql As String = "SELECT COUNT(*) FROM [login] WHERE username=? AND [password]=?"
+            Dim checkSql As String = "SELECT COUNT(*) FROM [user] WHERE username=? AND [password]=?"
             Using checkCmd As New OleDbCommand(checkSql, connect)
                 checkCmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
                 checkCmd.Parameters.Add("?", OleDbType.VarChar).Value = oldPassword
@@ -219,7 +219,7 @@ Public Class Form5
                 Exit Sub
             End If
 
-            Dim updateSql As String = "UPDATE [login] SET [password]=? WHERE username=?"
+            Dim updateSql As String = "UPDATE [user] SET [password]=? WHERE username=?"
             Using updateCmd As New OleDbCommand(updateSql, connect)
                 updateCmd.Parameters.Add("?", OleDbType.VarChar).Value = newPassword
                 updateCmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
@@ -391,7 +391,7 @@ Public Class Form5
 
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
-            Dim checkSql As String = "SELECT COUNT(*) FROM [login] WHERE username=? AND [password]=?"
+            Dim checkSql As String = "SELECT COUNT(*) FROM [user] WHERE username=? AND [password]=?"
             Using checkCmd As New OleDbCommand(checkSql, connect)
                 checkCmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
                 checkCmd.Parameters.Add("?", OleDbType.VarChar).Value = password
@@ -401,7 +401,7 @@ Public Class Form5
                 End If
             End Using
 
-            Dim updateSql As String = $"UPDATE [login] SET [{fieldToChange}]=? WHERE username=?"
+            Dim updateSql As String = $"UPDATE [user] SET [{fieldToChange}]=? WHERE username=?"
             Using updateCmd As New OleDbCommand(updateSql, connect)
                 If fieldToChange = "Age" Then
                     updateCmd.Parameters.Add("?", OleDbType.Integer).Value = CInt(newValue)

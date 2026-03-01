@@ -79,7 +79,7 @@ Public Class Form2
             If connect.State = ConnectionState.Closed Then connect.Open()
 
             ' CHECK DUPLICATE USERNAME
-            sql = "SELECT COUNT(*) FROM [login] WHERE username=?"
+            sql = "SELECT COUNT(*) FROM [user] WHERE username=?"
             command = New OleDbCommand(sql, connect)
             command.Parameters.Add("?", OleDbType.VarChar).Value = su_username
 
@@ -89,7 +89,7 @@ Public Class Form2
             End If
 
             ' GET NEXT EID
-            sql = "SELECT MAX(EID) FROM [login]"
+            sql = "SELECT MAX(EID) FROM [user]"
             command = New OleDbCommand(sql, connect)
 
             Dim result As Object = command.ExecuteScalar()
@@ -104,7 +104,7 @@ Public Class Form2
             su_eid = nextId.ToString("000")
 
             ' INSERT USER DATA
-            sql = "INSERT INTO [login] " &
+            sql = "INSERT INTO [user] " &
                   "(EID, username, [password], FullName, MobileN, Email, Address, Gender, Age, Department) " &
                   "VALUES (?,?,?,?,?,?,?,?,?,?)"
 

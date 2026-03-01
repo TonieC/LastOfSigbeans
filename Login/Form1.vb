@@ -65,7 +65,7 @@ Public Class Form1
             Dim dbPassword As Object = Nothing
 
             ' Get password from login table
-            Using cmd As New OleDbCommand("SELECT [password] FROM [login] WHERE username=?", connect)
+            Using cmd As New OleDbCommand("SELECT [password] FROM [user] WHERE username=?", connect)
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = pendingUsername
                 dbPassword = cmd.ExecuteScalar()
             End Using
@@ -134,7 +134,7 @@ Public Class Form1
 
             ' Verify password first
             Dim dbPassword As Object = Nothing
-            Using cmd As New OleDbCommand("SELECT [password] FROM [login] WHERE username=?", connect)
+            Using cmd As New OleDbCommand("SELECT [password] FROM [user] WHERE username=?", connect)
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = pendingUsername
                 dbPassword = cmd.ExecuteScalar()
             End Using
@@ -259,7 +259,7 @@ Public Class Form1
             Try
                 If connect.State = ConnectionState.Closed Then connect.Open()
 
-                Using cmd As New OleDbCommand("SELECT FullName FROM [login] WHERE username=?", connect)
+                Using cmd As New OleDbCommand("SELECT FullName FROM [user] WHERE username=?", connect)
                     cmd.Parameters.Add("?", OleDbType.VarChar).Value = result.Text
                     Using reader = cmd.ExecuteReader()
                         If reader.Read() Then
