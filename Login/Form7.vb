@@ -22,7 +22,7 @@ Public Class Form7
     ' FORM LOAD
     ' =========================
     Private Sub Form7_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
+        Me.WindowState = FormWindowState.Maximized
         ComboBox1.Items.Clear()
         ComboBox1.Items.Add("Sick Leave")
         ComboBox1.Items.Add("Emergency Leave")

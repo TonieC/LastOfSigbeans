@@ -4,7 +4,9 @@ Imports iTextSharp.text
 Imports iTextSharp.text.pdf
 Imports System.IO
 
+
 Public Class Form6
+    Me.WindowState = FormWindowState.Maximized
 
     ' =========================
     ' CONNECTION STRING

@@ -1,5 +1,6 @@
 ﻿Imports System.Data.OleDb
 Imports System.Data
+Imports System.Text.RegularExpressions
 
 Public Class Form2
 
@@ -15,6 +16,7 @@ Public Class Form2
     End Sub
 
     Private Sub Form2_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Me.WindowState = FormWindowState.Maximized
 
         connect.ConnectionString =
             "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Administrator\OneDrive\Documents\Login.accdb"
@@ -66,12 +68,31 @@ Public Class Form2
         Dim su_department As String = ComboBox3.SelectedItem.ToString()
         Dim su_eid As String = ""
 
-        ' Validation
+        ' Validation: required fields
         If su_username = "" Or su_password = "" Or su_fullname = "" _
             Or su_mobile = "" Or su_email = "" Or su_address = "" _
             Or su_department = "" Then
 
             MsgBox("All fields are required")
+            Exit Sub
+        End If
+
+        ' Validation: Full Name (letters only)
+        If Not Regex.IsMatch(su_fullname, "^[a-zA-Z\s]+$") Then
+            MsgBox("Full Name cannot contain numbers or special characters")
+            Exit Sub
+        End If
+
+        ' Validation: Mobile Number (numbers only)
+        If Not Regex.IsMatch(su_mobile, "^\d+$") Then
+            MsgBox("Mobile Number must contain digits only")
+            Exit Sub
+        End If
+
+        ' Validation: Password (8+ characters with special character)
+        Dim passwordPattern As String = "^(?=.*[!@#$%^&*(),.?""{}|<>]).{8,}$"
+        If Not Regex.IsMatch(su_password, passwordPattern) Then
+            MsgBox("Password must be at least 8 characters long and include at least one special character (!@#$%^&* etc.)")
             Exit Sub
         End If
 

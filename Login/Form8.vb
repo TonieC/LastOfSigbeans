@@ -20,6 +20,7 @@ Public Class Form8
     End Sub
 
     Private Sub Form8_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Me.WindowState = FormWindowState.Maximized
         If String.IsNullOrEmpty(staffUsername) Then
             MsgBox("Staff identity not loaded.")
             Exit Sub

@@ -30,6 +30,7 @@ Public Class Form5
     ' Form Load
     ' =========================
     Private Sub Form5_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Me.WindowState = FormWindowState.Maximized
         LoadEmployeeData()
         LoadAttendanceData()
         Label14.Text = "Attendance Records"

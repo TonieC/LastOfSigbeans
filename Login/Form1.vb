@@ -9,6 +9,7 @@ Imports System.Threading.Tasks
 
 Public Class Form1
 
+
     ' Database connection
     Private connect As New OleDbConnection(
         "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Administrator\OneDrive\Documents\Login.accdb")
@@ -24,6 +25,7 @@ Public Class Form1
     Private pendingFullName As String = ""
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Me.WindowState = FormWindowState.Maximized
         videoDevices = New FilterInfoCollection(FilterCategory.VideoInputDevice)
         Label1.Text = "Waiting for QR scan..."
 
@@ -216,7 +218,7 @@ Public Class Form1
                   End Sub)
     End Sub
 
-    ' Camera feed + QR decode
+    ' Camera feed + QR decode (FIXED to handle invalid users)
     Private Sub Video_NewFrame(sender As Object, eventArgs As NewFrameEventArgs)
         If Not scanning Then Return
 
@@ -254,22 +256,26 @@ Public Class Form1
 
         ' Handle QR scan
         If result IsNot Nothing Then
-            scanning = False ' pause scanning until action taken
+            scanning = False ' pause scanning
+
+            Dim scannedUser As String = result.Text.Trim()
+            Dim userFound As Boolean = False
 
             Try
                 If connect.State = ConnectionState.Closed Then connect.Open()
 
                 Using cmd As New OleDbCommand("SELECT FullName FROM [user] WHERE username=?", connect)
-                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = result.Text
+                    cmd.Parameters.Add("?", OleDbType.VarChar).Value = scannedUser
                     Using reader = cmd.ExecuteReader()
                         If reader.Read() Then
-                            pendingUsername = result.Text
+                            pendingUsername = scannedUser
                             pendingFullName = reader("FullName").ToString()
+                            userFound = True
 
-                            ' Show password fields only after QR scan (on UI thread)
                             Me.Invoke(Sub()
                                           Label2.Visible = True
                                           TextBox1.Visible = True
+                                          Label1.Text = $"User scanned: {pendingUsername}"
                                       End Sub)
                         End If
                     End Using
@@ -280,9 +286,23 @@ Public Class Form1
                 connect.Close()
             End Try
 
+            ' If user not found → show failure and resume scanning
+            If Not userFound Then
+                pendingUsername = ""
+                pendingFullName = ""
+                Me.Invoke(Sub()
+                              Label1.Text = "Failed to scan: user doesn't exist"
+                          End Sub)
+                Task.Delay(1200).ContinueWith(Sub()
+                                                  scanning = True
+                                                  Me.Invoke(Sub()
+                                                                Label1.Text = "Waiting for QR scan..."
+                                                            End Sub)
+                                              End Sub)
+            End If
+
             UpdateStatusLabel()
         End If
-
     End Sub
 
     ' Cleanup on Form Closing

@@ -140,7 +140,7 @@ Partial Class Form2
         ' 
         Label4.AutoSize = True
         Label4.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label4.Location = New Point(414, 264)
+        Label4.Location = New Point(384, 264)
         Label4.Name = "Label4"
         Label4.Size = New Size(160, 19)
         Label4.TabIndex = 17
