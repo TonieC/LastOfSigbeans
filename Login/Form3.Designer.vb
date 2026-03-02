@@ -51,7 +51,7 @@ Partial Class Form3
         ' Label1
         ' 
         Label1.AutoSize = True
-        Label1.Font = New Font("Wide Latin", 48.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label1.Font = New Font("Wide Latin", 48F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label1.Location = New Point(303, 47)
         Label1.Name = "Label1"
         Label1.Size = New Size(450, 79)
@@ -61,7 +61,7 @@ Partial Class Form3
         ' Label2
         ' 
         Label2.AutoSize = True
-        Label2.Font = New Font("Wide Latin", 12.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label2.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label2.Location = New Point(438, 257)
         Label2.Name = "Label2"
         Label2.Size = New Size(199, 19)
@@ -71,7 +71,7 @@ Partial Class Form3
         ' Label3
         ' 
         Label3.AutoSize = True
-        Label3.Font = New Font("Wide Latin", 12.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label3.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label3.Location = New Point(440, 322)
         Label3.Name = "Label3"
         Label3.Size = New Size(197, 19)
@@ -129,7 +129,7 @@ Partial Class Form3
         ' 
         ' Form3
         ' 
-        AutoScaleDimensions = New SizeF(7.0F, 15.0F)
+        AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1039, 675)
         Controls.Add(Button2)
