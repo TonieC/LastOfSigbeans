@@ -24,12 +24,10 @@ Public Class Form2
         TextBox1.UseSystemPasswordChar = True
         TextBox4.MaxLength = 11
 
-        ' Gender
         ComboBox1.Items.Clear()
         ComboBox1.Items.AddRange({"Male", "Female", "Prefer not to say"})
         ComboBox1.SelectedIndex = 0
 
-        ' Age
         ComboBox2.Items.Clear()
         For i As Integer = 18 To 65
             ComboBox2.Items.Add(i.ToString())
