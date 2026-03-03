@@ -31,7 +31,7 @@ Public Class Form2
 
         ' Age
         ComboBox2.Items.Clear()
-        For i As Integer = 16 To 65
+        For i As Integer = 18 To 65
             ComboBox2.Items.Add(i.ToString())
         Next
         ComboBox2.SelectedIndex = 0
@@ -49,13 +49,15 @@ Public Class Form2
             "PSYCHOLOGY",
             "CRIMINOLOGY",
             "CABAM",
-            "Junior High School"
+            "Junior High School",
+            "SHOTS",
+            "Basic Educ"
         })
         ComboBox3.SelectedIndex = 0
 
         ' Role
         ComboBox4.Items.Clear()
-        ComboBox4.Items.AddRange({"Teacher", "Staff", "Supervisor", "Strand Coordinator"})
+        ComboBox4.Items.AddRange({"Teacher", "Supervisor", "Strand Coordinator"})
         ComboBox4.SelectedIndex = 0
     End Sub
 
@@ -202,5 +204,7 @@ Public Class Form2
         End If
     End Sub
 
+    Private Sub ComboBox2_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox2.SelectedIndexChanged
 
+    End Sub
 End Class
