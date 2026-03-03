@@ -44,6 +44,12 @@ Partial Class Form2
         ComboBox2 = New ComboBox()
         ComboBox3 = New ComboBox()
         Label10 = New Label()
+        TextBox7 = New TextBox()
+        Label11 = New Label()
+        Label12 = New Label()
+        TextBox8 = New TextBox()
+        ComboBox4 = New ComboBox()
+        Label13 = New Label()
         SuspendLayout()
         ' 
         ' LinkLabel1
@@ -124,14 +130,14 @@ Partial Class Form2
         ' 
         ' TextBox3
         ' 
-        TextBox3.Location = New Point(379, 286)
+        TextBox3.Location = New Point(373, 286)
         TextBox3.Name = "TextBox3"
-        TextBox3.Size = New Size(204, 23)
+        TextBox3.Size = New Size(210, 23)
         TextBox3.TabIndex = 15
         ' 
         ' TextBox4
         ' 
-        TextBox4.Location = New Point(379, 343)
+        TextBox4.Location = New Point(377, 438)
         TextBox4.Name = "TextBox4"
         TextBox4.Size = New Size(204, 23)
         TextBox4.TabIndex = 16
@@ -140,17 +146,17 @@ Partial Class Form2
         ' 
         Label4.AutoSize = True
         Label4.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label4.Location = New Point(384, 264)
+        Label4.Location = New Point(372, 264)
         Label4.Name = "Label4"
-        Label4.Size = New Size(160, 19)
+        Label4.Size = New Size(142, 19)
         Label4.TabIndex = 17
-        Label4.Text = "Full Name"
+        Label4.Text = "Surname"
         ' 
         ' Label5
         ' 
         Label5.AutoSize = True
         Label5.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label5.Location = New Point(379, 321)
+        Label5.Location = New Point(377, 416)
         Label5.Name = "Label5"
         Label5.Size = New Size(231, 19)
         Label5.TabIndex = 18
@@ -158,7 +164,7 @@ Partial Class Form2
         ' 
         ' TextBox5
         ' 
-        TextBox5.Location = New Point(379, 394)
+        TextBox5.Location = New Point(627, 178)
         TextBox5.Name = "TextBox5"
         TextBox5.Size = New Size(206, 23)
         TextBox5.TabIndex = 19
@@ -167,7 +173,7 @@ Partial Class Form2
         ' 
         Label6.AutoSize = True
         Label6.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label6.Location = New Point(431, 372)
+        Label6.Location = New Point(679, 156)
         Label6.Name = "Label6"
         Label6.Size = New Size(98, 19)
         Label6.TabIndex = 20
@@ -175,16 +181,16 @@ Partial Class Form2
         ' 
         ' TextBox6
         ' 
-        TextBox6.Location = New Point(379, 442)
+        TextBox6.Location = New Point(627, 226)
         TextBox6.Name = "TextBox6"
-        TextBox6.Size = New Size(206, 23)
+        TextBox6.Size = New Size(213, 23)
         TextBox6.TabIndex = 21
         ' 
         ' Label7
         ' 
         Label7.AutoSize = True
         Label7.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label7.Location = New Point(414, 420)
+        Label7.Location = New Point(662, 204)
         Label7.Name = "Label7"
         Label7.Size = New Size(128, 19)
         Label7.TabIndex = 22
@@ -194,7 +200,7 @@ Partial Class Form2
         ' 
         Label8.AutoSize = True
         Label8.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label8.Location = New Point(623, 144)
+        Label8.Location = New Point(675, 252)
         Label8.Name = "Label8"
         Label8.Size = New Size(115, 19)
         Label8.TabIndex = 23
@@ -203,7 +209,7 @@ Partial Class Form2
         ' ComboBox1
         ' 
         ComboBox1.FormattingEnabled = True
-        ComboBox1.Location = New Point(623, 166)
+        ComboBox1.Location = New Point(675, 274)
         ComboBox1.Name = "ComboBox1"
         ComboBox1.Size = New Size(115, 23)
         ComboBox1.TabIndex = 24
@@ -212,7 +218,7 @@ Partial Class Form2
         ' 
         Label9.AutoSize = True
         Label9.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label9.Location = New Point(644, 204)
+        Label9.Location = New Point(696, 312)
         Label9.Name = "Label9"
         Label9.Size = New Size(63, 19)
         Label9.TabIndex = 25
@@ -221,7 +227,7 @@ Partial Class Form2
         ' ComboBox2
         ' 
         ComboBox2.FormattingEnabled = True
-        ComboBox2.Location = New Point(623, 226)
+        ComboBox2.Location = New Point(675, 334)
         ComboBox2.Name = "ComboBox2"
         ComboBox2.Size = New Size(115, 23)
         ComboBox2.TabIndex = 26
@@ -229,7 +235,7 @@ Partial Class Form2
         ' ComboBox3
         ' 
         ComboBox3.FormattingEnabled = True
-        ComboBox3.Location = New Point(623, 286)
+        ComboBox3.Location = New Point(675, 394)
         ComboBox3.Name = "ComboBox3"
         ComboBox3.Size = New Size(115, 23)
         ComboBox3.TabIndex = 28
@@ -238,17 +244,75 @@ Partial Class Form2
         ' 
         Label10.AutoSize = True
         Label10.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label10.Location = New Point(590, 264)
+        Label10.Location = New Point(642, 372)
         Label10.Name = "Label10"
         Label10.Size = New Size(182, 19)
         Label10.TabIndex = 27
         Label10.Text = "Department"
+        ' 
+        ' TextBox7
+        ' 
+        TextBox7.Location = New Point(379, 334)
+        TextBox7.Name = "TextBox7"
+        TextBox7.Size = New Size(210, 23)
+        TextBox7.TabIndex = 29
+        ' 
+        ' Label11
+        ' 
+        Label11.AutoSize = True
+        Label11.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label11.Location = New Point(377, 312)
+        Label11.Name = "Label11"
+        Label11.Size = New Size(265, 19)
+        Label11.TabIndex = 30
+        Label11.Text = "Middle (Optional)"
+        ' 
+        ' Label12
+        ' 
+        Label12.AutoSize = True
+        Label12.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label12.Location = New Point(375, 368)
+        Label12.Name = "Label12"
+        Label12.Size = New Size(173, 19)
+        Label12.TabIndex = 32
+        Label12.Text = "First Name"
+        ' 
+        ' TextBox8
+        ' 
+        TextBox8.Location = New Point(377, 390)
+        TextBox8.Name = "TextBox8"
+        TextBox8.Size = New Size(204, 23)
+        TextBox8.TabIndex = 31
+        ' 
+        ' ComboBox4
+        ' 
+        ComboBox4.FormattingEnabled = True
+        ComboBox4.Location = New Point(662, 448)
+        ComboBox4.Name = "ComboBox4"
+        ComboBox4.Size = New Size(115, 23)
+        ComboBox4.TabIndex = 34
+        ' 
+        ' Label13
+        ' 
+        Label13.AutoSize = True
+        Label13.Font = New Font("Wide Latin", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label13.Location = New Point(683, 426)
+        Label13.Name = "Label13"
+        Label13.Size = New Size(76, 19)
+        Label13.TabIndex = 33
+        Label13.Text = "Role"
         ' 
         ' Form2
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1038, 675)
+        Controls.Add(ComboBox4)
+        Controls.Add(Label13)
+        Controls.Add(Label12)
+        Controls.Add(TextBox8)
+        Controls.Add(Label11)
+        Controls.Add(TextBox7)
         Controls.Add(ComboBox3)
         Controls.Add(Label10)
         Controls.Add(ComboBox2)
@@ -299,4 +363,10 @@ Partial Class Form2
     Friend WithEvents ComboBox2 As ComboBox
     Friend WithEvents ComboBox3 As ComboBox
     Friend WithEvents Label10 As Label
+    Friend WithEvents TextBox7 As TextBox
+    Friend WithEvents Label11 As Label
+    Friend WithEvents Label12 As Label
+    Friend WithEvents TextBox8 As TextBox
+    Friend WithEvents ComboBox4 As ComboBox
+    Friend WithEvents Label13 As Label
 End Class

@@ -120,7 +120,7 @@ Partial Class Form3
         ' 
         ' Button2
         ' 
-        Button2.Location = New Point(25, 25)
+        Button2.Location = New Point(23, 31)
         Button2.Name = "Button2"
         Button2.Size = New Size(113, 34)
         Button2.TabIndex = 10

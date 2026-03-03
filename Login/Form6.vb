@@ -147,11 +147,13 @@ Public Class Form6
 
     Private Sub UpdateRequest(newStatus As String)
 
+        ' Ensure a request is selected
         If currentTable <> "request" OrElse DataGridView1.SelectedRows.Count = 0 Then
             MsgBox("Select a request first.")
             Exit Sub
         End If
 
+        ' Get the selected request info
         Dim row = DataGridView1.SelectedRows(0)
         Dim uid As Integer = CInt(row.Cells("UID").Value)
         Dim eid As Integer = CInt(row.Cells("EID").Value)
@@ -160,30 +162,27 @@ Public Class Form6
             Try
                 conn.Open()
 
-                Using cmd As New OleDbCommand(
-                    "UPDATE request SET Status=? WHERE UID=?", conn)
+                ' Update the request status
+                Using cmd As New OleDbCommand("UPDATE request SET Status=? WHERE UID=?", conn)
                     cmd.Parameters.Add("?", OleDbType.VarWChar).Value = newStatus
                     cmd.Parameters.Add("?", OleDbType.Integer).Value = uid
                     cmd.ExecuteNonQuery()
                 End Using
 
-                If newStatus = "Approved" Then
-                    Using cmd As New OleDbCommand(
-                        "UPDATE user SET Status='On Leave' WHERE EID=?", conn)
-                        cmd.Parameters.Add("?", OleDbType.Integer).Value = eid
-                        cmd.ExecuteNonQuery()
-                    End Using
-                Else
-                    Using cmd As New OleDbCommand(
-                        "UPDATE user SET Status='Active' WHERE EID=?", conn)
-                        cmd.Parameters.Add("?", OleDbType.Integer).Value = eid
-                        cmd.ExecuteNonQuery()
-                    End Using
-                End If
+                ' Update the employee status based on the request
+                Dim employeeStatus As String = If(newStatus = "Approved", "On Leave", "Active")
+                Using cmd As New OleDbCommand("UPDATE [user] SET [Status]=? WHERE EID=?", conn)
+                    cmd.Parameters.Add("?", OleDbType.VarWChar).Value = employeeStatus
+                    cmd.Parameters.Add("?", OleDbType.Integer).Value = eid
+                    cmd.ExecuteNonQuery()
+                End Using
 
+                ' Log the action
                 AddLog("REQUEST_UPDATE", $"UID={uid}, Status={newStatus}")
+
+                ' Refresh table
                 LoadTable("request")
-                MsgBox("Request updated.")
+                MsgBox($"Request has been {newStatus.ToLower()}.")
 
             Catch ex As Exception
                 MsgBox("Update error: " & ex.Message)
@@ -266,8 +265,11 @@ Public Class Form6
     Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
         If MsgBox("Logout?", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
             AddLog("LOGOUT", "Staff logged out")
-            Dim f As New Form3
+
+            ' Open Form5 with required constructor parameters
+            Dim f As New Form5(loggedInStaffUsername, "Staff") ' "Staff" is the role
             f.Show()
+
             Close()
         End If
     End Sub

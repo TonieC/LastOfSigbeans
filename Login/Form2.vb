@@ -22,6 +22,7 @@ Public Class Form2
             "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Administrator\OneDrive\Documents\Login.accdb"
 
         TextBox1.UseSystemPasswordChar = True
+        TextBox4.MaxLength = 11
 
         ' Gender
         ComboBox1.Items.Clear()
@@ -52,6 +53,10 @@ Public Class Form2
         })
         ComboBox3.SelectedIndex = 0
 
+        ' Role
+        ComboBox4.Items.Clear()
+        ComboBox4.Items.AddRange({"Teacher", "Staff", "Supervisor", "Strand Coordinator"})
+        ComboBox4.SelectedIndex = 0
     End Sub
 
     ' SIGN UP BUTTON
@@ -59,33 +64,46 @@ Public Class Form2
 
         Dim su_username As String = TextBox2.Text.Trim()
         Dim su_password As String = TextBox1.Text.Trim()
-        Dim su_fullname As String = TextBox3.Text.Trim()
+
+        Dim firstName As String = TextBox8.Text.Trim()
+        Dim middleName As String = TextBox7.Text.Trim()
+        Dim lastName As String = TextBox3.Text.Trim()
+
+        Dim su_fullname As String
+        If middleName = "" Then
+            su_fullname = firstName & " " & lastName
+        Else
+            su_fullname = firstName & " " & middleName & " " & lastName
+        End If
+
         Dim su_mobile As String = TextBox4.Text.Trim()
         Dim su_email As String = TextBox5.Text.Trim()
         Dim su_address As String = TextBox6.Text.Trim()
         Dim su_gender As String = ComboBox1.SelectedItem.ToString()
         Dim su_age As Integer = CInt(ComboBox2.SelectedItem.ToString())
         Dim su_department As String = ComboBox3.SelectedItem.ToString()
+        Dim su_role As String = ComboBox4.SelectedItem.ToString()
         Dim su_eid As String = ""
 
-        ' Validation: required fields
-        If su_username = "" Or su_password = "" Or su_fullname = "" _
+        ' Validation: required fields (middle name excluded)
+        If su_username = "" Or su_password = "" Or firstName = "" Or lastName = "" _
             Or su_mobile = "" Or su_email = "" Or su_address = "" _
-            Or su_department = "" Then
-
-            MsgBox("All fields are required")
+            Or su_department = "" Or su_role = "" Then
+            MsgBox("All fields are required except Middle Name")
             Exit Sub
         End If
 
-        ' Validation: Full Name (letters only)
-        If Not Regex.IsMatch(su_fullname, "^[a-zA-Z\s]+$") Then
-            MsgBox("Full Name cannot contain numbers or special characters")
+        ' Validation: Names (letters only)
+        If Not Regex.IsMatch(firstName, "^[a-zA-Z\s]+$") _
+            Or Not Regex.IsMatch(lastName, "^[a-zA-Z\s]+$") _
+            Or (middleName <> "" And Not Regex.IsMatch(middleName, "^[a-zA-Z\s]+$")) Then
+            MsgBox("Names cannot contain numbers or special characters")
             Exit Sub
         End If
 
-        ' Validation: Mobile Number (numbers only)
-        If Not Regex.IsMatch(su_mobile, "^\d+$") Then
-            MsgBox("Mobile Number must contain digits only")
+        ' Validation: Mobile Number (exactly 11 digits)
+        If Not Regex.IsMatch(su_mobile, "^\d{11}$") Then
+            MsgBox("Mobile Number must be exactly 11 digits")
             Exit Sub
         End If
 
@@ -93,6 +111,12 @@ Public Class Form2
         Dim passwordPattern As String = "^(?=.*[!@#$%^&*(),.?""{}|<>]).{8,}$"
         If Not Regex.IsMatch(su_password, passwordPattern) Then
             MsgBox("Password must be at least 8 characters long and include at least one special character (!@#$%^&* etc.)")
+            Exit Sub
+        End If
+
+        ' Validation: Email (no spaces allowed)
+        If su_email.Contains(" ") Then
+            MsgBox("Email cannot contain spaces")
             Exit Sub
         End If
 
@@ -112,26 +136,21 @@ Public Class Form2
             ' GET NEXT EID
             sql = "SELECT MAX(EID) FROM [user]"
             command = New OleDbCommand(sql, connect)
-
             Dim result As Object = command.ExecuteScalar()
             Dim nextId As Integer
-
             If IsDBNull(result) Or result Is Nothing Then
                 nextId = 1
             Else
                 nextId = CInt(result) + 1
             End If
-
             su_eid = nextId.ToString("000")
 
             ' INSERT USER DATA
             sql = "INSERT INTO [user] " &
-                  "(EID, username, [password], FullName, MobileN, Email, Address, Gender, Age, Department) " &
-                  "VALUES (?,?,?,?,?,?,?,?,?,?)"
+                  "(EID, username, [password], FullName, MobileN, Email, Address, Gender, Age, Department, Role) " &
+                  "VALUES (?,?,?,?,?,?,?,?,?,?,?)"
 
             command = New OleDbCommand(sql, connect)
-
-            ' ORDER MATTERS
             command.Parameters.Add("?", OleDbType.VarChar).Value = su_eid
             command.Parameters.Add("?", OleDbType.VarChar).Value = su_username
             command.Parameters.Add("?", OleDbType.VarChar).Value = su_password
@@ -142,21 +161,25 @@ Public Class Form2
             command.Parameters.Add("?", OleDbType.VarChar).Value = su_gender
             command.Parameters.Add("?", OleDbType.Integer).Value = su_age
             command.Parameters.Add("?", OleDbType.VarChar).Value = su_department
+            command.Parameters.Add("?", OleDbType.VarChar).Value = su_role
 
             command.ExecuteNonQuery()
 
             MsgBox("Sign Up Successful. Employee ID: " & su_eid)
 
-            ' Clear inputs
+            ' Clear fields
             TextBox1.Clear()
             TextBox2.Clear()
             TextBox3.Clear()
             TextBox4.Clear()
             TextBox5.Clear()
             TextBox6.Clear()
+            TextBox7.Clear()
+            TextBox8.Clear()
             ComboBox1.SelectedIndex = 0
             ComboBox2.SelectedIndex = 0
             ComboBox3.SelectedIndex = 0
+            ComboBox4.SelectedIndex = 0
 
         Catch ex As Exception
             MsgBox("Error: " & ex.Message)
@@ -171,5 +194,13 @@ Public Class Form2
     Private Sub CheckBox1_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox1.CheckedChanged
         TextBox1.UseSystemPasswordChar = Not CheckBox1.Checked
     End Sub
+
+    ' Restrict TextBox4 to digits only
+    Private Sub TextBox4_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TextBox4.KeyPress
+        If Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsDigit(e.KeyChar) Then
+            e.Handled = True
+        End If
+    End Sub
+
 
 End Class

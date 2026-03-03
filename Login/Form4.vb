@@ -283,10 +283,15 @@ Public Class Form4
     ' LOGOUT
     ' =========================
     Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
-        AddLog("LOGOUT", loggedInAdmin)
-        Dim f As New Form3
-        f.Show()
-        Close()
+        If MsgBox("Logout?", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
+            AddLog("LOGOUT", "Admin logged out")
+
+            ' Open Form5 with required constructor parameters
+            Dim f As New Form5(loggedInAdmin, "Staff") ' "Staff" is the role
+            f.Show()
+
+            Close()
+        End If
     End Sub
 
     Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click

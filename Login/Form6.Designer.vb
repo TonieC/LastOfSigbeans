@@ -47,7 +47,7 @@ Partial Class Form6
         Button8.Name = "Button8"
         Button8.Size = New Size(139, 46)
         Button8.TabIndex = 24
-        Button8.Text = "Log Out"
+        Button8.Text = "Close"
         Button8.UseVisualStyleBackColor = True
         ' 
         ' Label2
