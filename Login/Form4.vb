@@ -25,7 +25,6 @@ Public Class Form4
     ' FORM LOAD
     ' =========================
     Private Sub Form4_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Me.WindowState = FormWindowState.Maximized
         LoadTable("user")
     End Sub
 

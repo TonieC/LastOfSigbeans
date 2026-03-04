@@ -44,14 +44,14 @@ Partial Class Form4
         ' DataGridView1
         ' 
         DataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DataGridView1.Location = New Point(81, 160)
+        DataGridView1.Location = New Point(162, 151)
         DataGridView1.Name = "DataGridView1"
         DataGridView1.Size = New Size(901, 395)
         DataGridView1.TabIndex = 0
         ' 
         ' Button1
         ' 
-        Button1.Location = New Point(450, 570)
+        Button1.Location = New Point(531, 561)
         Button1.Name = "Button1"
         Button1.Size = New Size(102, 27)
         Button1.TabIndex = 1
@@ -60,7 +60,7 @@ Partial Class Form4
         ' 
         ' Button2
         ' 
-        Button2.Location = New Point(558, 570)
+        Button2.Location = New Point(639, 561)
         Button2.Name = "Button2"
         Button2.Size = New Size(102, 27)
         Button2.TabIndex = 2
@@ -69,7 +69,7 @@ Partial Class Form4
         ' 
         ' Button3
         ' 
-        Button3.Location = New Point(342, 570)
+        Button3.Location = New Point(423, 561)
         Button3.Name = "Button3"
         Button3.Size = New Size(102, 27)
         Button3.TabIndex = 3
@@ -78,7 +78,7 @@ Partial Class Form4
         ' 
         ' Button4
         ' 
-        Button4.Location = New Point(666, 570)
+        Button4.Location = New Point(747, 561)
         Button4.Name = "Button4"
         Button4.Size = New Size(102, 27)
         Button4.TabIndex = 4
@@ -87,7 +87,7 @@ Partial Class Form4
         ' 
         ' Button5
         ' 
-        Button5.Location = New Point(81, 570)
+        Button5.Location = New Point(162, 561)
         Button5.Name = "Button5"
         Button5.Size = New Size(102, 27)
         Button5.TabIndex = 5
@@ -96,7 +96,7 @@ Partial Class Form4
         ' 
         ' Button6
         ' 
-        Button6.Location = New Point(81, 636)
+        Button6.Location = New Point(162, 627)
         Button6.Name = "Button6"
         Button6.Size = New Size(102, 27)
         Button6.TabIndex = 6
@@ -105,7 +105,7 @@ Partial Class Form4
         ' 
         ' Button7
         ' 
-        Button7.Location = New Point(81, 603)
+        Button7.Location = New Point(162, 594)
         Button7.Name = "Button7"
         Button7.Size = New Size(102, 27)
         Button7.TabIndex = 7
@@ -116,7 +116,7 @@ Partial Class Form4
         ' 
         Label1.AutoSize = True
         Label1.Font = New Font("Showcard Gothic", 20.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label1.Location = New Point(403, 34)
+        Label1.Location = New Point(484, 25)
         Label1.Name = "Label1"
         Label1.Size = New Size(288, 33)
         Label1.TabIndex = 8
@@ -126,7 +126,7 @@ Partial Class Form4
         ' 
         Label2.AutoSize = True
         Label2.Font = New Font("Showcard Gothic", 20.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label2.Location = New Point(329, 109)
+        Label2.Location = New Point(410, 100)
         Label2.Name = "Label2"
         Label2.Size = New Size(151, 33)
         Label2.TabIndex = 9
@@ -135,7 +135,7 @@ Partial Class Form4
         ' Button8
         ' 
         Button8.Font = New Font("Showcard Gothic", 15.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Button8.Location = New Point(81, 29)
+        Button8.Location = New Point(162, 20)
         Button8.Name = "Button8"
         Button8.Size = New Size(139, 46)
         Button8.TabIndex = 13
@@ -146,7 +146,7 @@ Partial Class Form4
         ' 
         Label3.AutoSize = True
         Label3.Font = New Font("Showcard Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label3.Location = New Point(699, 134)
+        Label3.Location = New Point(780, 125)
         Label3.Name = "Label3"
         Label3.Size = New Size(63, 15)
         Label3.TabIndex = 29
@@ -154,7 +154,7 @@ Partial Class Form4
         ' 
         ' TextBox1
         ' 
-        TextBox1.Location = New Point(768, 134)
+        TextBox1.Location = New Point(849, 125)
         TextBox1.Name = "TextBox1"
         TextBox1.Size = New Size(164, 23)
         TextBox1.TabIndex = 28
@@ -162,7 +162,7 @@ Partial Class Form4
         ' DateTimePicker1
         ' 
         DateTimePicker1.Format = DateTimePickerFormat.Short
-        DateTimePicker1.Location = New Point(938, 134)
+        DateTimePicker1.Location = New Point(1019, 125)
         DateTimePicker1.Name = "DateTimePicker1"
         DateTimePicker1.Size = New Size(81, 23)
         DateTimePicker1.TabIndex = 30
@@ -170,7 +170,7 @@ Partial Class Form4
         ' Button9
         ' 
         Button9.Font = New Font("Showcard Gothic", 15.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Button9.Location = New Point(843, 29)
+        Button9.Location = New Point(924, 20)
         Button9.Name = "Button9"
         Button9.Size = New Size(139, 46)
         Button9.TabIndex = 31
@@ -179,7 +179,7 @@ Partial Class Form4
         ' 
         ' Button10
         ' 
-        Button10.Location = New Point(924, 571)
+        Button10.Location = New Point(1005, 562)
         Button10.Name = "Button10"
         Button10.Size = New Size(58, 26)
         Button10.TabIndex = 34
@@ -190,7 +190,7 @@ Partial Class Form4
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(1052, 672)
+        ClientSize = New Size(1172, 671)
         Controls.Add(Button10)
         Controls.Add(Button9)
         Controls.Add(DateTimePicker1)

@@ -321,9 +321,15 @@ Public Class Form1
     End Sub
 
     ' SIGNUP BUTTON
-    Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
-        Form2.Show()
-        Me.Hide()
+    ' Change button color on hover
+    Private Sub Button4_MouseEnter(sender As Object, e As EventArgs) Handles Button4.MouseEnter
+        Button4.BackColor = Color.LightBlue   ' change to any color you like
+        Button4.ForeColor = Color.White       ' optional: change text color
+    End Sub
+
+    Private Sub Button4_MouseLeave(sender As Object, e As EventArgs) Handles Button4.MouseLeave
+        Button4.BackColor = SystemColors.Control  ' revert to original
+        Button4.ForeColor = Color.Black           ' revert text color
     End Sub
 
 End Class

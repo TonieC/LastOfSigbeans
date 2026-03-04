@@ -9,6 +9,8 @@ Imports ZXing.Windows.Compatibility
 Imports iTextSharp.text
 Imports iTextSharp.text.pdf
 Imports System.IO
+Imports System.Net
+Imports System.Net.Mail
 
 Public Class Form5
 
@@ -30,7 +32,6 @@ Public Class Form5
     ' Form Load
     ' =========================
     Private Sub Form5_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Me.WindowState = FormWindowState.Maximized
         LoadEmployeeData()
         LoadAttendanceData()
         Label14.Text = "Attendance Records"
@@ -433,6 +434,123 @@ Public Class Form5
     End Sub
 
     Private Sub Label24_Click(sender As Object, e As EventArgs) Handles Label24.Click
+        Try
+            If connect.State = ConnectionState.Closed Then connect.Open()
 
+            ' Determine current half of the month
+            Dim today As Date = Date.Today
+            Dim currentHalf As String
+            If today.Day <= 15 Then
+                currentHalf = "1-15"
+            Else
+                currentHalf = "16-31"
+            End If
+
+            Dim totalPay As Double = 0
+
+            ' Fetch all attendance records for this user
+            Dim sql As String = "SELECT LoginDate, LoginTime, Status FROM [attendance] WHERE Username=?"
+            Using cmd As New OleDbCommand(sql, connect)
+                cmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
+                Using reader As OleDbDataReader = cmd.ExecuteReader()
+                    While reader.Read()
+                        Dim loginDate As Date = Convert.ToDateTime(reader("LoginDate"))
+                        Dim loginTime As DateTime = Convert.ToDateTime(reader("LoginTime"))
+                        Dim dayOfMonth As Integer = loginDate.Day
+
+                        ' Only include current half of the month
+                        If (currentHalf = "1-15" And dayOfMonth > 15) Or (currentHalf = "16-31" And dayOfMonth < 16) Then
+                            Continue While
+                        End If
+
+                        Dim status As String = reader("Status").ToString().ToLower()
+                        Dim dayPay As Double = 86.86 ' default pay per hour
+
+                        ' Check if absent
+                        If status = "absent" Then
+                            ' Check all approved leave types
+                            Dim leaveSql As String =
+                            "SELECT COUNT(*) FROM [request] " &
+                            "WHERE EID=? AND Format(RequestDate,'yyyy-mm-dd')=? " &
+                            "AND Status IN ('Approved','Sick Leave','Emergency Leave','Vacation Leave','Maternity Leave','Paternity Leave','Bereavement Leave','Special Leave')"
+                            Using leaveCmd As New OleDbCommand(leaveSql, connect)
+                                leaveCmd.Parameters.Add("?", OleDbType.VarChar).Value = Label2.Text
+                                leaveCmd.Parameters.Add("?", OleDbType.VarChar).Value = loginDate.ToString("yyyy-MM-dd")
+                                Dim approvedLeaves As Integer = Convert.ToInt32(leaveCmd.ExecuteScalar())
+                                If approvedLeaves = 0 Then dayPay = 0 ' no pay if absent without leave
+                            End Using
+                        End If
+
+                        ' Deduct late minutes (after 8:00 AM)
+                        Dim shiftStart As Date = loginDate.Date.AddHours(8)
+                        If loginTime > shiftStart Then
+                            Dim lateMinutes As Double = (loginTime - shiftStart).TotalMinutes
+                            dayPay -= lateMinutes * 1.44
+                            If dayPay < 0 Then dayPay = 0
+                        End If
+
+                        totalPay += dayPay
+                    End While
+                End Using
+            End Using
+
+            ' Ensure minimum wage
+            If totalPay < 695 Then totalPay = 695
+
+            ' Update Pay in user table
+            Dim updateSql As String = "UPDATE [user] SET Pay=? WHERE username=?"
+            Using updateCmd As New OleDbCommand(updateSql, connect)
+                updateCmd.Parameters.Add("?", OleDbType.Double).Value = totalPay
+                updateCmd.Parameters.Add("?", OleDbType.VarChar).Value = loggedInUsername
+                updateCmd.ExecuteNonQuery()
+            End Using
+
+            ' Display current pay in label
+            Label24.Text = $"Current Pay ({currentHalf}): ₱{totalPay:F2}"
+
+        Catch ex As Exception
+            MsgBox("Payment calculation error: " & ex.Message)
+        Finally
+            connect.Close()
+        End Try
+    End Sub
+
+    Private Sub Button10_Click(sender As Object, e As EventArgs) Handles Button10.Click
+        ' Ensure QR code exists
+        If PictureBox1.Image Is Nothing Then
+            MsgBox("No QR code to send.", MsgBoxStyle.Exclamation)
+            Exit Sub
+        End If
+
+        ' Ask for the recipient email
+        Dim recipientEmail As String = InputBox("Enter the email address to send the QR code to:", "Send QR Code", Label10.Text)
+        If String.IsNullOrWhiteSpace(recipientEmail) Then
+            MsgBox("Email address cannot be empty.", MsgBoxStyle.Exclamation)
+            Exit Sub
+        End If
+
+        ' Send QR code
+        Try
+            Using ms As New MemoryStream()
+                PictureBox1.Image.Save(ms, Imaging.ImageFormat.Png)
+                ms.Position = 0
+
+                Dim mail As New MailMessage()
+                mail.From = New MailAddress("cadizal06@gmail.com")
+                mail.To.Add(recipientEmail)
+                mail.Subject = "Your QR Code"
+                mail.Body = "Attached is your QR code."
+                mail.Attachments.Add(New Attachment(ms, Label4.Text & "_QR.png", "image/png"))
+
+                Dim smtp As New SmtpClient("smtp.gmail.com", 587)
+                smtp.EnableSsl = True
+                smtp.UseDefaultCredentials = False
+                smtp.Credentials = New NetworkCredential("cadizal06@gmail.com", "ptpz oiah zzuj kjfj")
+                smtp.Send(mail)
+            End Using
+            MsgBox("QR code sent successfully!", MsgBoxStyle.Information)
+        Catch ex As Exception
+            MsgBox("Failed to send QR code: " & ex.Message, MsgBoxStyle.Critical)
+        End Try
     End Sub
 End Class

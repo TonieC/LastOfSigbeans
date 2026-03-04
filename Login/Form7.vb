@@ -23,9 +23,15 @@ Public Class Form7
     ' =========================
     Private Sub Form7_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         ComboBox1.Items.Clear()
+        ' Populate leave types for HR
+        ComboBox1.Items.Clear()
         ComboBox1.Items.Add("Sick Leave")
         ComboBox1.Items.Add("Emergency Leave")
         ComboBox1.Items.Add("Vacation Leave")
+        ComboBox1.Items.Add("Maternity Leave")
+        ComboBox1.Items.Add("Paternity Leave")
+        ComboBox1.Items.Add("Bereavement Leave")
+        ComboBox1.Items.Add("Special Leave")
         ComboBox1.SelectedIndex = -1
 
         TextBox1.Clear()

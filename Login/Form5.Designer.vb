@@ -58,6 +58,7 @@ Partial Class Form5
         Button4 = New Button()
         Label23 = New Label()
         Label24 = New Label()
+        Button10 = New Button()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
@@ -194,7 +195,7 @@ Partial Class Form5
         ' 
         ' PictureBox1
         ' 
-        PictureBox1.Location = New Point(422, 76)
+        PictureBox1.Location = New Point(962, 48)
         PictureBox1.Name = "PictureBox1"
         PictureBox1.Size = New Size(190, 195)
         PictureBox1.TabIndex = 13
@@ -202,7 +203,7 @@ Partial Class Form5
         ' 
         ' Button2
         ' 
-        Button2.Location = New Point(545, 277)
+        Button2.Location = New Point(1085, 249)
         Button2.Name = "Button2"
         Button2.Size = New Size(67, 34)
         Button2.TabIndex = 14
@@ -211,7 +212,7 @@ Partial Class Form5
         ' 
         ' Button3
         ' 
-        Button3.Location = New Point(422, 277)
+        Button3.Location = New Point(962, 249)
         Button3.Name = "Button3"
         Button3.Size = New Size(67, 34)
         Button3.TabIndex = 15
@@ -222,17 +223,17 @@ Partial Class Form5
         ' 
         Label13.AutoSize = True
         Label13.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label13.Location = New Point(422, 50)
+        Label13.Location = New Point(911, 22)
         Label13.Name = "Label13"
-        Label13.Size = New Size(98, 23)
+        Label13.Size = New Size(241, 23)
         Label13.TabIndex = 18
-        Label13.Text = "QR Code"
+        Label13.Text = "Your Unique QR Code"
         ' 
         ' Label15
         ' 
         Label15.AutoSize = True
         Label15.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label15.Location = New Point(548, 629)
+        Label15.Location = New Point(726, 641)
         Label15.Name = "Label15"
         Label15.Size = New Size(245, 23)
         Label15.TabIndex = 21
@@ -242,7 +243,7 @@ Partial Class Form5
         ' 
         Label16.AutoSize = True
         Label16.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label16.Location = New Point(799, 629)
+        Label16.Location = New Point(977, 641)
         Label16.Name = "Label16"
         Label16.Size = New Size(197, 23)
         Label16.TabIndex = 22
@@ -250,7 +251,7 @@ Partial Class Form5
         ' 
         ' Button5
         ' 
-        Button5.Location = New Point(422, 624)
+        Button5.Location = New Point(600, 636)
         Button5.Name = "Button5"
         Button5.Size = New Size(120, 25)
         Button5.TabIndex = 27
@@ -259,7 +260,7 @@ Partial Class Form5
         ' 
         ' Button6
         ' 
-        Button6.Location = New Point(460, 317)
+        Button6.Location = New Point(13, 64)
         Button6.Name = "Button6"
         Button6.Size = New Size(120, 23)
         Button6.TabIndex = 28
@@ -269,7 +270,7 @@ Partial Class Form5
         ' DataGridView1
         ' 
         DataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DataGridView1.Location = New Point(672, 45)
+        DataGridView1.Location = New Point(371, 32)
         DataGridView1.Name = "DataGridView1"
         DataGridView1.Size = New Size(349, 270)
         DataGridView1.TabIndex = 29
@@ -278,7 +279,7 @@ Partial Class Form5
         ' 
         Label14.AutoSize = True
         Label14.Font = New Font("Showcard Gothic", 11.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label14.Location = New Point(738, 21)
+        Label14.Location = New Point(437, 8)
         Label14.Name = "Label14"
         Label14.Size = New Size(182, 18)
         Label14.TabIndex = 30
@@ -286,7 +287,7 @@ Partial Class Form5
         ' 
         ' Button7
         ' 
-        Button7.Location = New Point(672, 321)
+        Button7.Location = New Point(371, 308)
         Button7.Name = "Button7"
         Button7.Size = New Size(58, 26)
         Button7.TabIndex = 31
@@ -296,14 +297,14 @@ Partial Class Form5
         ' DateTimePicker1
         ' 
         DateTimePicker1.Format = DateTimePickerFormat.Short
-        DateTimePicker1.Location = New Point(940, 17)
+        DateTimePicker1.Location = New Point(639, 4)
         DateTimePicker1.Name = "DateTimePicker1"
         DateTimePicker1.Size = New Size(81, 23)
         DateTimePicker1.TabIndex = 32
         ' 
         ' Button8
         ' 
-        Button8.Location = New Point(963, 321)
+        Button8.Location = New Point(662, 308)
         Button8.Name = "Button8"
         Button8.Size = New Size(58, 26)
         Button8.TabIndex = 33
@@ -392,7 +393,7 @@ Partial Class Form5
         ' 
         Label23.AutoSize = True
         Label23.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label23.Location = New Point(558, 550)
+        Label23.Location = New Point(8, 641)
         Label23.Name = "Label23"
         Label23.Size = New Size(195, 23)
         Label23.TabIndex = 42
@@ -402,17 +403,27 @@ Partial Class Form5
         ' 
         Label24.AutoSize = True
         Label24.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label24.Location = New Point(759, 550)
+        Label24.Location = New Point(200, 641)
         Label24.Name = "Label24"
-        Label24.Size = New Size(188, 23)
+        Label24.Size = New Size(197, 23)
         Label24.TabIndex = 43
-        Label24.Text = "Payment Status"
+        Label24.Text = "Click to Refresh"
+        ' 
+        ' Button10
+        ' 
+        Button10.Location = New Point(986, 289)
+        Button10.Name = "Button10"
+        Button10.Size = New Size(142, 34)
+        Button10.TabIndex = 44
+        Button10.Text = "Send a copy to email"
+        Button10.UseVisualStyleBackColor = True
         ' 
         ' Form5
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(1038, 671)
+        ClientSize = New Size(1173, 673)
+        Controls.Add(Button10)
         Controls.Add(Label24)
         Controls.Add(Label23)
         Controls.Add(Button4)
@@ -493,4 +504,5 @@ Partial Class Form5
     Friend WithEvents Button4 As Button
     Friend WithEvents Label23 As Label
     Friend WithEvents Label24 As Label
+    Friend WithEvents Button10 As Button
 End Class
