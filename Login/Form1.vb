@@ -9,18 +9,14 @@ Imports System.Threading.Tasks
 
 Public Class Form1
 
-
-    ' Database connection
     Private connect As New OleDbConnection(
         "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Administrator\OneDrive\Documents\Login.accdb")
 
-    ' Camera and scanner
     Private videoDevices As FilterInfoCollection
     Private videoSource As VideoCaptureDevice
     Private scanner As New BarcodeReader()
     Private scanning As Boolean = False
 
-    ' Track current username pending attendance
     Private pendingUsername As String = ""
     Private pendingFullName As String = ""
 
@@ -29,13 +25,12 @@ Public Class Form1
         videoDevices = New FilterInfoCollection(FilterCategory.VideoInputDevice)
         Label1.Text = "Waiting for QR scan..."
 
-        ' Hide password elements initially
         Label2.Visible = False
         TextBox1.Visible = False
         Button5.Visible = True
         Button5.Text = "Time In"
+        Button3.Text = "Time Out"
 
-        ' Start camera immediately
         If videoDevices IsNot Nothing AndAlso videoDevices.Count > 0 Then
             videoSource = New VideoCaptureDevice(videoDevices(2).MonikerString)
             AddHandler videoSource.NewFrame, AddressOf Video_NewFrame
@@ -44,13 +39,11 @@ Public Class Form1
         Else
             MsgBox("No camera detected")
         End If
-
-        ' Set Button3 as Time Out
-        Button3.Text = "Time Out"
     End Sub
 
-    ' Time In (password submit)
+    ' ================= TIME IN =================
     Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+
         If pendingUsername = "" Then
             MsgBox("Scan QR code first")
             Return
@@ -66,30 +59,27 @@ Public Class Form1
 
             Dim dbPassword As Object = Nothing
 
-            ' Get password from login table
             Using cmd As New OleDbCommand("SELECT [password] FROM [user] WHERE username=?", connect)
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = pendingUsername
                 dbPassword = cmd.ExecuteScalar()
             End Using
 
-            ' Check password
             If dbPassword Is DBNull.Value OrElse dbPassword.ToString() <> TextBox1.Text Then
                 MsgBox("Incorrect password")
                 Return
             End If
 
-            ' Check if Time In already exists today
             Dim exists As Boolean = False
-            Using cmd As New OleDbCommand("SELECT COUNT(*) FROM [attendance] WHERE Username=? AND LoginDate=? AND Status='Time In'", connect)
+            Using cmd As New OleDbCommand(
+                "SELECT COUNT(*) FROM attendance WHERE Username=? AND LoginDate=? AND Status='Time In'", connect)
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = pendingUsername
                 cmd.Parameters.Add("?", OleDbType.Date).Value = DateTime.Now.Date
                 exists = CInt(cmd.ExecuteScalar()) > 0
             End Using
 
-            ' Insert Time In if not exists
             If Not exists Then
                 Using cmd As New OleDbCommand(
-                    "INSERT INTO [attendance] (Username, FullName, LoginDate, LoginTime, Status) VALUES (?, ?, ?, ?, ?)", connect)
+                    "INSERT INTO attendance (Username, FullName, LoginDate, LoginTime, Status) VALUES (?, ?, ?, ?, ?)", connect)
                     cmd.Parameters.Add("?", OleDbType.VarChar).Value = pendingUsername
                     cmd.Parameters.Add("?", OleDbType.VarChar).Value = pendingFullName
                     cmd.Parameters.Add("?", OleDbType.Date).Value = DateTime.Now.Date
@@ -97,7 +87,8 @@ Public Class Form1
                     cmd.Parameters.Add("?", OleDbType.VarChar).Value = "Time In"
                     cmd.ExecuteNonQuery()
                 End Using
-                MsgBox($"Time In recorded for {pendingFullName}")
+
+                MsgBox("Time In recorded for " & pendingFullName)
             Else
                 MsgBox("Time In already recorded for today")
             End If
@@ -118,14 +109,14 @@ Public Class Form1
         UpdateStatusLabel()
     End Sub
 
-    ' Time Out button
+    ' ================= TIME OUT =================
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+
         If pendingUsername = "" Then
             MsgBox("Scan QR code first")
             Return
         End If
 
-        ' Require password for Time Out as well
         If TextBox1.Text.Trim() = "" Then
             MsgBox("Enter password before Time Out")
             Return
@@ -134,7 +125,6 @@ Public Class Form1
         Try
             If connect.State = ConnectionState.Closed Then connect.Open()
 
-            ' Verify password first
             Dim dbPassword As Object = Nothing
             Using cmd As New OleDbCommand("SELECT [password] FROM [user] WHERE username=?", connect)
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = pendingUsername
@@ -146,22 +136,20 @@ Public Class Form1
                 Return
             End If
 
-            ' Check if Time In exists and Time Out not exists
+            ' Get Time In time
+            Dim timeInTime As DateTime
             Dim hasTimeIn As Boolean = False
-            Dim hasTimeOut As Boolean = False
 
             Using cmd As New OleDbCommand(
-                "SELECT COUNT(*) FROM attendance WHERE Username=? AND LoginDate=? AND Status='Time In'", connect)
+                "SELECT TOP 1 LoginTime FROM attendance WHERE Username=? AND LoginDate=? AND Status='Time In' ORDER BY LoginTime ASC", connect)
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = pendingUsername
                 cmd.Parameters.Add("?", OleDbType.Date).Value = DateTime.Now.Date
-                hasTimeIn = CInt(cmd.ExecuteScalar()) > 0
-            End Using
 
-            Using cmd As New OleDbCommand(
-                "SELECT COUNT(*) FROM attendance WHERE Username=? AND LoginDate=? AND Status='Time Out'", connect)
-                cmd.Parameters.Add("?", OleDbType.VarChar).Value = pendingUsername
-                cmd.Parameters.Add("?", OleDbType.Date).Value = DateTime.Now.Date
-                hasTimeOut = CInt(cmd.ExecuteScalar()) > 0
+                Dim result = cmd.ExecuteScalar()
+                If result IsNot Nothing Then
+                    timeInTime = CDate(result)
+                    hasTimeIn = True
+                End If
             End Using
 
             If Not hasTimeIn Then
@@ -169,14 +157,29 @@ Public Class Form1
                 Return
             End If
 
+            Dim hasTimeOut As Boolean = False
+            Using cmd As New OleDbCommand(
+                "SELECT COUNT(*) FROM attendance WHERE Username=? AND LoginDate=? AND Status='Time Out'", connect)
+                cmd.Parameters.Add("?", OleDbType.VarChar).Value = pendingUsername
+                cmd.Parameters.Add("?", OleDbType.Date).Value = DateTime.Now.Date
+                hasTimeOut = CInt(cmd.ExecuteScalar()) > 0
+            End Using
+
             If hasTimeOut Then
                 MsgBox("Time Out already recorded")
                 Return
             End If
 
-            ' Insert Time Out
+            Dim minutesWorked As Double = DateTime.Now.Subtract(timeInTime).TotalMinutes
+
+            If minutesWorked < 60 Then
+                MsgBox("Cannot Time Out. Minimum 60 minutes required." &
+                       vbCrLf & "Worked: " & Math.Floor(minutesWorked) & " minutes.")
+                Return
+            End If
+
             Using cmd As New OleDbCommand(
-                "INSERT INTO [attendance] (Username, FullName, LoginDate, LoginTime, Status) VALUES (?, ?, ?, ?, ?)", connect)
+                "INSERT INTO attendance (Username, FullName, LoginDate, LoginTime, Status) VALUES (?, ?, ?, ?, ?)", connect)
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = pendingUsername
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = pendingFullName
                 cmd.Parameters.Add("?", OleDbType.Date).Value = DateTime.Now.Date
@@ -185,7 +188,8 @@ Public Class Form1
                 cmd.ExecuteNonQuery()
             End Using
 
-            MsgBox($"Time Out recorded for {pendingFullName}")
+            MsgBox("Time Out recorded for " & pendingFullName &
+                   vbCrLf & "Total worked: " & Math.Floor(minutesWorked) & " minutes")
 
             pendingUsername = ""
             pendingFullName = ""
@@ -203,12 +207,12 @@ Public Class Form1
         UpdateStatusLabel()
     End Sub
 
-    ' Always update Label1 with current status
+    ' ================= STATUS =================
     Private Sub UpdateStatusLabel()
         Me.Invoke(Sub()
                       If scanning Then
                           If pendingUsername <> "" Then
-                              Label1.Text = $"User scanned: {pendingUsername}"
+                              Label1.Text = "User scanned: " & pendingUsername
                           Else
                               Label1.Text = "Waiting for QR scan..."
                           End If
@@ -218,7 +222,7 @@ Public Class Form1
                   End Sub)
     End Sub
 
-    ' Camera feed + QR decode (FIXED to handle invalid users)
+    ' ================= CAMERA =================
     Private Sub Video_NewFrame(sender As Object, eventArgs As NewFrameEventArgs)
         If Not scanning Then Return
 
@@ -244,7 +248,6 @@ Public Class Form1
             End Using
         End If
 
-        ' Update PictureBox safely
         If PictureBox1.InvokeRequired Then
             PictureBox1.Invoke(Sub()
                                    If PictureBox1.Image IsNot Nothing Then PictureBox1.Image.Dispose()
@@ -254,9 +257,8 @@ Public Class Form1
             PictureBox1.Image = CType(frame.Clone(), Bitmap)
         End If
 
-        ' Handle QR scan
         If result IsNot Nothing Then
-            scanning = False ' pause scanning
+            scanning = False
 
             Dim scannedUser As String = result.Text.Trim()
             Dim userFound As Boolean = False
@@ -275,7 +277,7 @@ Public Class Form1
                             Me.Invoke(Sub()
                                           Label2.Visible = True
                                           TextBox1.Visible = True
-                                          Label1.Text = $"User scanned: {pendingUsername}"
+                                          Label1.Text = "User scanned: " & pendingUsername
                                       End Sub)
                         End If
                     End Using
@@ -286,13 +288,13 @@ Public Class Form1
                 connect.Close()
             End Try
 
-            ' If user not found → show failure and resume scanning
             If Not userFound Then
                 pendingUsername = ""
                 pendingFullName = ""
                 Me.Invoke(Sub()
                               Label1.Text = "Failed to scan: user doesn't exist"
                           End Sub)
+
                 Task.Delay(1200).ContinueWith(Sub()
                                                   scanning = True
                                                   Me.Invoke(Sub()
@@ -305,7 +307,6 @@ Public Class Form1
         End If
     End Sub
 
-    ' Cleanup on Form Closing
     Private Sub Form1_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
         If videoSource IsNot Nothing AndAlso videoSource.IsRunning Then
             videoSource.SignalToStop()
@@ -313,14 +314,14 @@ Public Class Form1
         End If
     End Sub
 
-    ' Manual Navigate to Form3 (Button1)
+    ' LOGIN BUTTON
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         Hide()
         Dim f3 As New Form3
         f3.Show()
     End Sub
 
-    ' Show Form2 (Button4)
+    ' SIGNUP BUTTON
     Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
         Form2.Show()
         Me.Hide()
