@@ -46,7 +46,6 @@ Public Class Form3
 
                 Dim role As String = roleObj.ToString().ToLower()
 
-                ' ✅ ONE DASHBOARD ONLY
                 Dim dash As New Form5(username, role)
                 dash.Show()
                 Me.Hide()
@@ -252,4 +251,5 @@ Public Class Form3
         End Using
 
     End Sub
+
 End Class
