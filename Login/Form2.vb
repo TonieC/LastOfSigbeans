@@ -8,6 +8,10 @@ Public Class Form2
     Dim command As OleDbCommand
     Dim sql As String = Nothing
 
+    ' Dynamic Role controls
+    Private cmbRole As New ComboBox
+    Private lblRole As New Label With {.Text = "Role:", .AutoSize = True}
+
     ' Back to LOGIN (Form3)
     Private Sub LinkLabel1_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LinkLabel1.LinkClicked
         Dim login As New Form3
@@ -24,10 +28,12 @@ Public Class Form2
         TextBox1.UseSystemPasswordChar = True
         TextBox4.MaxLength = 11
 
+        ' Gender
         ComboBox1.Items.Clear()
         ComboBox1.Items.AddRange({"Male", "Female", "Prefer not to say"})
         ComboBox1.SelectedIndex = 0
 
+        ' Age
         ComboBox2.Items.Clear()
         For i As Integer = 18 To 65
             ComboBox2.Items.Add(i.ToString())
@@ -53,10 +59,17 @@ Public Class Form2
         })
         ComboBox3.SelectedIndex = 0
 
-        ' Role
-        ComboBox4.Items.Clear()
-        ComboBox4.Items.AddRange({"Teacher", "Supervisor", "Strand Coordinator"})
-        ComboBox4.SelectedIndex = 0
+        ' Setup dynamic Role ComboBox
+        cmbRole.Top = ComboBox3.Top + 40
+        cmbRole.Left = ComboBox3.Left
+        cmbRole.Width = 300
+        cmbRole.Visible = False
+        Me.Controls.Add(cmbRole)
+
+        lblRole.Top = cmbRole.Top - 20
+        lblRole.Left = cmbRole.Left
+        lblRole.Visible = False
+        Me.Controls.Add(lblRole)
     End Sub
 
     ' SIGN UP BUTTON
@@ -82,13 +95,13 @@ Public Class Form2
         Dim su_gender As String = ComboBox1.SelectedItem.ToString()
         Dim su_age As Integer = CInt(ComboBox2.SelectedItem.ToString())
         Dim su_department As String = ComboBox3.SelectedItem.ToString()
-        Dim su_role As String = ComboBox4.SelectedItem.ToString()
+        Dim su_role As String = If(cmbRole.Visible, cmbRole.SelectedItem.ToString(), "")
         Dim su_eid As String = ""
 
         ' Validation: required fields (middle name excluded)
         If su_username = "" Or su_password = "" Or firstName = "" Or lastName = "" _
             Or su_mobile = "" Or su_email = "" Or su_address = "" _
-            Or su_department = "" Or su_role = "" Then
+            Or su_department = "" Or (cmbRole.Visible And su_role = "") Then
             MsgBox("All fields are required except Middle Name")
             Exit Sub
         End If
@@ -179,7 +192,7 @@ Public Class Form2
             ComboBox1.SelectedIndex = 0
             ComboBox2.SelectedIndex = 0
             ComboBox3.SelectedIndex = 0
-            ComboBox4.SelectedIndex = 0
+            cmbRole.Visible = False
 
         Catch ex As Exception
             MsgBox("Error: " & ex.Message)
@@ -203,6 +216,15 @@ Public Class Form2
     End Sub
 
     Private Sub ComboBox2_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox2.SelectedIndexChanged
-
     End Sub
+
+    ' Show dynamic Role based on Department
+    Private Sub ComboBox3_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox3.SelectedIndexChanged
+        cmbRole.Items.Clear()
+        cmbRole.Items.AddRange({"Teacher", "Supervisor", "Strand Coordinator"})
+        cmbRole.SelectedIndex = 0
+        cmbRole.Visible = True
+        lblRole.Visible = True
+    End Sub
+
 End Class
