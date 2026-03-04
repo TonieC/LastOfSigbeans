@@ -22,66 +22,36 @@ Partial Class Form3
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form3))
         TextBox1 = New TextBox()
         TextBox2 = New TextBox()
-        Label1 = New Label()
-        Label2 = New Label()
-        Label3 = New Label()
         Button1 = New Button()
         LinkLabel1 = New LinkLabel()
         CheckBox1 = New CheckBox()
         LinkLabel2 = New LinkLabel()
         Button2 = New Button()
+        PictureBox2 = New PictureBox()
+        CType(PictureBox2, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
         ' TextBox1
         ' 
-        TextBox1.Location = New Point(490, 276)
+        TextBox1.Location = New Point(597, 265)
         TextBox1.Name = "TextBox1"
         TextBox1.Size = New Size(204, 23)
         TextBox1.TabIndex = 0
         ' 
         ' TextBox2
         ' 
-        TextBox2.Location = New Point(490, 341)
+        TextBox2.Location = New Point(597, 370)
         TextBox2.Name = "TextBox2"
         TextBox2.Size = New Size(204, 23)
         TextBox2.TabIndex = 1
         ' 
-        ' Label1
-        ' 
-        Label1.AutoSize = True
-        Label1.Font = New Font("Wide Latin", 48.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label1.Location = New Point(360, 44)
-        Label1.Name = "Label1"
-        Label1.Size = New Size(450, 79)
-        Label1.TabIndex = 2
-        Label1.Text = "LOGIN"
-        ' 
-        ' Label2
-        ' 
-        Label2.AutoSize = True
-        Label2.Font = New Font("Wide Latin", 12.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label2.Location = New Point(495, 254)
-        Label2.Name = "Label2"
-        Label2.Size = New Size(199, 19)
-        Label2.TabIndex = 3
-        Label2.Text = "USERNAME"
-        ' 
-        ' Label3
-        ' 
-        Label3.AutoSize = True
-        Label3.Font = New Font("Wide Latin", 12.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label3.Location = New Point(497, 319)
-        Label3.Name = "Label3"
-        Label3.Size = New Size(197, 19)
-        Label3.TabIndex = 4
-        Label3.Text = "PASSWORD"
-        ' 
         ' Button1
         ' 
         Button1.Font = New Font("Showcard Gothic", 15.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Button1.Location = New Point(540, 382)
+        Button1.Location = New Point(681, 439)
         Button1.Name = "Button1"
         Button1.Size = New Size(102, 38)
         Button1.TabIndex = 5
@@ -91,7 +61,7 @@ Partial Class Form3
         ' LinkLabel1
         ' 
         LinkLabel1.AutoSize = True
-        LinkLabel1.Location = New Point(523, 547)
+        LinkLabel1.Location = New Point(669, 588)
         LinkLabel1.Name = "LinkLabel1"
         LinkLabel1.Size = New Size(144, 15)
         LinkLabel1.TabIndex = 6
@@ -101,7 +71,7 @@ Partial Class Form3
         ' CheckBox1
         ' 
         CheckBox1.AutoSize = True
-        CheckBox1.Location = New Point(700, 345)
+        CheckBox1.Location = New Point(900, 399)
         CheckBox1.Name = "CheckBox1"
         CheckBox1.Size = New Size(138, 19)
         CheckBox1.TabIndex = 7
@@ -111,7 +81,7 @@ Partial Class Form3
         ' LinkLabel2
         ' 
         LinkLabel2.AutoSize = True
-        LinkLabel2.Location = New Point(547, 423)
+        LinkLabel2.Location = New Point(688, 421)
         LinkLabel2.Name = "LinkLabel2"
         LinkLabel2.Size = New Size(95, 15)
         LinkLabel2.TabIndex = 9
@@ -120,16 +90,26 @@ Partial Class Form3
         ' 
         ' Button2
         ' 
-        Button2.Location = New Point(23, 31)
+        Button2.Location = New Point(27, 23)
         Button2.Name = "Button2"
         Button2.Size = New Size(113, 34)
         Button2.TabIndex = 10
         Button2.Text = "Attendance"
         Button2.UseVisualStyleBackColor = True
         ' 
+        ' PictureBox2
+        ' 
+        PictureBox2.Image = CType(resources.GetObject("PictureBox2.Image"), Image)
+        PictureBox2.Location = New Point(-23, -2)
+        PictureBox2.Name = "PictureBox2"
+        PictureBox2.Size = New Size(1223, 683)
+        PictureBox2.SizeMode = PictureBoxSizeMode.StretchImage
+        PictureBox2.TabIndex = 21
+        PictureBox2.TabStop = False
+        ' 
         ' Form3
         ' 
-        AutoScaleDimensions = New SizeF(7.0F, 15.0F)
+        AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1176, 677)
         Controls.Add(Button2)
@@ -137,26 +117,23 @@ Partial Class Form3
         Controls.Add(CheckBox1)
         Controls.Add(LinkLabel1)
         Controls.Add(Button1)
-        Controls.Add(Label3)
-        Controls.Add(Label2)
-        Controls.Add(Label1)
         Controls.Add(TextBox2)
         Controls.Add(TextBox1)
+        Controls.Add(PictureBox2)
         Name = "Form3"
         Text = "Form1"
+        CType(PictureBox2, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
         PerformLayout()
     End Sub
 
     Friend WithEvents TextBox1 As TextBox
     Friend WithEvents TextBox2 As TextBox
-    Friend WithEvents Label1 As Label
-    Friend WithEvents Label2 As Label
-    Friend WithEvents Label3 As Label
     Friend WithEvents Button1 As Button
     Friend WithEvents LinkLabel1 As LinkLabel
     Friend WithEvents CheckBox1 As CheckBox
     Friend WithEvents LinkLabel2 As LinkLabel
     Friend WithEvents Button2 As Button
+    Friend WithEvents PictureBox2 As PictureBox
 
 End Class

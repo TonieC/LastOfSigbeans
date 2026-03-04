@@ -4,7 +4,6 @@ Imports iTextSharp.text
 Imports iTextSharp.text.pdf
 Imports System.IO
 
-
 Public Class Form6
     ' =========================
     ' CONNECTION STRING
@@ -34,18 +33,17 @@ Public Class Form6
     ' =========================
     Private Sub Form6_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadTable("request")
-        AddLog("FORM_LOAD", "Staff dashboard loaded")
+        DateTimePicker1.Checked = False
+        DateTimePicker1.ShowCheckBox = True
     End Sub
 
     ' =========================
-    ' LOGGING (SEPARATE CONNECTION)
+    ' LOGGING
     ' =========================
     Private Sub AddLog(action As String, details As String)
-
         Using logConn As New OleDbConnection(connString)
             Try
                 logConn.Open()
-
                 Using cmd As New OleDbCommand(
                     "INSERT INTO logs ([Username], ActionDate, [Action], Details) VALUES (?,?,?,?)", logConn)
 
@@ -53,40 +51,35 @@ Public Class Form6
                     cmd.Parameters.Add("?", OleDbType.Date).Value = DateTime.Now
                     cmd.Parameters.Add("?", OleDbType.VarWChar).Value = action
                     cmd.Parameters.Add("?", OleDbType.VarWChar).Value = details
-
                     cmd.ExecuteNonQuery()
                 End Using
-
             Catch ex As Exception
                 MsgBox("LOGGING FAILED: " & ex.Message)
             End Try
         End Using
-
     End Sub
 
     ' =========================
     ' LOAD TABLES
     ' =========================
     Private Sub LoadTable(tableName As String)
-
         Using conn As New OleDbConnection(connString)
             Try
                 conn.Open()
-
                 dt = New DataTable()
                 Dim sql As String = ""
 
                 Select Case tableName
                     Case "user"
-                        sql = "SELECT EID, Username, FullName, MobileN, Email, Address, Gender, Age, Department, Status FROM login"
+                        sql = "SELECT EID, Username, FullName, MobileN, Email, Address, Gender, Age, Department, Status FROM [user]"
                         Label2.Text = "Viewing: Employees"
 
                     Case "request"
-                        sql = "SELECT UID, EID, FullName, Category, [Request], Status, RequestDate FROM request"
+                        sql = "SELECT UID, EID, FullName, Category, [Request], Status, RequestDate FROM [request]"
                         Label2.Text = "Viewing: Leave Requests"
 
                     Case "attendance"
-                        sql = "SELECT Username, FullName, LoginDate, LoginTime, Status FROM attendance"
+                        sql = "SELECT Username, FullName, LoginDate, LoginTime, Status FROM [attendance]"
                         Label2.Text = "Viewing: Attendance"
                 End Select
 
@@ -98,8 +91,9 @@ Public Class Form6
                 DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
                 DataGridView1.MultiSelect = False
                 DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-                DataGridView1.ReadOnly = True
 
+                ' Set read-only rules
+                DataGridView1.ReadOnly = True
                 If tableName = "request" Then
                     DataGridView1.ReadOnly = False
                     For Each c In {"UID", "EID", "FullName", "Category", "Request", "RequestDate"}
@@ -113,7 +107,6 @@ Public Class Form6
                 MsgBox("Load error: " & ex.Message)
             End Try
         End Using
-
     End Sub
 
     ' =========================
@@ -146,30 +139,26 @@ Public Class Form6
     End Sub
 
     Private Sub UpdateRequest(newStatus As String)
-
-        ' Ensure a request is selected
         If currentTable <> "request" OrElse DataGridView1.SelectedRows.Count = 0 Then
             MsgBox("Select a request first.")
             Exit Sub
         End If
 
-        ' Get the selected request info
         Dim row = DataGridView1.SelectedRows(0)
-        Dim uid As Integer = CInt(row.Cells("UID").Value)
-        Dim eid As Integer = CInt(row.Cells("EID").Value)
+        Dim uid As Integer = Convert.ToInt32(row.Cells("UID").Value)
+        Dim eid As Integer = Convert.ToInt32(row.Cells("EID").Value)
 
         Using conn As New OleDbConnection(connString)
             Try
                 conn.Open()
-
-                ' Update the request status
-                Using cmd As New OleDbCommand("UPDATE request SET Status=? WHERE UID=?", conn)
+                ' Update request status
+                Using cmd As New OleDbCommand("UPDATE [request] SET [Status]=? WHERE UID=?", conn)
                     cmd.Parameters.Add("?", OleDbType.VarWChar).Value = newStatus
                     cmd.Parameters.Add("?", OleDbType.Integer).Value = uid
                     cmd.ExecuteNonQuery()
                 End Using
 
-                ' Update the employee status based on the request
+                ' Update employee status
                 Dim employeeStatus As String = If(newStatus = "Approved", "On Leave", "Active")
                 Using cmd As New OleDbCommand("UPDATE [user] SET [Status]=? WHERE EID=?", conn)
                     cmd.Parameters.Add("?", OleDbType.VarWChar).Value = employeeStatus
@@ -177,10 +166,7 @@ Public Class Form6
                     cmd.ExecuteNonQuery()
                 End Using
 
-                ' Log the action
                 AddLog("REQUEST_UPDATE", $"UID={uid}, Status={newStatus}")
-
-                ' Refresh table
                 LoadTable("request")
                 MsgBox($"Request has been {newStatus.ToLower()}.")
 
@@ -188,7 +174,6 @@ Public Class Form6
                 MsgBox("Update error: " & ex.Message)
             End Try
         End Using
-
     End Sub
 
     ' =========================
@@ -203,14 +188,12 @@ Public Class Form6
     ' EXPORT PDF
     ' =========================
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-
         If DataGridView1.Rows.Count = 0 Then Exit Sub
 
         Using dlg As New SaveFileDialog With {
             .Filter = "PDF (*.pdf)|*.pdf",
             .FileName = currentTable & "_Export.pdf"
         }
-
             If dlg.ShowDialog() <> DialogResult.OK Then Exit Sub
 
             Dim doc As New Document(PageSize.A4.Rotate())
@@ -236,17 +219,71 @@ Public Class Form6
 
             AddLog("EXPORT_PDF", currentTable)
             MsgBox("PDF exported.")
-
         End Using
     End Sub
 
     ' =========================
-    ' SEARCH
+    ' SEARCH TEXTBOX & DATE PICKER
     ' =========================
     Private Sub TextBox1_TextChanged(sender As Object, e As EventArgs) Handles TextBox1.TextChanged
+        ApplyFilters()
+    End Sub
+
+    Private Sub DateTimePicker1_ValueChanged(sender As Object, e As EventArgs) Handles DateTimePicker1.ValueChanged
+        ApplyFilters()
+    End Sub
+
+    ' =========================
+    ' APPLY FILTERS (SEARCH ALL COLUMNS)
+    ' =========================
+    Private Sub ApplyFilters()
         If dt Is Nothing Then Exit Sub
+
         Dim dv As New DataView(dt)
-        dv.RowFilter = $"FullName LIKE '%{TextBox1.Text.Replace("'", "''")}%'"
+        Dim searchText As String = TextBox1.Text.Replace("'", "''")
+        Dim filter As String = ""
+
+        ' =========================
+        ' TEXT SEARCH ACROSS ALL COLUMNS
+        ' =========================
+        If Not String.IsNullOrWhiteSpace(searchText) Then
+            Dim columnFilters As New List(Of String)
+            For Each col As DataColumn In dt.Columns
+                ' Only attempt to filter on supported types
+                If col.DataType Is GetType(String) OrElse col.DataType Is GetType(Integer) _
+                OrElse col.DataType Is GetType(Double) OrElse col.DataType Is GetType(Date) Then
+                    columnFilters.Add($"CONVERT([{col.ColumnName}], 'System.String') LIKE '%{searchText}%'")
+                End If
+            Next
+            filter = String.Join(" OR ", columnFilters)
+        End If
+
+        ' =========================
+        ' DATE FILTER (ONLY IF TOGGLED)
+        ' =========================
+        If DateTimePicker1.Checked Then
+            Dim selectedDate As String = DateTimePicker1.Value.ToString("MM/dd/yyyy")
+            Dim dateFilter As String = ""
+
+            Select Case currentTable
+                Case "request"
+                    dateFilter = $"CONVERT(RequestDate, 'System.String') LIKE '%{selectedDate}%'"
+                Case "attendance"
+                    dateFilter = $"CONVERT(LoginDate, 'System.String') LIKE '%{selectedDate}%'"
+                Case "logs"
+                    dateFilter = $"CONVERT(ActionDate, 'System.String') LIKE '%{selectedDate}%'"
+            End Select
+
+            If dateFilter <> "" Then
+                If filter <> "" Then filter &= " AND "
+                filter &= dateFilter
+            End If
+        End If
+
+        ' =========================
+        ' APPLY FILTER
+        ' =========================
+        dv.RowFilter = filter
         DataGridView1.DataSource = dv
     End Sub
 
@@ -265,13 +302,11 @@ Public Class Form6
     Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
         If MsgBox("Logout?", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
             AddLog("LOGOUT", "Staff logged out")
-
-            ' Open Form5 with required constructor parameters
-            Dim f As New Form5(loggedInStaffUsername, "Staff") ' "Staff" is the role
+            Dim f As New Form5(loggedInStaffUsername, "Staff")
             f.Show()
-
             Close()
         End If
     End Sub
+
 
 End Class

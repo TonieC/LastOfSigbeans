@@ -22,6 +22,7 @@ Partial Class Form5
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form5))
         Label1 = New Label()
         Label2 = New Label()
         Label3 = New Label()
@@ -59,8 +60,10 @@ Partial Class Form5
         Label23 = New Label()
         Label24 = New Label()
         Button10 = New Button()
+        PictureBox2 = New PictureBox()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
+        CType(PictureBox2, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
         ' Label1
@@ -270,16 +273,16 @@ Partial Class Form5
         ' DataGridView1
         ' 
         DataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DataGridView1.Location = New Point(371, 32)
+        DataGridView1.Location = New Point(390, 53)
         DataGridView1.Name = "DataGridView1"
-        DataGridView1.Size = New Size(349, 270)
+        DataGridView1.Size = New Size(349, 230)
         DataGridView1.TabIndex = 29
         ' 
         ' Label14
         ' 
         Label14.AutoSize = True
         Label14.Font = New Font("Showcard Gothic", 11.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label14.Location = New Point(437, 8)
+        Label14.Location = New Point(390, 32)
         Label14.Name = "Label14"
         Label14.Size = New Size(182, 18)
         Label14.TabIndex = 30
@@ -287,7 +290,7 @@ Partial Class Form5
         ' 
         ' Button7
         ' 
-        Button7.Location = New Point(371, 308)
+        Button7.Location = New Point(390, 289)
         Button7.Name = "Button7"
         Button7.Size = New Size(58, 26)
         Button7.TabIndex = 31
@@ -297,14 +300,14 @@ Partial Class Form5
         ' DateTimePicker1
         ' 
         DateTimePicker1.Format = DateTimePickerFormat.Short
-        DateTimePicker1.Location = New Point(639, 4)
+        DateTimePicker1.Location = New Point(658, 27)
         DateTimePicker1.Name = "DateTimePicker1"
         DateTimePicker1.Size = New Size(81, 23)
         DateTimePicker1.TabIndex = 32
         ' 
         ' Button8
         ' 
-        Button8.Location = New Point(662, 308)
+        Button8.Location = New Point(681, 289)
         Button8.Name = "Button8"
         Button8.Size = New Size(58, 26)
         Button8.TabIndex = 33
@@ -418,6 +421,16 @@ Partial Class Form5
         Button10.Text = "Send a copy to email"
         Button10.UseVisualStyleBackColor = True
         ' 
+        ' PictureBox2
+        ' 
+        PictureBox2.Image = CType(resources.GetObject("PictureBox2.Image"), Image)
+        PictureBox2.Location = New Point(-25, -2)
+        PictureBox2.Name = "PictureBox2"
+        PictureBox2.Size = New Size(1223, 679)
+        PictureBox2.SizeMode = PictureBoxSizeMode.StretchImage
+        PictureBox2.TabIndex = 45
+        PictureBox2.TabStop = False
+        ' 
         ' Form5
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -460,10 +473,12 @@ Partial Class Form5
         Controls.Add(Label3)
         Controls.Add(Label2)
         Controls.Add(Label1)
+        Controls.Add(PictureBox2)
         Name = "Form5"
         Text = "Form5"
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
         CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
+        CType(PictureBox2, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
         PerformLayout()
     End Sub
@@ -505,4 +520,5 @@ Partial Class Form5
     Friend WithEvents Label23 As Label
     Friend WithEvents Label24 As Label
     Friend WithEvents Button10 As Button
+    Friend WithEvents PictureBox2 As PictureBox
 End Class

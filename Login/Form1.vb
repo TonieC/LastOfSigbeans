@@ -48,7 +48,7 @@ Public Class Form1
             Return
         End If
 
-        If TextBox1.Text.Trim() = "" Then
+        If TextBox1.Text.Trim = "" Then
             MsgBox("Enter password first")
             Return
         End If
@@ -60,20 +60,20 @@ Public Class Form1
 
             Using cmd As New OleDbCommand("SELECT [password] FROM [user] WHERE username=?", connect)
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = pendingUsername
-                dbPassword = cmd.ExecuteScalar()
+                dbPassword = cmd.ExecuteScalar
             End Using
 
-            If dbPassword Is DBNull.Value OrElse dbPassword.ToString() <> TextBox1.Text Then
+            If dbPassword Is DBNull.Value OrElse dbPassword.ToString <> TextBox1.Text Then
                 MsgBox("Incorrect password")
                 Return
             End If
 
-            Dim exists As Boolean = False
+            Dim exists = False
             Using cmd As New OleDbCommand(
                 "SELECT COUNT(*) FROM attendance WHERE Username=? AND LoginDate=? AND Status='Time In'", connect)
                 cmd.Parameters.Add("?", OleDbType.VarChar).Value = pendingUsername
-                cmd.Parameters.Add("?", OleDbType.Date).Value = DateTime.Now.Date
-                exists = CInt(cmd.ExecuteScalar()) > 0
+                cmd.Parameters.Add("?", OleDbType.Date).Value = Date.Now.Date
+                exists = CInt(cmd.ExecuteScalar) > 0
             End Using
 
             If Not exists Then
@@ -81,8 +81,8 @@ Public Class Form1
                     "INSERT INTO attendance (Username, FullName, LoginDate, LoginTime, Status) VALUES (?, ?, ?, ?, ?)", connect)
                     cmd.Parameters.Add("?", OleDbType.VarChar).Value = pendingUsername
                     cmd.Parameters.Add("?", OleDbType.VarChar).Value = pendingFullName
-                    cmd.Parameters.Add("?", OleDbType.Date).Value = DateTime.Now.Date
-                    cmd.Parameters.Add("?", OleDbType.Date).Value = DateTime.Now
+                    cmd.Parameters.Add("?", OleDbType.Date).Value = Date.Now.Date
+                    cmd.Parameters.Add("?", OleDbType.Date).Value = Date.Now
                     cmd.Parameters.Add("?", OleDbType.VarChar).Value = "Time In"
                     cmd.ExecuteNonQuery()
                 End Using
@@ -313,23 +313,14 @@ Public Class Form1
         End If
     End Sub
 
-    ' LOGIN BUTTON
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-        Hide()
-        Dim f3 As New Form3
-        f3.Show()
+        Form3.Show()
+        Me.Hide()
+
     End Sub
 
-    ' SIGNUP BUTTON
-    ' Change button color on hover
-    Private Sub Button4_MouseEnter(sender As Object, e As EventArgs) Handles Button4.MouseEnter
-        Button4.BackColor = Color.LightBlue   ' change to any color you like
-        Button4.ForeColor = Color.White       ' optional: change text color
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        Form2.Show()
+        Me.Hide()
     End Sub
-
-    Private Sub Button4_MouseLeave(sender As Object, e As EventArgs) Handles Button4.MouseLeave
-        Button4.BackColor = SystemColors.Control  ' revert to original
-        Button4.ForeColor = Color.Black           ' revert text color
-    End Sub
-
 End Class

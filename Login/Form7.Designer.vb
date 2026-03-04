@@ -22,55 +22,47 @@ Partial Class Form7
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form7))
         ComboBox1 = New ComboBox()
         Button5 = New Button()
-        Label14 = New Label()
         TextBox1 = New TextBox()
         Button1 = New Button()
         Label1 = New Label()
         Button2 = New Button()
         Label2 = New Label()
         Label3 = New Label()
+        PictureBox2 = New PictureBox()
+        CType(PictureBox2, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
         ' ComboBox1
         ' 
         ComboBox1.FormattingEnabled = True
-        ComboBox1.Location = New Point(680, 341)
+        ComboBox1.Location = New Point(800, 351)
         ComboBox1.Name = "ComboBox1"
         ComboBox1.Size = New Size(148, 23)
         ComboBox1.TabIndex = 27
         ' 
         ' Button5
         ' 
-        Button5.Location = New Point(408, 385)
+        Button5.Location = New Point(408, 526)
         Button5.Name = "Button5"
         Button5.Size = New Size(118, 33)
         Button5.TabIndex = 26
         Button5.Text = "File Leave"
         Button5.UseVisualStyleBackColor = True
         ' 
-        ' Label14
-        ' 
-        Label14.AutoSize = True
-        Label14.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label14.Location = New Point(478, 48)
-        Label14.Name = "Label14"
-        Label14.Size = New Size(136, 23)
-        Label14.TabIndex = 25
-        Label14.Text = "File a Leave"
-        ' 
         ' TextBox1
         ' 
-        TextBox1.Location = New Point(408, 234)
+        TextBox1.Location = New Point(408, 291)
         TextBox1.Multiline = True
         TextBox1.Name = "TextBox1"
-        TextBox1.Size = New Size(266, 130)
+        TextBox1.Size = New Size(375, 220)
         TextBox1.TabIndex = 24
         ' 
         ' Button1
         ' 
-        Button1.Location = New Point(25, 22)
+        Button1.Location = New Point(12, 37)
         Button1.Name = "Button1"
         Button1.Size = New Size(148, 49)
         Button1.TabIndex = 28
@@ -81,7 +73,7 @@ Partial Class Form7
         ' 
         Label1.AutoSize = True
         Label1.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label1.Location = New Point(436, 22)
+        Label1.Location = New Point(426, 134)
         Label1.Name = "Label1"
         Label1.Size = New Size(220, 23)
         Label1.TabIndex = 29
@@ -89,7 +81,7 @@ Partial Class Form7
         ' 
         ' Button2
         ' 
-        Button2.Location = New Point(555, 385)
+        Button2.Location = New Point(664, 517)
         Button2.Name = "Button2"
         Button2.Size = New Size(119, 33)
         Button2.TabIndex = 30
@@ -100,7 +92,7 @@ Partial Class Form7
         ' 
         Label2.AutoSize = True
         Label2.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label2.Location = New Point(408, 208)
+        Label2.Location = New Point(408, 265)
         Label2.Name = "Label2"
         Label2.Size = New Size(88, 23)
         Label2.TabIndex = 31
@@ -110,11 +102,21 @@ Partial Class Form7
         ' 
         Label3.AutoSize = True
         Label3.Font = New Font("Showcard Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label3.Location = New Point(680, 315)
+        Label3.Location = New Point(800, 315)
         Label3.Name = "Label3"
         Label3.Size = New Size(138, 20)
         Label3.TabIndex = 32
         Label3.Text = "Type of Leave"
+        ' 
+        ' PictureBox2
+        ' 
+        PictureBox2.Image = CType(resources.GetObject("PictureBox2.Image"), Image)
+        PictureBox2.Location = New Point(-27, -3)
+        PictureBox2.Name = "PictureBox2"
+        PictureBox2.Size = New Size(1223, 661)
+        PictureBox2.SizeMode = PictureBoxSizeMode.StretchImage
+        PictureBox2.TabIndex = 33
+        PictureBox2.TabStop = False
         ' 
         ' Form7
         ' 
@@ -128,21 +130,22 @@ Partial Class Form7
         Controls.Add(Button1)
         Controls.Add(ComboBox1)
         Controls.Add(Button5)
-        Controls.Add(Label14)
         Controls.Add(TextBox1)
+        Controls.Add(PictureBox2)
         Name = "Form7"
         Text = "Form7"
+        CType(PictureBox2, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
         PerformLayout()
     End Sub
 
     Friend WithEvents ComboBox1 As ComboBox
     Friend WithEvents Button5 As Button
-    Friend WithEvents Label14 As Label
     Friend WithEvents TextBox1 As TextBox
     Friend WithEvents Button1 As Button
     Friend WithEvents Label1 As Label
     Friend WithEvents Button2 As Button
     Friend WithEvents Label2 As Label
     Friend WithEvents Label3 As Label
+    Friend WithEvents PictureBox2 As PictureBox
 End Class

@@ -22,20 +22,23 @@ Partial Class Form8
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form8))
         Label1 = New Label()
         DataGridView1 = New DataGridView()
         Button1 = New Button()
         Label2 = New Label()
         TextBox1 = New TextBox()
         Button2 = New Button()
+        PictureBox2 = New PictureBox()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
+        CType(PictureBox2, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
         ' Label1
         ' 
         Label1.AutoSize = True
         Label1.Font = New Font("Showcard Gothic", 11.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label1.Location = New Point(587, 8)
+        Label1.Location = New Point(366, 157)
         Label1.Name = "Label1"
         Label1.Size = New Size(91, 18)
         Label1.TabIndex = 0
@@ -44,14 +47,14 @@ Partial Class Form8
         ' DataGridView1
         ' 
         DataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DataGridView1.Location = New Point(108, 41)
+        DataGridView1.Location = New Point(85, 193)
         DataGridView1.Name = "DataGridView1"
         DataGridView1.Size = New Size(1014, 443)
         DataGridView1.TabIndex = 1
         ' 
         ' Button1
         ' 
-        Button1.Location = New Point(105, 7)
+        Button1.Location = New Point(12, 126)
         Button1.Name = "Button1"
         Button1.Size = New Size(110, 28)
         Button1.TabIndex = 2
@@ -62,7 +65,7 @@ Partial Class Form8
         ' 
         Label2.AutoSize = True
         Label2.Font = New Font("Showcard Gothic", 11.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label2.Location = New Point(912, 17)
+        Label2.Location = New Point(903, 172)
         Label2.Name = "Label2"
         Label2.Size = New Size(77, 18)
         Label2.TabIndex = 3
@@ -70,19 +73,29 @@ Partial Class Form8
         ' 
         ' TextBox1
         ' 
-        TextBox1.Location = New Point(991, 17)
+        TextBox1.Location = New Point(995, 167)
         TextBox1.Name = "TextBox1"
         TextBox1.Size = New Size(104, 23)
         TextBox1.TabIndex = 4
         ' 
         ' Button2
         ' 
-        Button2.Location = New Point(1012, 490)
+        Button2.Location = New Point(1052, 642)
         Button2.Name = "Button2"
         Button2.Size = New Size(110, 28)
         Button2.TabIndex = 5
         Button2.Text = "Print"
         Button2.UseVisualStyleBackColor = True
+        ' 
+        ' PictureBox2
+        ' 
+        PictureBox2.Image = CType(resources.GetObject("PictureBox2.Image"), Image)
+        PictureBox2.Location = New Point(-24, -2)
+        PictureBox2.Name = "PictureBox2"
+        PictureBox2.Size = New Size(1223, 685)
+        PictureBox2.SizeMode = PictureBoxSizeMode.StretchImage
+        PictureBox2.TabIndex = 21
+        PictureBox2.TabStop = False
         ' 
         ' Form8
         ' 
@@ -95,9 +108,11 @@ Partial Class Form8
         Controls.Add(Button1)
         Controls.Add(DataGridView1)
         Controls.Add(Label1)
+        Controls.Add(PictureBox2)
         Name = "Form8"
         Text = "Form8"
         CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
+        CType(PictureBox2, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
         PerformLayout()
     End Sub
@@ -108,4 +123,5 @@ Partial Class Form8
     Friend WithEvents Label2 As Label
     Friend WithEvents TextBox1 As TextBox
     Friend WithEvents Button2 As Button
+    Friend WithEvents PictureBox2 As PictureBox
 End Class

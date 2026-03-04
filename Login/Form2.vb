@@ -48,13 +48,9 @@ Public Class Form2
             "STEM",
             "HE",
             "GAS",
-            "EDUC",
-            "PSYCHOLOGY",
-            "CRIMINOLOGY",
-            "CABAM",
-            "Junior High School",
-            "SHOTS",
-            "Basic Educ"
+            "Basic Education",
+            "Marketing",
+            "Maintenance"
         })
         ComboBox3.SelectedIndex = 0
 
@@ -220,10 +216,17 @@ Public Class Form2
     ' Show dynamic Role based on Department
     Private Sub ComboBox3_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox3.SelectedIndexChanged
         cmbRole.Items.Clear()
-        cmbRole.Items.AddRange({"Teacher", "Supervisor", "Strand Coordinator"})
+        cmbRole.Items.AddRange({"Staff", "Teacher", "Supervisor", "Strand Coordinator"})
         cmbRole.SelectedIndex = 0
         cmbRole.Visible = True
         lblRole.Visible = True
     End Sub
 
+    Private Sub TextBox4_TextChanged(sender As Object, e As EventArgs)
+
+    End Sub
+
+    Private Sub TextBox3_TextChanged(sender As Object, e As EventArgs) Handles TextBox3.TextChanged
+
+    End Sub
 End Class

@@ -22,48 +22,31 @@ Partial Class Form1
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Button1 = New Button()
-        Label11 = New Label()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form1))
         PictureBox1 = New PictureBox()
         Button3 = New Button()
         Label1 = New Label()
-        Button4 = New Button()
         TextBox1 = New TextBox()
         Label2 = New Label()
         Button5 = New Button()
+        PictureBox2 = New PictureBox()
+        Button1 = New Button()
+        Button2 = New Button()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
+        CType(PictureBox2, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
-        ' 
-        ' Button1
-        ' 
-        Button1.Location = New Point(1044, 74)
-        Button1.Name = "Button1"
-        Button1.Size = New Size(102, 45)
-        Button1.TabIndex = 0
-        Button1.Text = "Login"
-        Button1.UseVisualStyleBackColor = True
-        ' 
-        ' Label11
-        ' 
-        Label11.AutoSize = True
-        Label11.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label11.Location = New Point(450, 20)
-        Label11.Name = "Label11"
-        Label11.Size = New Size(141, 23)
-        Label11.TabIndex = 11
-        Label11.Text = "Attendance"
         ' 
         ' PictureBox1
         ' 
-        PictureBox1.Location = New Point(211, 74)
+        PictureBox1.Location = New Point(345, 160)
         PictureBox1.Name = "PictureBox1"
-        PictureBox1.Size = New Size(642, 390)
+        PictureBox1.Size = New Size(774, 341)
         PictureBox1.TabIndex = 12
         PictureBox1.TabStop = False
         ' 
         ' Button3
         ' 
-        Button3.Location = New Point(546, 522)
+        Button3.Location = New Point(716, 593)
         Button3.Name = "Button3"
         Button3.Size = New Size(76, 28)
         Button3.TabIndex = 14
@@ -73,35 +56,28 @@ Partial Class Form1
         ' Label1
         ' 
         Label1.AutoSize = True
+        Label1.BackColor = Color.FromArgb(CByte(37), CByte(129), CByte(51))
         Label1.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label1.Location = New Point(415, 48)
+        Label1.Location = New Point(345, 504)
         Label1.Name = "Label1"
         Label1.Size = New Size(94, 23)
         Label1.TabIndex = 15
         Label1.Text = "Status:"
         ' 
-        ' Button4
-        ' 
-        Button4.Location = New Point(1044, 12)
-        Button4.Name = "Button4"
-        Button4.Size = New Size(102, 45)
-        Button4.TabIndex = 16
-        Button4.Text = "Sign Up"
-        Button4.UseVisualStyleBackColor = True
-        ' 
         ' TextBox1
         ' 
-        TextBox1.Location = New Point(434, 493)
+        TextBox1.Location = New Point(598, 556)
         TextBox1.Name = "TextBox1"
-        TextBox1.Size = New Size(188, 23)
+        TextBox1.Size = New Size(194, 23)
         TextBox1.TabIndex = 17
         TextBox1.Visible = False
         ' 
         ' Label2
         ' 
         Label2.AutoSize = True
+        Label2.BackColor = Color.FromArgb(CByte(37), CByte(129), CByte(51))
         Label2.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label2.Location = New Point(428, 467)
+        Label2.Location = New Point(598, 530)
         Label2.Name = "Label2"
         Label2.Size = New Size(194, 23)
         Label2.TabIndex = 18
@@ -110,43 +86,79 @@ Partial Class Form1
         ' 
         ' Button5
         ' 
-        Button5.Location = New Point(434, 522)
+        Button5.Location = New Point(598, 593)
         Button5.Name = "Button5"
         Button5.Size = New Size(85, 28)
         Button5.TabIndex = 19
         Button5.Text = "Time In"
-        Button5.UseVisualStyleBackColor = True
+        Button5.UseVisualStyleBackColor = False
+        ' 
+        ' PictureBox2
+        ' 
+        PictureBox2.Image = CType(resources.GetObject("PictureBox2.Image"), Image)
+        PictureBox2.Location = New Point(2, 2)
+        PictureBox2.Name = "PictureBox2"
+        PictureBox2.Size = New Size(1223, 644)
+        PictureBox2.SizeMode = PictureBoxSizeMode.StretchImage
+        PictureBox2.TabIndex = 20
+        PictureBox2.TabStop = False
+        ' 
+        ' Button1
+        ' 
+        Button1.BackColor = Color.FromArgb(CByte(37), CByte(129), CByte(51))
+        Button1.FlatStyle = FlatStyle.Flat
+        Button1.Font = New Font("Showcard Gothic", 21.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Button1.ForeColor = Color.FloralWhite
+        Button1.Location = New Point(1037, 519)
+        Button1.Name = "Button1"
+        Button1.Size = New Size(141, 49)
+        Button1.TabIndex = 21
+        Button1.Text = "Log In"
+        Button1.UseVisualStyleBackColor = False
+        ' 
+        ' Button2
+        ' 
+        Button2.BackColor = Color.FromArgb(CByte(37), CByte(129), CByte(51))
+        Button2.FlatStyle = FlatStyle.Flat
+        Button2.Font = New Font("Showcard Gothic", 21.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Button2.ForeColor = Color.FloralWhite
+        Button2.Location = New Point(1037, 574)
+        Button2.Name = "Button2"
+        Button2.Size = New Size(141, 49)
+        Button2.TabIndex = 22
+        Button2.Text = "Sign In"
+        Button2.UseVisualStyleBackColor = False
         ' 
         ' Form1
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(1169, 669)
+        ClientSize = New Size(1224, 642)
+        Controls.Add(Button2)
+        Controls.Add(Button1)
         Controls.Add(Button5)
         Controls.Add(Label2)
         Controls.Add(TextBox1)
-        Controls.Add(Button4)
         Controls.Add(Label1)
         Controls.Add(Button3)
         Controls.Add(PictureBox1)
-        Controls.Add(Label11)
-        Controls.Add(Button1)
+        Controls.Add(PictureBox2)
         Name = "Form1"
         Text = "Form3"
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
+        CType(PictureBox2, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
         PerformLayout()
     End Sub
-
-    Friend WithEvents Button1 As Button
-    Friend WithEvents Label11 As Label
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents Button3 As Button
     Friend WithEvents Label1 As Label
-    Friend WithEvents Button4 As Button
     Friend WithEvents TextBox1 As TextBox
     Friend WithEvents Label2 As Label
     Friend WithEvents Button5 As Button
+    Friend WithEvents PictureBox2 As PictureBox
+    Friend WithEvents Button1 As Button
+    Friend WithEvents Button2 As Button
 
 
 End Class
