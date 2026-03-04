@@ -56,6 +56,8 @@ Partial Class Form5
         Label21 = New Label()
         Label22 = New Label()
         Button4 = New Button()
+        Label23 = New Label()
+        Label24 = New Label()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
@@ -386,11 +388,33 @@ Partial Class Form5
         Button4.Text = "View Dashboard"
         Button4.UseVisualStyleBackColor = True
         ' 
+        ' Label23
+        ' 
+        Label23.AutoSize = True
+        Label23.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label23.Location = New Point(558, 550)
+        Label23.Name = "Label23"
+        Label23.Size = New Size(195, 23)
+        Label23.TabIndex = 42
+        Label23.Text = "Payment Status:"
+        ' 
+        ' Label24
+        ' 
+        Label24.AutoSize = True
+        Label24.Font = New Font("Showcard Gothic", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label24.Location = New Point(759, 550)
+        Label24.Name = "Label24"
+        Label24.Size = New Size(188, 23)
+        Label24.TabIndex = 43
+        Label24.Text = "Payment Status"
+        ' 
         ' Form5
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1038, 671)
+        Controls.Add(Label24)
+        Controls.Add(Label23)
         Controls.Add(Button4)
         Controls.Add(Label22)
         Controls.Add(Label21)
@@ -467,4 +491,6 @@ Partial Class Form5
     Friend WithEvents Label21 As Label
     Friend WithEvents Label22 As Label
     Friend WithEvents Button4 As Button
+    Friend WithEvents Label23 As Label
+    Friend WithEvents Label24 As Label
 End Class

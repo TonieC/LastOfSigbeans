@@ -431,4 +431,8 @@ Public Class Form5
             connect.Close()
         End Try
     End Sub
+
+    Private Sub Label24_Click(sender As Object, e As EventArgs) Handles Label24.Click
+
+    End Sub
 End Class

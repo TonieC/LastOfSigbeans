@@ -35,7 +35,7 @@ Partial Class Form8
         ' 
         Label1.AutoSize = True
         Label1.Font = New Font("Showcard Gothic", 11.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label1.Location = New Point(494, 10)
+        Label1.Location = New Point(587, 8)
         Label1.Name = "Label1"
         Label1.Size = New Size(91, 18)
         Label1.TabIndex = 0
@@ -44,14 +44,14 @@ Partial Class Form8
         ' DataGridView1
         ' 
         DataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DataGridView1.Location = New Point(15, 43)
+        DataGridView1.Location = New Point(108, 41)
         DataGridView1.Name = "DataGridView1"
         DataGridView1.Size = New Size(1014, 443)
         DataGridView1.TabIndex = 1
         ' 
         ' Button1
         ' 
-        Button1.Location = New Point(12, 9)
+        Button1.Location = New Point(105, 7)
         Button1.Name = "Button1"
         Button1.Size = New Size(110, 28)
         Button1.TabIndex = 2
@@ -62,7 +62,7 @@ Partial Class Form8
         ' 
         Label2.AutoSize = True
         Label2.Font = New Font("Showcard Gothic", 11.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label2.Location = New Point(819, 19)
+        Label2.Location = New Point(912, 17)
         Label2.Name = "Label2"
         Label2.Size = New Size(77, 18)
         Label2.TabIndex = 3
@@ -70,14 +70,14 @@ Partial Class Form8
         ' 
         ' TextBox1
         ' 
-        TextBox1.Location = New Point(898, 19)
+        TextBox1.Location = New Point(991, 17)
         TextBox1.Name = "TextBox1"
         TextBox1.Size = New Size(104, 23)
         TextBox1.TabIndex = 4
         ' 
         ' Button2
         ' 
-        Button2.Location = New Point(919, 492)
+        Button2.Location = New Point(1012, 490)
         Button2.Name = "Button2"
         Button2.Size = New Size(110, 28)
         Button2.TabIndex = 5
@@ -88,7 +88,7 @@ Partial Class Form8
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(1045, 674)
+        ClientSize = New Size(1174, 677)
         Controls.Add(Button2)
         Controls.Add(TextBox1)
         Controls.Add(Label2)
